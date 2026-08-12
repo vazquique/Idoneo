@@ -44,6 +44,7 @@
   ];
 
   const COLLECTION = 'abogados_registrados';
+  const HIDDEN_DEMOS_COLLECTION = 'demos_ocultos';
 
   function requireDb(){
     if(typeof db === 'undefined'){
@@ -70,9 +71,29 @@
     });
   }
 
+  async function getHiddenDemoIds(){
+    const snap = await requireDb().collection(HIDDEN_DEMOS_COLLECTION).get();
+    return snap.docs.map(d => d.id);
+  }
+
+  async function hideDemo(id){
+    await requireDb().collection(HIDDEN_DEMOS_COLLECTION).doc(String(id)).set({
+      hiddenAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  async function unhideDemo(id){
+    await requireDb().collection(HIDDEN_DEMOS_COLLECTION).doc(String(id)).delete();
+  }
+
+  async function getVisibleDemos(){
+    const hiddenIds = await getHiddenDemoIds();
+    return DEMO_ABOGADOS.filter(d => !hiddenIds.includes(String(d.id)));
+  }
+
   async function getAllListings(){
-    const approved = await getApproved();
-    return DEMO_ABOGADOS.concat(approved);
+    const [demos, approved] = await Promise.all([getVisibleDemos(), getApproved()]);
+    return demos.concat(approved);
   }
 
   async function submitRegistration(data){
@@ -131,6 +152,7 @@
     getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,
+    getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };
 })(window);
