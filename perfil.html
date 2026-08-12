@@ -56,11 +56,6 @@
   .review-author{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:rgba(241,234,216,0.85);}
   .review-text{font-size:0.92rem; color:rgba(241,234,216,0.72);}
 
-  .demo-note{
-    font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a6a1f;
-    background:#f3e4c2; border:1px solid #d9ab52; padding:6px 12px; border-radius:20px; display:inline-block; margin-bottom:20px;
-  }
-
   .not-found{padding:80px 0; text-align:center; color:rgba(241,234,216,0.7);}
 
   footer{padding:36px 0; border-top:1px solid var(--line); margin-top:40px;}
@@ -162,7 +157,6 @@
     `).join('');
 
     content.innerHTML = `
-      ${window.IdoneoListings.isDemo(ab.id) ? '<span class="demo-note">⚠ Perfil de ejemplo</span>' : ''}
       <div class="profile-card">
         <div class="profile-top">
           <div class="avatar-lg">${initials(ab.nombre)}</div>

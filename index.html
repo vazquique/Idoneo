@@ -90,11 +90,6 @@
   .resultados{background:var(--parchment); color:var(--ink); padding:32px 0 64px;}
   .resultados-head{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:22px;}
   .resultados-count{font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:#6b6250;}
-  .demo-badge{
-    display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem;
-    text-transform:uppercase; letter-spacing:0.06em; color:#8a6a1f; background:#f3e4c2; border:1px solid #d9ab52;
-    padding:4px 10px; border-radius:20px;
-  }
   .card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;}
   .lawyer-card{
     background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:20px;
@@ -290,7 +285,6 @@
         <h2 style="font-size:1.3rem;">Despachos y abogados</h2>
         <div class="resultados-count" id="resultsCount"></div>
       </div>
-      <span class="demo-badge" id="demoBadge">⚠ Perfiles de ejemplo — aún no hay abogados reales dados de alta</span>
     </div>
     <div class="card-grid" id="cardGrid"></div>
     <div class="no-results" id="noResults">No hay resultados para esa combinación. Prueba con otra ciudad o especialidad.</div>
@@ -391,10 +385,6 @@
     document.getElementById('resultsCount').textContent = 'Cargando…';
     try{
       abogados = await window.IdoneoListings.getAllListings();
-      const approvedCount = abogados.length - window.IdoneoListings.DEMO_ABOGADOS.length;
-      if(approvedCount > 0){
-        document.getElementById('demoBadge').textContent = '✓ Incluye perfiles registrados y verificados manualmente';
-      }
     } catch(err){
       console.error('No se pudieron cargar los perfiles registrados, mostrando solo los de ejemplo.', err);
       abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
