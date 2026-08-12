@@ -30,7 +30,9 @@
   .header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 28px;}
   .brand{display:flex; align-items:center; gap:10px; font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600;}
   .brand-mark{width:24px; height:24px; flex-shrink:0;}
+  .nav-right{display:flex; align-items:center; gap:14px; position:relative;}
   .nav-links{display:flex; align-items:center; gap:10px;}
+  .nav-toggle{display:none;}
   .nav-link{
     font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.07em;
     padding:9px 16px; border-radius:2px; text-decoration:none; color:rgba(241,234,216,0.8);
@@ -52,7 +54,7 @@
   /* Search card */
   .search-card{
     margin-top:40px; background:var(--parchment); color:var(--ink); border-radius:6px 6px 0 0;
-    padding:24px; display:grid; grid-template-columns:1fr 1fr auto; gap:14px; align-items:end;
+    padding:24px; display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:14px; align-items:end;
     box-shadow:0 20px 50px rgba(0,0,0,0.25);
   }
   .search-field label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-2); margin-bottom:6px;}
@@ -61,6 +63,15 @@
     font-family:'IBM Plex Sans', sans-serif; font-size:0.95rem; color:var(--ink);
   }
   .search-field select:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .search-field .input-icon-wrap{position:relative;}
+  .search-field .input-icon-wrap svg{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:#8a8069; pointer-events:none;
+  }
+  .search-field input[type="text"]{
+    width:100%; padding:12px 12px 12px 36px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0;
+    font-family:'IBM Plex Sans', sans-serif; font-size:0.95rem; color:var(--ink);
+  }
+  .search-field input[type="text"]:focus{outline:2px solid var(--brass); outline-offset:1px;}
   .search-btn{
     background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:13px 26px;
     font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em;
@@ -178,8 +189,18 @@
     .articulo{grid-template-columns:1fr; gap:6px;}
     .registro-inner{grid-template-columns:1fr;}
     .row2{grid-template-columns:1fr;}
-    .nav-links{gap:6px;}
-    .nav-link{padding:8px 10px; font-size:0.7rem;}
+  }
+  @media (max-width: 680px){
+    .nav-toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; order:2;}
+    .nav-toggle:hover{border-color:var(--brass-light);}
+    .auth-slot{order:1;}
+    .nav-links{
+      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
+      border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+    }
+    .nav-links.open{display:flex;}
+    .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
 </style>
@@ -192,9 +213,18 @@
       <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7l-3 6a4 4 0 0 0 8 0l-3-6m14 0l-3 6a4 4 0 0 0 8 0l-3-6M4 7h6m4 0h6M8 21h8"/></svg>
       Idóneo <span style="opacity:0.55; font-weight:400; margin-left:6px;">Abogados</span>
     </div>
-    <div class="nav-links">
-      <a class="nav-link" href="#resultados">Buscar abogado</a>
-      <a class="nav-link primary" href="registro.html">Regístrate como abogado</a>
+    <div class="nav-right">
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link" href="#resultados" id="navBuscar" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          Buscar abogado
+        </a>
+        <a class="nav-link primary" href="registro.html">Regístrate como abogado</a>
+      </div>
+      <div class="auth-slot" id="navAuth"></div>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
     </div>
   </div>
 </header>
@@ -205,7 +235,14 @@
     <h1>Encuentra al abogado <em>idóneo</em> para tu caso.</h1>
     <p class="hero-sub">Filtra por ciudad y especialidad, compara reseñas y precio entre despachos verificados, y contacta directo por WhatsApp — tú eliges, nadie te reparte a ciegas.</p>
 
-    <div class="search-card">
+    <div class="search-card" id="searchCard">
+      <div class="search-field">
+        <label for="fNombre">Buscar por nombre</label>
+        <div class="input-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="fNombre" placeholder="Nombre del abogado o despacho">
+        </div>
+      </div>
       <div class="search-field">
         <label for="fCiudad">Ciudad</label>
         <select id="fCiudad">
@@ -350,10 +387,16 @@
     });
   }
 
+  function normalize(str){
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
   function applyFilters(){
+    const nombre = normalize(document.getElementById('fNombre').value.trim());
     const ciudad = document.getElementById('fCiudad').value;
     const especialidad = document.getElementById('fEspecialidad').value;
     const filtered = abogados.filter(ab =>
+      (nombre === '' || normalize(ab.nombre).includes(nombre)) &&
       (ciudad === '' || ab.ciudad === ciudad) &&
       (especialidad === '' || ab.especialidad === especialidad)
     );
@@ -361,6 +404,13 @@
   }
 
   document.getElementById('btnBuscar').addEventListener('click', applyFilters);
+  document.getElementById('fNombre').addEventListener('input', applyFilters);
+  document.getElementById('fNombre').addEventListener('keydown', e => { if(e.key === 'Enter') applyFilters(); });
+  document.getElementById('navBuscar').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('searchCard').scrollIntoView({behavior:'smooth', block:'center'});
+    document.getElementById('fNombre').focus();
+  });
   renderCards(abogados);
 
   // Stamp animation on load
@@ -368,6 +418,8 @@
     document.getElementById('heroSeal').classList.add('stamped');
   });
 </script>
+
+<script src="auth.js" defer></script>
 
 </body>
 </html>
