@@ -117,10 +117,11 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="listings.js"></script>
 <script>
-  const abogados = window.IdoneoListings.getAllListings();
-
   function initials(name){
     return name.replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   }
@@ -129,11 +130,24 @@
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
-  const ab = abogados.find(a => a.id === id);
   const content = document.getElementById('profileContent');
+  content.innerHTML = '<p class="not-found">Cargando perfil…</p>';
 
+  async function init(){
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    let abogados;
+    try{
+      abogados = await window.IdoneoListings.getAllListings();
+    } catch(err){
+      console.error('No se pudieron cargar los perfiles registrados, mostrando solo los de ejemplo.', err);
+      abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
+    }
+    const ab = abogados.find(a => String(a.id) === id);
+    renderProfile(ab);
+  }
+
+  function renderProfile(ab){
   if(!ab){
     content.innerHTML = `<div class="not-found"><p>No encontramos ese perfil.</p></div>`;
   } else {
@@ -174,6 +188,9 @@
       ${reviewsHtml}
     `;
   }
+  }
+
+  init();
 </script>
 
 <script src="auth.js" defer></script>

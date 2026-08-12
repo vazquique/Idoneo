@@ -313,12 +313,12 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="listings.js"></script>
 <script>
-  const abogados = window.IdoneoListings.getAllListings();
-  if(window.IdoneoListings.getApproved().length > 0){
-    document.getElementById('demoBadge').textContent = '✓ Incluye perfiles registrados y verificados manualmente';
-  }
+  let abogados = [];
 
   function initials(name){
     return name.replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
@@ -386,7 +386,22 @@
     document.getElementById('searchCard').scrollIntoView({behavior:'smooth', block:'center'});
     document.getElementById('fNombre').focus();
   });
-  renderCards(abogados);
+
+  async function init(){
+    document.getElementById('resultsCount').textContent = 'Cargando…';
+    try{
+      abogados = await window.IdoneoListings.getAllListings();
+      const approvedCount = abogados.length - window.IdoneoListings.DEMO_ABOGADOS.length;
+      if(approvedCount > 0){
+        document.getElementById('demoBadge').textContent = '✓ Incluye perfiles registrados y verificados manualmente';
+      }
+    } catch(err){
+      console.error('No se pudieron cargar los perfiles registrados, mostrando solo los de ejemplo.', err);
+      abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
+    }
+    renderCards(abogados);
+  }
+  init();
 
   // Stamp animation on load
   window.addEventListener('load', () => {

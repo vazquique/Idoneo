@@ -246,6 +246,9 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="listings.js"></script>
 <script>
   const articulos = document.querySelectorAll('.articulo');
@@ -262,13 +265,13 @@
   const successMsg = document.getElementById('successMsg');
   const errorMsg = document.getElementById('errorMsg');
   const submitBtn = form.querySelector('.submit-btn');
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.classList.remove('show');
     submitBtn.textContent = 'Enviando...';
     submitBtn.disabled = true;
     try{
-      window.IdoneoListings.submitRegistration({
+      await window.IdoneoListings.submitRegistration({
         nombre: document.getElementById('nombre').value.trim(),
         especialidad: document.getElementById('especialidad').value,
         ciudad: document.getElementById('ciudad').value.trim(),
@@ -280,6 +283,7 @@
       form.querySelectorAll('input, select').forEach(el => el.disabled = true);
       submitBtn.textContent = 'Registrado ✓';
     } catch(err){
+      console.error('No se pudo guardar el registro en Firestore.', err);
       errorMsg.classList.add('show');
       submitBtn.textContent = 'Apartar mi lugar';
       submitBtn.disabled = false;

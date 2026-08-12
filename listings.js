@@ -1,14 +1,16 @@
 /*
   Idóneo — datos de abogados/despachos: los 8 perfiles de ejemplo del
-  lanzamiento, más los registros reales que se van aprobando desde
-  admin.html. Se incluye en index.html, perfil.html y registro.html con
-  <script src="listings.js"></script> (sin defer: index.html y perfil.html
-  necesitan IdoneoListings disponible antes de su propio script inline).
+  lanzamiento (fijos, en este archivo) + los registros reales, que ahora
+  viven en Firestore (compartidos de verdad entre cualquier dispositivo).
 
-  Todo vive en localStorage del navegador — no hay servidor. Un registro
-  hecho en un dispositivo solo lo ve/aprueba quien use ESE MISMO navegador
-  (por ejemplo, el dueño del sitio revisando desde su propia laptop). No es
-  una base de datos compartida entre visitantes de verdad.
+  Se incluye en index.html, perfil.html, registro.html y admin.html
+  DESPUÉS de firebase-app-compat.js, firebase-firestore-compat.js,
+  firebase-auth-compat.js y firebase-config.js (ese orden importa: este
+  archivo usa `db` y `auth`, definidos en firebase-config.js).
+
+  Todas las funciones de datos son async (devuelven Promesas) porque ahora
+  hablan con Firestore por red — el código que las usa debe hacer
+  `await` o `.then()`.
 */
 (function(global){
   const DEMO_ABOGADOS = [
@@ -41,30 +43,40 @@
     ]},
   ];
 
-  const PENDING_KEY = 'idoneo_pending_abogados';
-  const APPROVED_KEY = 'idoneo_approved_abogados';
-  const NEXT_ID_KEY = 'idoneo_next_abogado_id';
-  const FIRST_CUSTOM_ID = 1000;
+  const COLLECTION = 'abogados_registrados';
 
-  function readList(key){
-    try{ return JSON.parse(localStorage.getItem(key)) || []; }
-    catch(e){ return []; }
-  }
-  function writeList(key, list){ localStorage.setItem(key, JSON.stringify(list)); }
-
-  function getPending(){ return readList(PENDING_KEY); }
-  function getApproved(){ return readList(APPROVED_KEY); }
-
-  function nextId(){
-    let n = parseInt(localStorage.getItem(NEXT_ID_KEY), 10);
-    if(!n || Number.isNaN(n)) n = FIRST_CUSTOM_ID;
-    localStorage.setItem(NEXT_ID_KEY, String(n + 1));
-    return n;
+  function requireDb(){
+    if(typeof db === 'undefined'){
+      throw new Error('Firestore no está inicializado. Revisa que firebase-config.js esté cargado antes que listings.js, y que hayas pegado tu configuración real.');
+    }
+    return db;
   }
 
-  function submitRegistration(data){
+  function docToEntry(doc){
+    return Object.assign({id: doc.id}, doc.data());
+  }
+
+  async function getApproved(){
+    const snap = await requireDb().collection(COLLECTION).where('status', '==', 'approved').get();
+    return snap.docs.map(docToEntry);
+  }
+
+  async function getPending(){
+    const snap = await requireDb().collection(COLLECTION).where('status', '==', 'pending').get();
+    return snap.docs.map(docToEntry).sort((a, b) => {
+      const ta = a.submittedAt && a.submittedAt.toMillis ? a.submittedAt.toMillis() : 0;
+      const tb = b.submittedAt && b.submittedAt.toMillis ? b.submittedAt.toMillis() : 0;
+      return ta - tb;
+    });
+  }
+
+  async function getAllListings(){
+    const approved = await getApproved();
+    return DEMO_ABOGADOS.concat(approved);
+  }
+
+  async function submitRegistration(data){
     const entry = {
-      id: nextId(),
       nombre: (data.nombre || '').trim(),
       especialidad: data.especialidad || '',
       ciudad: (data.ciudad || '').trim(),
@@ -76,56 +88,49 @@
       experiencia: '',
       bio: '',
       reseñas: [],
-      submittedAt: new Date().toISOString()
+      status: 'pending',
+      submittedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-    const pending = getPending();
-    pending.push(entry);
-    writeList(PENDING_KEY, pending);
-    return entry;
+    const ref = await requireDb().collection(COLLECTION).add(entry);
+    return ref.id;
   }
 
-  function approveRegistration(id, edits){
-    const pending = getPending();
-    const idx = pending.findIndex(p => p.id === id);
-    if(idx === -1) return false;
-    const entry = Object.assign({}, pending[idx], edits || {});
-    pending.splice(idx, 1);
-    writeList(PENDING_KEY, pending);
-    const approved = getApproved();
-    approved.push(entry);
-    writeList(APPROVED_KEY, approved);
-    return true;
+  async function approveRegistration(id, edits){
+    await requireDb().collection(COLLECTION).doc(id).update(Object.assign({}, edits || {}, {status: 'approved'}));
   }
 
-  function rejectRegistration(id){
-    writeList(PENDING_KEY, getPending().filter(p => p.id !== id));
+  async function rejectRegistration(id){
+    await requireDb().collection(COLLECTION).doc(id).delete();
   }
 
-  function updateApproved(id, edits){
-    const approved = getApproved();
-    const idx = approved.findIndex(a => a.id === id);
-    if(idx === -1) return false;
-    approved[idx] = Object.assign({}, approved[idx], edits || {});
-    writeList(APPROVED_KEY, approved);
-    return true;
+  async function updateApproved(id, edits){
+    await requireDb().collection(COLLECTION).doc(id).update(edits || {});
   }
 
-  function removeApproved(id){
-    writeList(APPROVED_KEY, getApproved().filter(a => a.id !== id));
+  async function removeApproved(id){
+    await requireDb().collection(COLLECTION).doc(id).delete();
   }
 
   function isDemo(id){
-    return DEMO_ABOGADOS.some(d => d.id === id);
+    return DEMO_ABOGADOS.some(d => String(d.id) === String(id));
   }
 
-  function getAllListings(){
-    return DEMO_ABOGADOS.concat(getApproved());
+  // ---- Sesión de administrador (Firebase Authentication) ----
+  function adminSignIn(email, password){
+    return auth.signInWithEmailAndPassword(email, password);
+  }
+  function adminSignOut(){
+    return auth.signOut();
+  }
+  function onAdminAuthChanged(callback){
+    return auth.onAuthStateChanged(callback);
   }
 
   global.IdoneoListings = {
     DEMO_ABOGADOS,
-    getPending, getApproved, getAllListings,
+    getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
-    updateApproved, removeApproved, isDemo
+    updateApproved, removeApproved, isDemo,
+    adminSignIn, adminSignOut, onAdminAuthChanged
   };
 })(window);
