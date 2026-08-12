@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel de administración — Idóneo Abogados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
+    --parchment:#f1ead8; --parchment-dim:#e4dbc4;
+    --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5; min-height:100vh;}
+  a{color:inherit;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:20; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  .header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:900px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Newsreader', serif; font-size:1.2rem; font-weight:600; text-decoration:none;}
+  .brand-mark{width:22px; height:22px; flex-shrink:0;}
+  .header-actions{display:flex; align-items:center; gap:10px;}
+  .nav-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.06em; padding:8px 14px; border-radius:2px; text-decoration:none; color:rgba(241,234,216,0.8); border:1px solid var(--line-strong); background:none; cursor:pointer;}
+  .nav-link:hover{color:var(--parchment); border-color:var(--brass-light);}
+
+  main{padding:40px 0 80px;}
+  .page-title{font-family:'Newsreader', serif; font-size:1.8rem; font-weight:600; margin-bottom:6px;}
+  .page-sub{color:rgba(241,234,216,0.68); font-size:0.92rem; max-width:60ch; margin-bottom:8px;}
+  .disclaimer{
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:#8a6a1f; background:#f3e4c2; border:1px solid #d9ab52;
+    border-radius:4px; padding:10px 14px; margin:18px 0 36px; line-height:1.5;
+  }
+
+  .section-title{font-family:'Newsreader', serif; font-size:1.2rem; font-weight:600; margin:36px 0 16px; display:flex; align-items:center; gap:10px;}
+  .count-pill{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; background:rgba(241,234,216,0.12); padding:3px 10px; border-radius:20px;}
+  .empty-note{color:rgba(241,234,216,0.55); font-size:0.9rem; padding:18px 0;}
+
+  .admin-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:22px; margin-bottom:16px;}
+  .admin-card-head{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:16px;}
+  .admin-name{font-family:'Newsreader', serif; font-weight:600; font-size:1.1rem;}
+  .verified-pill{display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:#2e4a2a; background:#dcecd6; padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle;}
+  .admin-meta{font-size:0.84rem; color:#6b6250; margin-top:2px;}
+  .wa-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:#1f8a45; text-decoration:none; white-space:nowrap;}
+  .wa-link:hover{text-decoration:underline;}
+
+  .admin-fields{display:grid; grid-template-columns:120px 1fr; gap:12px; margin-bottom:12px;}
+  .field label{display:block; font-size:0.76rem; font-weight:600; margin-bottom:4px; color:var(--ink-2);}
+  .field input, .field select, .field textarea{
+    width:100%; padding:9px 10px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0;
+    font-family:'IBM Plex Sans', sans-serif; font-size:0.9rem; color:var(--ink); resize:vertical;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .bio-field{margin-bottom:12px;}
+  .check-row{display:flex; align-items:center; gap:8px; font-size:0.86rem; margin-bottom:16px; cursor:pointer;}
+  .check-row input{width:16px; height:16px;}
+
+  .admin-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .admin-actions button{
+    font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em;
+    padding:10px 18px; border-radius:2px; border:none; cursor:pointer;
+  }
+  .approve-btn{background:var(--ink); color:var(--parchment);}
+  .approve-btn:hover{background:var(--ink-2);}
+  .reject-btn{background:none; color:#8a2a2a; border:1px solid #c98a8a !important;}
+  .reject-btn:hover{background:#f2e6e6;}
+  .admin-date{margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:#8a8069;}
+
+  /* ---- pantalla de acceso ---- */
+  .lock-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .lock-card{background:var(--parchment); color:var(--ink); border-radius:8px; padding:36px; width:100%; max-width:340px; box-shadow:0 30px 70px rgba(0,0,0,0.4);}
+  .lock-card h1{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; margin-bottom:8px;}
+  .lock-card p{font-size:0.86rem; color:#6b6250; margin-bottom:18px;}
+  .lock-card input{width:100%; padding:11px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0; font-size:0.94rem; margin-bottom:12px;}
+  .lock-card input:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .lock-card button{width:100%; background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:12px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer;}
+  .lock-card button:hover{background:var(--ink-2);}
+  .lock-error{display:none; color:#8a2a2a; font-size:0.82rem; margin-top:10px;}
+  .lock-error.show{display:block;}
+
+  @media (max-width: 560px){
+    .admin-fields{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="lock-screen" id="lockScreen">
+  <form class="lock-card" id="lockForm">
+    <h1>Panel de Idóneo</h1>
+    <p>Acceso solo para el equipo de Idóneo — desde aquí se aprueban los registros de abogados y despachos.</p>
+    <input type="password" id="lockPassword" placeholder="Contraseña" autocomplete="off" autofocus>
+    <button type="submit">Entrar</button>
+    <div class="lock-error" id="lockError">Contraseña incorrecta.</div>
+  </form>
+</div>
+
+<div id="adminApp" style="display:none">
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7l-3 6a4 4 0 0 0 8 0l-3-6m14 0l-3 6a4 4 0 0 0 8 0l-3-6M4 7h6m4 0h6M8 21h8"/></svg>
+        Idóneo <span style="opacity:0.55; font-weight:400; margin-left:6px;">Panel</span>
+      </a>
+      <div class="header-actions">
+        <a class="nav-link" href="index.html">Ver sitio</a>
+        <button class="nav-link" id="logoutBtn" type="button">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="page-title">Registros de abogados y despachos</div>
+    <div class="page-sub">Revisa cada registro, confirma la cédula profesional por tu cuenta (llamada, WhatsApp, o el medio que uses) y aprueba solo lo que ya verificaste.</div>
+    <div class="disclaimer">
+      ⚠ Este panel vive solo en este navegador (localStorage) y la contraseña es una barrera simple, no seguridad real —
+      cualquiera que abra el código fuente de admin.html puede verla. No compartas esta URL públicamente.
+      Para aprobar registros hechos en OTRO dispositivo, tendrías que revisarlos desde ese mismo dispositivo.
+    </div>
+
+    <div class="section-title">Pendientes de revisión <span class="count-pill" id="pendingCount">0</span></div>
+    <div id="pendingList"></div>
+
+    <div class="section-title">Publicados <span class="count-pill" id="approvedCount">0</span></div>
+    <div id="approvedList"></div>
+  </main>
+</div>
+
+<script src="listings.js"></script>
+<script>
+  // Cambia esta contraseña por la tuya antes de usar el panel en serio.
+  const ADMIN_PASSWORD = 'idoneo2026';
+  const UNLOCK_KEY = 'idoneo_admin_unlocked';
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  function priceOptions(selected){
+    return ['$', '$$', '$$$'].map(p => `<option value="${p}" ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
+  }
+
+  function renderPending(){
+    const list = window.IdoneoListings.getPending();
+    document.getElementById('pendingCount').textContent = list.length;
+    const container = document.getElementById('pendingList');
+    if(list.length === 0){
+      container.innerHTML = '<p class="empty-note">No hay registros pendientes.</p>';
+      return;
+    }
+    container.innerHTML = list.map(p => `
+      <div class="admin-card" data-id="${p.id}">
+        <div class="admin-card-head">
+          <div>
+            <div class="admin-name">${escapeHtml(p.nombre)}</div>
+            <div class="admin-meta">${escapeHtml(p.especialidad)} · ${escapeHtml(p.ciudad)}</div>
+          </div>
+          ${p.telefono ? `<a class="wa-link" href="https://wa.me/${escapeHtml(p.telefono)}" target="_blank" rel="noopener">Contactar por WhatsApp ↗</a>` : ''}
+        </div>
+        <div class="admin-fields">
+          <div class="field"><label>Precio</label><select data-field="precio">${priceOptions(p.precio)}</select></div>
+          <div class="field"><label>Experiencia</label><input type="text" data-field="experiencia" value="${escapeHtml(p.experiencia)}" placeholder="Ej. 8 años"></div>
+        </div>
+        <div class="field bio-field"><label>Bio breve</label><textarea data-field="bio" rows="2" placeholder="Área de práctica, enfoque...">${escapeHtml(p.bio)}</textarea></div>
+        <label class="check-row"><input type="checkbox" data-field="verificado" ${p.verificado ? 'checked' : ''}> Ya confirmé su cédula profesional</label>
+        <div class="admin-actions">
+          <button class="approve-btn" data-action="approve" data-id="${p.id}" type="button">Aprobar y publicar</button>
+          <button class="reject-btn" data-action="reject" data-id="${p.id}" type="button">Rechazar</button>
+        </div>
+        <div class="admin-date">Registrado: ${new Date(p.submittedAt).toLocaleString('es-MX')}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderApproved(){
+    const list = window.IdoneoListings.getApproved();
+    document.getElementById('approvedCount').textContent = list.length;
+    const container = document.getElementById('approvedList');
+    if(list.length === 0){
+      container.innerHTML = '<p class="empty-note">Aún no hay perfiles publicados.</p>';
+      return;
+    }
+    container.innerHTML = list.map(a => `
+      <div class="admin-card" data-id="${a.id}">
+        <div class="admin-card-head">
+          <div>
+            <div class="admin-name">${escapeHtml(a.nombre)}${a.verificado ? '<span class="verified-pill">Verificado</span>' : ''}</div>
+            <div class="admin-meta">${escapeHtml(a.especialidad)} · ${escapeHtml(a.ciudad)}</div>
+          </div>
+          <a class="wa-link" href="perfil.html?id=${a.id}" target="_blank" rel="noopener">Ver perfil publicado ↗</a>
+        </div>
+        <div class="admin-fields">
+          <div class="field"><label>Precio</label><select data-field="precio">${priceOptions(a.precio)}</select></div>
+          <div class="field"><label>Experiencia</label><input type="text" data-field="experiencia" value="${escapeHtml(a.experiencia)}"></div>
+        </div>
+        <div class="field bio-field"><label>Bio breve</label><textarea data-field="bio" rows="2">${escapeHtml(a.bio)}</textarea></div>
+        <label class="check-row"><input type="checkbox" data-field="verificado" ${a.verificado ? 'checked' : ''}> Cédula profesional verificada</label>
+        <div class="admin-actions">
+          <button class="approve-btn" data-action="save" data-id="${a.id}" type="button">Guardar cambios</button>
+          <button class="reject-btn" data-action="unpublish" data-id="${a.id}" type="button">Despublicar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function readFields(card){
+    return {
+      precio: card.querySelector('[data-field="precio"]').value,
+      experiencia: card.querySelector('[data-field="experiencia"]').value.trim(),
+      bio: card.querySelector('[data-field="bio"]').value.trim(),
+      verificado: card.querySelector('[data-field="verificado"]').checked
+    };
+  }
+
+  function renderAll(){
+    renderPending();
+    renderApproved();
+  }
+
+  document.getElementById('pendingList').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if(!btn) return;
+    const id = Number(btn.dataset.id);
+    const card = btn.closest('.admin-card');
+    if(btn.dataset.action === 'approve'){
+      window.IdoneoListings.approveRegistration(id, readFields(card));
+      renderAll();
+    } else if(btn.dataset.action === 'reject'){
+      if(confirm('¿Rechazar y eliminar este registro? No se puede deshacer.')){
+        window.IdoneoListings.rejectRegistration(id);
+        renderAll();
+      }
+    }
+  });
+
+  document.getElementById('approvedList').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if(!btn) return;
+    const id = Number(btn.dataset.id);
+    const card = btn.closest('.admin-card');
+    if(btn.dataset.action === 'save'){
+      window.IdoneoListings.updateApproved(id, readFields(card));
+      renderAll();
+    } else if(btn.dataset.action === 'unpublish'){
+      if(confirm('¿Quitar este perfil del buscador?')){
+        window.IdoneoListings.removeApproved(id);
+        renderAll();
+      }
+    }
+  });
+
+  function unlock(){
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    renderAll();
+  }
+
+  if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
+    unlock();
+  }
+
+  document.getElementById('lockForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const value = document.getElementById('lockPassword').value;
+    const errEl = document.getElementById('lockError');
+    if(value === ADMIN_PASSWORD){
+      sessionStorage.setItem(UNLOCK_KEY, '1');
+      errEl.classList.remove('show');
+      unlock();
+    } else {
+      errEl.classList.add('show');
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem(UNLOCK_KEY);
+    document.getElementById('adminApp').style.display = 'none';
+    document.getElementById('lockScreen').style.display = 'flex';
+    document.getElementById('lockPassword').value = '';
+    document.getElementById('lockPassword').focus();
+  });
+</script>
+
+</body>
+</html>
