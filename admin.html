@@ -90,10 +90,11 @@
 <div class="lock-screen" id="lockScreen">
   <form class="lock-card" id="lockForm">
     <h1>Panel de Idóneo</h1>
-    <p>Acceso solo para el equipo de Idóneo — desde aquí se aprueban los registros de abogados y despachos.</p>
-    <input type="password" id="lockPassword" placeholder="Contraseña" autocomplete="off" autofocus>
+    <p>Inicia sesión con la cuenta de administrador que configuraste en Firebase Authentication.</p>
+    <input type="email" id="lockEmail" placeholder="Correo" autocomplete="username" autofocus>
+    <input type="password" id="lockPassword" placeholder="Contraseña" autocomplete="current-password">
     <button type="submit">Entrar</button>
-    <div class="lock-error" id="lockError">Contraseña incorrecta.</div>
+    <div class="lock-error" id="lockError">Correo o contraseña incorrectos.</div>
   </form>
 </div>
 
@@ -115,9 +116,9 @@
     <div class="page-title">Registros de abogados y despachos</div>
     <div class="page-sub">Revisa cada registro, confirma la cédula profesional por tu cuenta (llamada, WhatsApp, o el medio que uses) y aprueba solo lo que ya verificaste.</div>
     <div class="disclaimer">
-      ⚠ Este panel vive solo en este navegador (localStorage) y la contraseña es una barrera simple, no seguridad real —
-      cualquiera que abra el código fuente de admin.html puede verla. No compartas esta URL públicamente.
-      Para aprobar registros hechos en OTRO dispositivo, tendrías que revisarlos desde ese mismo dispositivo.
+      Los registros y las aprobaciones ahora se guardan en Firestore — funcionan desde cualquier dispositivo, no solo este navegador.
+      El acceso a este panel usa tu cuenta real de Firebase Authentication (la que creaste al configurar el proyecto).
+      No compartas tu correo/contraseña de administrador ni el enlace a esta página públicamente.
     </div>
 
     <div class="section-title">Pendientes de revisión <span class="count-pill" id="pendingCount">0</span></div>
@@ -128,12 +129,12 @@
   </main>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="listings.js"></script>
 <script>
-  // Cambia esta contraseña por la tuya antes de usar el panel en serio.
-  const ADMIN_PASSWORD = 'idoneo2026';
-  const UNLOCK_KEY = 'idoneo_admin_unlocked';
-
   function escapeHtml(str){
     const div = document.createElement('div');
     div.textContent = str == null ? '' : String(str);
@@ -144,10 +145,17 @@
     return ['$', '$$', '$$$'].map(p => `<option value="${p}" ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
   }
 
-  function renderPending(){
-    const list = window.IdoneoListings.getPending();
-    document.getElementById('pendingCount').textContent = list.length;
+  function formatDate(ts){
+    if(!ts) return 'fecha desconocida';
+    const d = typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+    return d.toLocaleString('es-MX');
+  }
+
+  async function renderPending(){
     const container = document.getElementById('pendingList');
+    container.innerHTML = '<p class="empty-note">Cargando…</p>';
+    const list = await window.IdoneoListings.getPending();
+    document.getElementById('pendingCount').textContent = list.length;
     if(list.length === 0){
       container.innerHTML = '<p class="empty-note">No hay registros pendientes.</p>';
       return;
@@ -171,15 +179,16 @@
           <button class="approve-btn" data-action="approve" data-id="${p.id}" type="button">Aprobar y publicar</button>
           <button class="reject-btn" data-action="reject" data-id="${p.id}" type="button">Rechazar</button>
         </div>
-        <div class="admin-date">Registrado: ${new Date(p.submittedAt).toLocaleString('es-MX')}</div>
+        <div class="admin-date">Registrado: ${formatDate(p.submittedAt)}</div>
       </div>
     `).join('');
   }
 
-  function renderApproved(){
-    const list = window.IdoneoListings.getApproved();
-    document.getElementById('approvedCount').textContent = list.length;
+  async function renderApproved(){
     const container = document.getElementById('approvedList');
+    container.innerHTML = '<p class="empty-note">Cargando…</p>';
+    const list = await window.IdoneoListings.getApproved();
+    document.getElementById('approvedCount').textContent = list.length;
     if(list.length === 0){
       container.innerHTML = '<p class="empty-note">Aún no hay perfiles publicados.</p>';
       return;
@@ -216,72 +225,101 @@
     };
   }
 
-  function renderAll(){
-    renderPending();
-    renderApproved();
+  async function renderAll(){
+    await Promise.all([renderPending(), renderApproved()]);
   }
 
-  document.getElementById('pendingList').addEventListener('click', (e) => {
+  function setCardBusy(card, busy){
+    card.querySelectorAll('button').forEach(b => b.disabled = busy);
+  }
+
+  document.getElementById('pendingList').addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if(!btn) return;
-    const id = Number(btn.dataset.id);
+    const id = btn.dataset.id;
     const card = btn.closest('.admin-card');
-    if(btn.dataset.action === 'approve'){
-      window.IdoneoListings.approveRegistration(id, readFields(card));
-      renderAll();
-    } else if(btn.dataset.action === 'reject'){
-      if(confirm('¿Rechazar y eliminar este registro? No se puede deshacer.')){
-        window.IdoneoListings.rejectRegistration(id);
-        renderAll();
+    try{
+      if(btn.dataset.action === 'approve'){
+        setCardBusy(card, true);
+        await window.IdoneoListings.approveRegistration(id, readFields(card));
+        await renderAll();
+      } else if(btn.dataset.action === 'reject'){
+        if(confirm('¿Rechazar y eliminar este registro? No se puede deshacer.')){
+          setCardBusy(card, true);
+          await window.IdoneoListings.rejectRegistration(id);
+          await renderAll();
+        }
       }
+    } catch(err){
+      console.error(err);
+      alert('Algo falló al guardar en Firestore. Revisa tu conexión y vuelve a intentar.');
+      setCardBusy(card, false);
     }
   });
 
-  document.getElementById('approvedList').addEventListener('click', (e) => {
+  document.getElementById('approvedList').addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if(!btn) return;
-    const id = Number(btn.dataset.id);
+    const id = btn.dataset.id;
     const card = btn.closest('.admin-card');
-    if(btn.dataset.action === 'save'){
-      window.IdoneoListings.updateApproved(id, readFields(card));
-      renderAll();
-    } else if(btn.dataset.action === 'unpublish'){
-      if(confirm('¿Quitar este perfil del buscador?')){
-        window.IdoneoListings.removeApproved(id);
-        renderAll();
+    try{
+      if(btn.dataset.action === 'save'){
+        setCardBusy(card, true);
+        await window.IdoneoListings.updateApproved(id, readFields(card));
+        await renderAll();
+      } else if(btn.dataset.action === 'unpublish'){
+        if(confirm('¿Quitar este perfil del buscador?')){
+          setCardBusy(card, true);
+          await window.IdoneoListings.removeApproved(id);
+          await renderAll();
+        }
       }
+    } catch(err){
+      console.error(err);
+      alert('Algo falló al guardar en Firestore. Revisa tu conexión y vuelve a intentar.');
+      setCardBusy(card, false);
     }
   });
 
-  function unlock(){
+  function showApp(){
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('adminApp').style.display = 'block';
     renderAll();
   }
-
-  if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
-    unlock();
+  function showLock(){
+    document.getElementById('adminApp').style.display = 'none';
+    document.getElementById('lockScreen').style.display = 'flex';
   }
 
-  document.getElementById('lockForm').addEventListener('submit', (e) => {
+  if(!window.IdoneoListings){
+    document.querySelector('.lock-card p').textContent = 'No se pudo cargar listings.js o firebase-config.js. Revisa que ambos archivos estén en esta misma carpeta.';
+    document.getElementById('lockForm').querySelectorAll('input, button').forEach(el => el.disabled = true);
+  } else {
+    window.IdoneoListings.onAdminAuthChanged((user) => {
+      if(user) showApp(); else showLock();
+    });
+  }
+
+  document.getElementById('lockForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const value = document.getElementById('lockPassword').value;
+    const email = document.getElementById('lockEmail').value.trim();
+    const password = document.getElementById('lockPassword').value;
     const errEl = document.getElementById('lockError');
-    if(value === ADMIN_PASSWORD){
-      sessionStorage.setItem(UNLOCK_KEY, '1');
-      errEl.classList.remove('show');
-      unlock();
-    } else {
+    errEl.classList.remove('show');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try{
+      await window.IdoneoListings.adminSignIn(email, password);
+      // onAdminAuthChanged se encarga de mostrar el panel.
+    } catch(err){
       errEl.classList.add('show');
+    } finally {
+      submitBtn.disabled = false;
     }
   });
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem(UNLOCK_KEY);
-    document.getElementById('adminApp').style.display = 'none';
-    document.getElementById('lockScreen').style.display = 'flex';
-    document.getElementById('lockPassword').value = '';
-    document.getElementById('lockPassword').focus();
+    window.IdoneoListings.adminSignOut();
   });
 </script>
 
