@@ -37,11 +37,13 @@
   .state-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:36px; max-width:520px;}
   .state-card h2{font-family:'Newsreader', serif; font-size:1.2rem; font-weight:600; margin-bottom:10px;}
   .state-card p{color:#6b6250; font-size:0.92rem; margin-bottom:20px; max-width:44ch;}
-  .state-card .submit-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:12px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; text-decoration:none; display:inline-block;}
-  .state-card .submit-btn:hover{background:var(--ink-2);}
+  .state-card .submit-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:12px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; text-decoration:none; display:inline-block; transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;}
+  .state-card .submit-btn:hover{background:var(--ink-2); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+  .state-card .submit-btn:active{transform:translateY(0); box-shadow:none;}
 
   /* ---- tarjeta de despacho ---- */
-  .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px;}
+  @keyframes card-in{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
+  .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px; animation:card-in 0.5s ease both;}
   .listing-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:6px;}
   .listing-name{font-family:'Newsreader', serif; font-size:1.4rem; font-weight:600;}
   .status-pill{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; padding:4px 11px; border-radius:20px; margin-left:10px; vertical-align:middle;}
@@ -62,11 +64,13 @@
   .field-locked{font-size:0.82rem; color:#8a8069; background:#ece3cd; border-radius:3px; padding:9px 11px;}
 
   .listing-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:18px;}
-  .save-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:11px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
-  .save-btn:hover{background:var(--ink-2);}
+  .save-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:11px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;}
+  .save-btn:hover:not(:disabled){background:var(--ink-2); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+  .save-btn:active:not(:disabled){transform:translateY(0); box-shadow:none;}
   .save-btn:disabled{opacity:0.6; cursor:default;}
-  .delete-btn{background:none; border:1px solid #c98a8a; color:#8a2a2a; border-radius:3px; padding:11px 18px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
-  .delete-btn:hover{background:#f2e6e6;}
+  .delete-btn{background:none; border:1px solid #c98a8a; color:#8a2a2a; border-radius:3px; padding:11px 18px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; transition:background 0.15s ease, transform 0.15s ease;}
+  .delete-btn:hover{background:#f2e6e6; transform:translateY(-1px);}
+  .delete-btn:active{transform:translateY(0);}
   .save-msg{font-size:0.82rem; margin-left:4px; display:none;}
   .save-msg.show{display:inline;}
   .save-msg.ok{color:#2e4a2a;}
@@ -93,11 +97,16 @@
     .nav-toggle:hover{border-color:var(--brass-light);}
     .auth-slot{order:1;}
     .nav-links{
-      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      display:flex; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
       flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
       border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+      opacity:0; visibility:hidden; transform:translateY(-8px);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     }
-    .nav-links.open{display:flex;}
+    .nav-links.open{
+      opacity:1; visibility:visible; transform:translateY(0);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
+    }
     .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
     .field-grid{grid-template-columns:1fr;}
     .listing-card{padding:22px;}

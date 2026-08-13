@@ -31,11 +31,12 @@
 
   .hero{position:relative; padding:72px 0 56px; border-bottom:1px solid var(--line);
     background: radial-gradient(ellipse 700px 380px at 85% -10%, rgba(217,171,82,0.14), transparent 60%);}
-  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px;}
+  @keyframes fade-up-in{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px; animation:fade-up-in 0.6s ease both;}
   .eyebrow::before{content:''; width:24px; height:1px; background:var(--brass-light);}
-  h1{font-size:clamp(2.1rem, 4.4vw, 3.2rem); font-weight:500; line-height:1.1; max-width:17ch; letter-spacing:-0.01em;}
+  h1{font-size:clamp(2.1rem, 4.4vw, 3.2rem); font-weight:500; line-height:1.1; max-width:17ch; letter-spacing:-0.01em; animation:fade-up-in 0.6s ease 0.08s both;}
   h1 em{font-style:italic; color:var(--brass-light); font-weight:500;}
-  .hero-sub{margin-top:20px; max-width:50ch; font-size:1.02rem; color:rgba(241,234,216,0.78);}
+  .hero-sub{margin-top:20px; max-width:50ch; font-size:1.02rem; color:rgba(241,234,216,0.78); animation:fade-up-in 0.6s ease 0.16s both;}
 
   .seal-wrap{position:absolute; top:60px; right:28px; width:120px; height:120px; opacity:0.9;}
   .seal{width:100%; height:100%; animation:seal-idle 7s ease-in-out infinite;}
@@ -53,19 +54,24 @@
   .articulo{display:grid; grid-template-columns:140px 1fr; gap:26px; padding:26px 0; border-top:1px solid var(--line); opacity:0; transform:translateY(14px); transition:opacity 0.6s ease, transform 0.6s ease;}
   .articulo.visible{opacity:1; transform:translateY(0);}
   .articulo:last-child{border-bottom:1px solid var(--line);}
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity 0.6s ease, transform 0.6s ease;}
+  .reveal.visible{opacity:1; transform:translateY(0);}
   .art-label{font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:var(--brass-light);}
   .articulo h3{font-family:'Newsreader', serif; font-size:1.25rem; font-weight:500; margin-bottom:6px;}
   .articulo p{color:rgba(241,234,216,0.72); font-size:0.95rem; max-width:56ch;}
 
   .beneficios{padding-bottom:0;}
   .beneficios-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
-  .beneficio{background:var(--ink); padding:28px 24px;}
-  .beneficio-icon{width:26px; height:26px; margin-bottom:16px; color:var(--brass-light);}
+  .beneficio{background:var(--ink); padding:28px 24px; position:relative; transition:background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;}
+  .beneficio:hover{background:var(--ink-2); transform:translateY(-3px); box-shadow:0 16px 32px rgba(0,0,0,0.3); z-index:2;}
+  .beneficio-icon{width:26px; height:26px; margin-bottom:16px; color:var(--brass-light); transition:transform 0.2s ease;}
+  .beneficio:hover .beneficio-icon{transform:scale(1.12);}
   .beneficio h3{font-family:'Newsreader', serif; font-weight:500; font-size:1.05rem; margin-bottom:8px;}
   .beneficio p{font-size:0.88rem; color:rgba(241,234,216,0.68);}
 
   .chip-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;}
-  .chip{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; padding:8px 15px; border:1px solid var(--line-strong); border-radius:20px; color:rgba(241,234,216,0.85);}
+  .chip{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; padding:8px 15px; border:1px solid var(--line-strong); border-radius:20px; color:rgba(241,234,216,0.85); transition:border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;}
+  .chip:hover{border-color:var(--brass-light); color:var(--parchment); transform:translateY(-1px);}
 
   .registro{border-top:1px solid var(--line);}
   .registro-inner{display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:start;}
@@ -77,8 +83,9 @@
   .field input, .field select{width:100%; padding:11px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.94rem; color:var(--ink);}
   .field input:focus, .field select:focus{outline:2px solid var(--brass); outline-offset:1px;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-  .submit-btn{margin-top:4px; background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:14px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.2s ease;}
-  .submit-btn:hover{background:var(--ink-2);}
+  .submit-btn{margin-top:4px; background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:14px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.2s ease, transform 0.15s ease;}
+  .submit-btn:hover:not(:disabled){background:var(--ink-2); transform:translateY(-1px);}
+  .submit-btn:active:not(:disabled){transform:translateY(0);}
   .fine-print{font-size:0.75rem; color:#6b6250;}
   .consent-row{display:flex; align-items:flex-start; gap:9px; font-size:0.8rem; color:#6b6250; cursor:pointer;}
   .consent-row input{width:15px; height:15px; margin-top:2px; flex-shrink:0;}
@@ -106,11 +113,16 @@
     .nav-toggle:hover{border-color:var(--brass-light);}
     .auth-slot{order:1;}
     .nav-links{
-      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      display:flex; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
       flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
       border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+      opacity:0; visibility:hidden; transform:translateY(-8px);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     }
-    .nav-links.open{display:flex;}
+    .nav-links.open{
+      opacity:1; visibility:visible; transform:translateY(0);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
+    }
     .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
@@ -171,17 +183,17 @@
 <section class="beneficios">
   <div class="wrap"><div class="section-head"><span class="kicker">Por qué registrarte</span><h2>Lo que Idóneo hace distinto.</h2></div></div>
   <div class="beneficios-grid">
-    <div class="beneficio">
+    <div class="beneficio reveal" style="transition-delay:0s">
       <svg class="beneficio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
       <h3>Sello de verificado</h3>
       <p>Tu cédula profesional respaldada frente a cada persona que ve tu perfil, sin que tengas que explicarlo tú mismo.</p>
     </div>
-    <div class="beneficio">
+    <div class="beneficio reveal" style="transition-delay:0.1s">
       <svg class="beneficio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.5 8.5 0 0 1-4-1L3 20l1.1-4.4a8.4 8.4 0 0 1-1-4A8.4 8.4 0 0 1 11.6 3a8.5 8.5 0 0 1 9.4 8.5z"/></svg>
       <h3>Te elige a ti, no a ciegas</h3>
       <p>Nada de repartir tu caso entre diez despachos que ofertan sin contexto. El cliente ve tu perfil, tus reseñas y tu precio, y te escribe a ti directamente.</p>
     </div>
-    <div class="beneficio">
+    <div class="beneficio reveal" style="transition-delay:0.2s">
       <svg class="beneficio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 17.3l-6.2 3.6 1.6-7-5.4-4.7 7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7z"/></svg>
       <h3>Reputación que se acumula</h3>
       <p>Reseñas de clientes reales que te contactaron a través de la plataforma, construyendo tu historial en un solo lugar.</p>
@@ -196,7 +208,7 @@
       <h2>Especialidades que ya puedes registrar.</h2>
       <p>Si tu área no aparece, regístrate de todas formas — la iremos ampliando con las especialidades más buscadas.</p>
     </div>
-    <div class="chip-row">
+    <div class="chip-row reveal">
       <span class="chip">Familiar</span><span class="chip">Penal</span><span class="chip">Laboral</span><span class="chip">Mercantil</span>
       <span class="chip">Migratorio</span><span class="chip">Corporativo</span><span class="chip">Civil</span><span class="chip">Fiscal</span>
       <span class="chip">Bienes raíces</span><span class="chip">Amparo</span>
@@ -267,11 +279,11 @@
 <script src="listings.js"></script>
 <script src="auth.js"></script>
 <script>
-  const articulos = document.querySelectorAll('.articulo');
+  const revealables = document.querySelectorAll('.articulo, .reveal');
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
   }, {threshold:0.25});
-  articulos.forEach(a => io.observe(a));
+  revealables.forEach(a => io.observe(a));
 
   window.addEventListener('load', () => {
     document.getElementById('heroSeal').classList.add('stamped');

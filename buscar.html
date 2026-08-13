@@ -45,17 +45,19 @@
   /* ---------- Hero + buscador ---------- */
   .hero{position:relative; padding:72px 0 0; border-bottom:1px solid var(--line);
     background: radial-gradient(ellipse 700px 380px at 85% -10%, rgba(217,171,82,0.14), transparent 60%);}
-  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px;}
+  @keyframes fade-up-in{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px; animation:fade-up-in 0.6s ease both;}
   .eyebrow::before{content:''; width:24px; height:1px; background:var(--brass-light);}
-  h1{font-size:clamp(2.1rem, 4.4vw, 3.4rem); font-weight:500; line-height:1.1; max-width:17ch; letter-spacing:-0.01em;}
+  h1{font-size:clamp(2.1rem, 4.4vw, 3.4rem); font-weight:500; line-height:1.1; max-width:17ch; letter-spacing:-0.01em; animation:fade-up-in 0.6s ease 0.08s both;}
   h1 em{font-style:italic; color:var(--brass-light); font-weight:500;}
-  .hero-sub{margin-top:20px; max-width:50ch; font-size:1.02rem; color:rgba(241,234,216,0.78);}
+  .hero-sub{margin-top:20px; max-width:50ch; font-size:1.02rem; color:rgba(241,234,216,0.78); animation:fade-up-in 0.6s ease 0.16s both;}
 
   /* Search card */
   .search-card{
     margin-top:40px; background:var(--parchment); color:var(--ink); border-radius:6px 6px 0 0;
     padding:24px; display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:14px; align-items:end;
     box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    animation:fade-up-in 0.6s ease 0.24s both;
   }
   .search-field label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-2); margin-bottom:6px;}
   .search-field select{
@@ -75,9 +77,10 @@
   .search-btn{
     background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:13px 26px;
     font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em;
-    cursor:pointer; white-space:nowrap; transition:background 0.2s ease;
+    cursor:pointer; white-space:nowrap; transition:background 0.2s ease, transform 0.15s ease;
   }
-  .search-btn:hover{background:var(--ink-2);}
+  .search-btn:hover{background:var(--ink-2); transform:translateY(-1px);}
+  .search-btn:active{transform:translateY(0);}
 
   /* ---------- Seal ---------- */
   .seal-wrap{position:absolute; top:60px; right:28px; width:120px; height:120px; opacity:0.9;}
@@ -94,7 +97,11 @@
   .lawyer-card{
     background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:20px;
     display:flex; flex-direction:column; gap:12px;
+    animation:card-in 0.45s ease both;
+    transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
+  .lawyer-card:hover{transform:translateY(-3px); box-shadow:0 14px 28px rgba(24,38,68,0.12); border-color:#c9bd9c;}
+  @keyframes card-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   .lawyer-top{display:flex; gap:12px; align-items:flex-start;}
   .avatar{
     width:44px; height:44px; border-radius:50%; background:var(--ink); color:var(--brass-light);
@@ -116,9 +123,9 @@
   .contact-btn{
     margin-top:4px; text-align:center; background:var(--ink); color:var(--parchment); text-decoration:none;
     padding:10px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em;
-    transition:background 0.2s ease;
+    transition:background 0.2s ease, transform 0.15s ease;
   }
-  .contact-btn:hover{background:var(--ink-2);}
+  .contact-btn:hover{background:var(--ink-2); transform:translateY(-1px);}
   .no-results{display:none; text-align:center; padding:50px 20px; color:#6b6250;}
   .no-results.show{display:block;}
 
@@ -190,11 +197,16 @@
     .nav-toggle:hover{border-color:var(--brass-light);}
     .auth-slot{order:1;}
     .nav-links{
-      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      display:flex; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
       flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
       border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+      opacity:0; visibility:hidden; transform:translateY(-8px);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     }
-    .nav-links.open{display:flex;}
+    .nav-links.open{
+      opacity:1; visibility:visible; transform:translateY(0);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
+    }
     .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
@@ -338,10 +350,11 @@
     }
     noResults.classList.remove('show');
     count.textContent = list.length + (list.length === 1 ? ' resultado' : ' resultados');
-    list.forEach(ab => {
+    list.forEach((ab, i) => {
       const stats = reviewStats[ab.id] || {average: 0, total: 0};
       const card = document.createElement('div');
       card.className = 'lawyer-card';
+      card.style.animationDelay = Math.min(i * 0.05, 0.4) + 's';
       card.innerHTML = `
         <div class="lawyer-top">
           <div class="avatar">${initials(ab.nombre)}</div>

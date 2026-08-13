@@ -60,11 +60,16 @@
     .nav-toggle:hover{border-color:var(--brass-light);}
     .auth-slot{order:1;}
     .nav-links{
-      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      display:flex; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
       flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
       border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+      opacity:0; visibility:hidden; transform:translateY(-8px);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     }
-    .nav-links.open{display:flex;}
+    .nav-links.open{
+      opacity:1; visibility:visible; transform:translateY(0);
+      transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
+    }
     .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
     .doc-card{padding:26px;}
   }
