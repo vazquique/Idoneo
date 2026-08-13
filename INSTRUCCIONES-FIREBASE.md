@@ -27,7 +27,8 @@ completes esto.
    un clic). Firebase pide un correo de soporte del proyecto — pon el tuyo
    y guarda.
 4. Pestaña **Users** → "Agregar usuario" → pon tu correo y una contraseña
-   segura. Esta es la cuenta con la que vas a entrar a `admin.html`.
+   segura. Esta es la cuenta con la que vas a entrar al panel de admin
+   (`index.html` dentro de la carpeta `admin`).
 5. Haz clic en el usuario que acabas de crear y **copia su "User UID"**
    (una cadena larga tipo `aB3xY...`). La necesitas en el siguiente paso.
 
@@ -117,8 +118,8 @@ mano) puede tener:
 4. Agrega un campo cualquiera, por ejemplo `role` (tipo string) con valor
    `admin` → Guardar.
 
-Si en el futuro quieres que alguien más apruebe registros desde
-`admin.html`, repite esto con el UID de esa persona.
+Si en el futuro quieres que alguien más apruebe registros desde el panel
+de admin, repite esto con el UID de esa persona.
 
 ## 6. Pegar las reglas de seguridad de Firestore
 
@@ -278,7 +279,7 @@ Qué hacen estas reglas:
    formulario de un abogado. Al terminar, ve a **Mi cuenta** (menú de tu
    cuenta, arriba a la derecha) — deberías ver tu registro como
    "Pendiente de revisión", editable.
-2. Abre `admin.html` (carpeta `admin`, junto a `Idoneo`), inicia sesión con
+2. Abre `index.html` (carpeta `admin`, junto a `Idoneo`), inicia sesión con
    el correo/contraseña del paso 3 — deberías ver el registro en
    "Pendientes de revisión". Apruébalo.
 3. Confirma que el abogado aparece en `buscar.html` y en su `perfil.html`, y
@@ -290,9 +291,9 @@ Qué hacen estas reglas:
    escribe una reseña con estrellas para ese abogado — debe aparecer de
    inmediato en la lista, en el promedio y en el conteo por estrellas.
 6. Confirma que esa segunda cuenta (la que solo reseñó) **no puede** entrar
-   a `admin.html`, ni ve nada en "Mi cuenta" salvo la opción de registrar
-   su propio despacho — su UID no está en `admins` ni es dueña de ningún
-   registro.
+   al panel de admin, ni ve nada en "Mi cuenta" salvo la opción de
+   registrar su propio despacho — su UID no está en `admins` ni es dueña
+   de ningún registro.
 7. En **Mi cuenta**, arriba de tu(s) despacho(s) debe verse una tarjeta con
    tu nombre y un botón "Subir foto" — sube una imagen (menos de 3MB) y
    confirma que aparece tu foto ahí, en el menú de tu cuenta (arriba a la
@@ -317,7 +318,7 @@ Qué hacen estas reglas:
 
 ```
 Escritorio/
-  Idoneo/                 ← sitio público (se publica solo en Netlify)
+  Idoneo/                 ← sitio público (se publica en Netlify)
     index.html              ← portada / landing
     buscar.html             ← buscador y resultados
     registro.html
@@ -326,18 +327,39 @@ Escritorio/
     listings.js            ← lógica compartida con Firestore
     firebase-config.js      ← tus llaves reales
     auth.js                 ← login de visitantes (para reseñar y registrar despacho)
-  admin/                  ← panel de administración (se publica solo en Netlify)
-    admin.html
+  admin/                  ← panel de administración (se publica en GitHub Pages)
+    index.html              ← antes se llamaba admin.html; GitHub Pages necesita index.html
     listings.js             ← copia idéntica a la de Idoneo/
     firebase-config.js       ← copia idéntica a la de Idoneo/
-    auth.js                  ← no se usa en admin.html, solo por si acaso
+    auth.js                  ← no se usa en el panel de admin, solo por si acaso
 ```
 
-`Idoneo/` y `admin/` son independientes a propósito — cada una se despliega
-como un sitio de Netlify separado y no pueden compartir archivos entre sí.
-Eso significa que **`listings.js` y `firebase-config.js` viven duplicados**
-en ambas carpetas: cualquier cambio a la lógica de datos o a la
-configuración de Firebase hay que aplicarlo en las dos copias.
+`Idoneo/` y `admin/` son independientes a propósito — cada una se publica
+por separado (`Idoneo/` en Netlify, `admin/` en GitHub Pages) y no pueden
+compartir archivos entre sí. Eso significa que **`listings.js` y
+`firebase-config.js` viven duplicados** en ambas carpetas: cualquier
+cambio a la lógica de datos o a la configuración de Firebase hay que
+aplicarlo en las dos copias.
+
+### Publicar `admin/` en GitHub Pages
+
+1. Sube el contenido de la carpeta `admin/` a un repositorio de GitHub
+   (puede ser un repo aparte del de `Idoneo/`, o el mismo repo con
+   `admin/` como subcarpeta).
+2. En el repo → **Settings → Pages** → elige la rama y carpeta desde
+   donde publicar (rama `main`, carpeta `/` si `admin/` es la raíz del
+   repo, o `/admin` si comparte repo con `Idoneo/`).
+3. GitHub Pages sirve automáticamente `index.html` como página de
+   entrada — por eso `admin.html` se renombró a `index.html`.
+4. El sitio queda en una URL pública tipo
+   `https://tu-usuario.github.io/tu-repo/` — eso no es un problema de
+   seguridad: nadie puede hacer nada sin iniciar sesión con una cuenta
+   que esté en la colección `admins` de Firestore (ver paso 5), igual
+   que ya explicamos que el `apiKey` de `firebase-config.js` está
+   pensado para ser público.
+5. Recuerda agregar ese dominio de GitHub Pages a **Authorized domains**
+   en Firebase Authentication (mismo paso que hiciste para el dominio de
+   Netlify), si vas a iniciar sesión con Google desde ahí.
 
 ## Notas
 
@@ -359,7 +381,7 @@ configuración de Firebase hay que aplicarlo en las dos copias.
   de administración solo a las cuentas en la colección `admins`.
 - Si tienes registros de abogados hechos **antes** de que existiera este
   sistema de cuentas (sin `ownerUid`), nadie puede administrarlos desde
-  "Mi cuenta" hasta que tú los ligues manualmente: en `admin.html`, cada
-  tarjeta tiene un campo "Cuenta dueña (UID)" — pídele al abogado su UID
+  "Mi cuenta" hasta que tú los ligues manualmente: en el panel de admin,
+  cada tarjeta tiene un campo "Cuenta dueña (UID)" — pídele al abogado su UID
   (Firebase Console → Authentication → Users, o que te lo comparta si él
   mismo se metió a crear su cuenta) y pégalo ahí con "Vincular".

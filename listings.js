@@ -4,7 +4,7 @@
   viven en Firestore (compartidos de verdad entre cualquier dispositivo).
 
   Se incluye en index.html, buscar.html, perfil.html, registro.html,
-  mi-cuenta.html y admin.html
+  mi-cuenta.html (carpeta Idoneo) y en index.html (carpeta admin)
   DESPUÉS de firebase-app-compat.js, firebase-firestore-compat.js,
   firebase-auth-compat.js y firebase-config.js (ese orden importa: este
   archivo usa `db` y `auth`, definidos en firebase-config.js).
@@ -47,6 +47,47 @@
   const COLLECTION = 'abogados_registrados';
   const HIDDEN_DEMOS_COLLECTION = 'demos_ocultos';
   const REVIEWS_COLLECTION = 'resenas';
+
+  // Los 32 estados de México con sus ciudades más importantes (capital +
+  // las de mayor población/actividad). Se usa para armar los selectores
+  // de Estado/Ciudad en registro.html, mi-cuenta.html y el filtro de
+  // buscar.html — el campo `ciudad` que se guarda sigue siendo un solo
+  // texto "Ciudad, Estado", igual que antes, para no romper nada de lo
+  // que ya lee ese campo (tarjetas, perfil, admin, etc.).
+  const MEXICO_ESTADOS = {
+    "Aguascalientes": ["Aguascalientes", "Jesús María", "Calvillo"],
+    "Baja California": ["Tijuana", "Mexicali", "Ensenada", "Rosarito"],
+    "Baja California Sur": ["La Paz", "Los Cabos", "San José del Cabo"],
+    "Campeche": ["Campeche", "Ciudad del Carmen", "Champotón"],
+    "Chiapas": ["Tuxtla Gutiérrez", "Tapachula", "San Cristóbal de las Casas", "Comitán"],
+    "Chihuahua": ["Chihuahua", "Ciudad Juárez", "Cuauhtémoc", "Delicias"],
+    "Ciudad de México": ["Ciudad de México"],
+    "Coahuila": ["Saltillo", "Torreón", "Monclova", "Piedras Negras"],
+    "Colima": ["Colima", "Manzanillo", "Tecomán"],
+    "Durango": ["Durango", "Gómez Palacio", "Lerdo"],
+    "Guanajuato": ["León", "Guanajuato", "Irapuato", "Celaya", "Salamanca"],
+    "Guerrero": ["Acapulco", "Chilpancingo", "Iguala", "Taxco"],
+    "Hidalgo": ["Pachuca", "Tulancingo", "Tula de Allende"],
+    "Jalisco": ["Guadalajara", "Zapopan", "Tlaquepaque", "Puerto Vallarta", "Tonalá"],
+    "México": ["Toluca", "Ecatepec", "Naucalpan", "Tlalnepantla", "Nezahualcóyotl"],
+    "Michoacán": ["Morelia", "Uruapan", "Zamora", "Lázaro Cárdenas"],
+    "Morelos": ["Cuernavaca", "Cuautla", "Jiutepec"],
+    "Nayarit": ["Tepic", "Bahía de Banderas", "Santiago Ixcuintla"],
+    "Nuevo León": ["Monterrey", "San Pedro Garza García", "Guadalupe", "San Nicolás de los Garza", "Apodaca"],
+    "Oaxaca": ["Oaxaca de Juárez", "Salina Cruz", "Tuxtepec"],
+    "Puebla": ["Puebla", "Tehuacán", "San Andrés Cholula", "Atlixco"],
+    "Querétaro": ["Querétaro", "San Juan del Río", "Corregidora"],
+    "Quintana Roo": ["Cancún", "Playa del Carmen", "Chetumal", "Tulum", "Cozumel"],
+    "San Luis Potosí": ["San Luis Potosí", "Soledad de Graciano Sánchez", "Ciudad Valles"],
+    "Sinaloa": ["Culiacán", "Mazatlán", "Los Mochis"],
+    "Sonora": ["Hermosillo", "Ciudad Obregón", "Nogales", "Guaymas"],
+    "Tabasco": ["Villahermosa", "Cárdenas", "Comalcalco"],
+    "Tamaulipas": ["Reynosa", "Matamoros", "Nuevo Laredo", "Tampico", "Ciudad Victoria"],
+    "Tlaxcala": ["Tlaxcala", "Apizaco", "Huamantla"],
+    "Veracruz": ["Veracruz", "Xalapa", "Coatzacoalcos", "Córdoba", "Orizaba"],
+    "Yucatán": ["Mérida", "Valladolid", "Progreso"],
+    "Zacatecas": ["Zacatecas", "Fresnillo", "Guadalupe"]
+  };
 
   function requireDb(){
     if(typeof db === 'undefined'){
@@ -314,7 +355,7 @@
   }
 
   global.IdoneoListings = {
-    DEMO_ABOGADOS,
+    DEMO_ABOGADOS, MEXICO_ESTADOS,
     getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,

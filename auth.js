@@ -9,8 +9,8 @@
   y requiere un elemento con id="navAuth" en el header de esa página
   (fuera de .nav-links, para que siga visible aunque el menú colapse en móvil).
 
-  Usa Firebase Authentication real (mismo proyecto que admin.html usa para
-  el panel) — no localStorage. Esto es lo que permite que "hay que tener
+  Usa Firebase Authentication real (mismo proyecto que index.html, carpeta
+  admin, usa para el panel) — no localStorage. Esto es lo que permite que "hay que tener
   cuenta para reseñar" sea una regla de verdad, aplicada por las reglas de
   seguridad de Firestore (request.auth != null), no solo una pantalla que
   cualquiera podría saltarse desde la consola del navegador.

@@ -223,6 +223,40 @@
   function priceOptions(selected){
     return ['$', '$$', '$$$'].map(p => `<option value="${p}" ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
   }
+  const MEXICO_ESTADOS = (typeof IdoneoListings !== 'undefined' && IdoneoListings.MEXICO_ESTADOS) || {};
+  function parseCiudadEstado(ciudadStr){
+    const str = (ciudadStr || '').trim();
+    if(!str) return {ciudad: '', estado: ''};
+    const idx = str.lastIndexOf(',');
+    if(idx === -1) return {ciudad: str, estado: ''};
+    return {ciudad: str.slice(0, idx).trim(), estado: str.slice(idx + 1).trim()};
+  }
+  function estadoOptionsHTML(selectedEstado){
+    const estados = Object.keys(MEXICO_ESTADOS);
+    let html = `<option value="" disabled ${selectedEstado ? '' : 'selected'}>Selecciona</option>`;
+    html += estados.map(e => `<option value="${escapeHtml(e)}" ${e === selectedEstado ? 'selected' : ''}>${escapeHtml(e)}</option>`).join('');
+    if(selectedEstado && !estados.includes(selectedEstado)){
+      html += `<option value="${escapeHtml(selectedEstado)}" selected>${escapeHtml(selectedEstado)}</option>`;
+    }
+    return html;
+  }
+  function ciudadOptionsHTML(estado, selectedCiudad){
+    const ciudades = MEXICO_ESTADOS[estado] || [];
+    let html = `<option value="" disabled ${selectedCiudad ? '' : 'selected'}>Selecciona</option>`;
+    html += ciudades.map(c => `<option value="${escapeHtml(c)}" ${c === selectedCiudad ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
+    if(selectedCiudad && !ciudades.includes(selectedCiudad)){
+      html += `<option value="${escapeHtml(selectedCiudad)}" selected>${escapeHtml(selectedCiudad)}</option>`;
+    }
+    return html;
+  }
+  function wireEstadoCiudad(card){
+    const estadoSel = card.querySelector('[data-role="estadoSelect"]');
+    const ciudadSel = card.querySelector('[data-role="ciudadCitySelect"]');
+    estadoSel.addEventListener('change', () => {
+      ciudadSel.innerHTML = ciudadOptionsHTML(estadoSel.value, '');
+      if(ciudadSel.value) ciudadSel.classList.remove('field-error');
+    });
+  }
   const ESPECIALIDADES_OPTS = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
   const MAX_ESPECIALIDADES = 3;
   function especialidadPickerHTML(selected){
@@ -490,8 +524,12 @@
         </div>
         <div class="field-grid">
           <div class="field">
-            <label>Ciudad / estado<span class="req">*</span></label>
-            <input type="text" data-field="ciudad" data-required="1" value="${escapeHtml(l.ciudad)}">
+            <label>Estado<span class="req">*</span></label>
+            <select data-role="estadoSelect" data-required="1">${estadoOptionsHTML(parseCiudadEstado(l.ciudad).estado)}</select>
+          </div>
+          <div class="field">
+            <label>Ciudad<span class="req">*</span></label>
+            <select data-role="ciudadCitySelect" data-required="1">${ciudadOptionsHTML(parseCiudadEstado(l.ciudad).estado, parseCiudadEstado(l.ciudad).ciudad)}</select>
           </div>
           <div class="field">
             <label>WhatsApp de contacto<span class="req">*</span></label>
@@ -559,7 +597,7 @@
   function readFields(card){
     return {
       especialidades: getSelectedEspecialidades(card),
-      ciudad: card.querySelector('[data-field="ciudad"]').value.trim(),
+      ciudad: `${card.querySelector('[data-role="ciudadCitySelect"]').value}, ${card.querySelector('[data-role="estadoSelect"]').value}`,
       telefono: card.querySelector('[data-field="telefono"]').value.trim(),
       precio: card.querySelector('[data-field="precio"]').value,
       experiencia: card.querySelector('[data-field="experiencia"]').value.trim(),
@@ -774,6 +812,7 @@
     wireListingPhoto(card, l);
     wireEspecialidadPicker(card);
     wireTipoToggle(card);
+    wireEstadoCiudad(card);
 
     card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
       if(!validateRequired(card)){

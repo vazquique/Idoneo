@@ -298,9 +298,19 @@
         <div class="especialidad-picker" id="especialidadPicker"></div>
         <div class="esp-hint" id="espHint">Selecciona de 1 a 3 especialidades.</div>
       </div>
-      <div class="field">
-        <label for="ciudad">Ciudad / estado<span class="req">*</span></label>
-        <input id="ciudad" name="ciudad" type="text" placeholder="Zapopan, Jalisco" required>
+      <div class="row2">
+        <div class="field">
+          <label for="estado">Estado<span class="req">*</span></label>
+          <select id="estado" name="estado" required>
+            <option value="" disabled selected>Selecciona</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ciudad">Ciudad<span class="req">*</span></label>
+          <select id="ciudad" name="ciudad" required disabled>
+            <option value="" disabled selected>Elige un estado primero</option>
+          </select>
+        </div>
       </div>
       <div class="field">
         <label for="whatsapp">WhatsApp de contacto<span class="req">*</span></label>
@@ -387,6 +397,22 @@
     return Array.from(espPicker.querySelectorAll('.esp-chip.selected')).map(c => c.dataset.esp);
   }
 
+  const estadoSelect = document.getElementById('estado');
+  const ciudadSelect = document.getElementById('ciudad');
+  const MEXICO_ESTADOS = (window.IdoneoListings && window.IdoneoListings.MEXICO_ESTADOS) || {};
+  Object.keys(MEXICO_ESTADOS).forEach(estado => {
+    const opt = document.createElement('option');
+    opt.value = estado;
+    opt.textContent = estado;
+    estadoSelect.appendChild(opt);
+  });
+  estadoSelect.addEventListener('change', () => {
+    const ciudades = MEXICO_ESTADOS[estadoSelect.value] || [];
+    ciudadSelect.innerHTML = '<option value="" disabled selected>Selecciona</option>' +
+      ciudades.map(c => `<option value="${c}">${c}</option>`).join('');
+    ciudadSelect.disabled = ciudades.length === 0;
+  });
+
   if(window.IdoneoAuth){
     window.IdoneoAuth.onAuthChanged((user) => {
       if(successMsg.classList.contains('show')) return; // no reemplazar el formulario tras un envío exitoso
@@ -405,6 +431,11 @@
       espHint.textContent = 'Elige al menos una especialidad.';
       espHint.classList.add('err');
       espPicker.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    if(!estadoSelect.value || !ciudadSelect.value){
+      estadoSelect.reportValidity();
+      estadoSelect.scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
     const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked').value;
@@ -428,7 +459,7 @@
         responsableCedula: responsableCedula,
         rfcPersonaMoral: document.getElementById('rfcPersonaMoral').value.trim(),
         especialidades: especialidades,
-        ciudad: document.getElementById('ciudad').value.trim(),
+        ciudad: `${ciudadSelect.value}, ${estadoSelect.value}`,
         telefono: document.getElementById('whatsapp').value.trim()
       });
       // Aviso por correo al dueño del sitio — best effort, no bloquea el registro si falla.

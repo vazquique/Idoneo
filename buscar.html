@@ -264,10 +264,6 @@
         <label for="fCiudad">Ciudad</label>
         <select id="fCiudad">
           <option value="">Todas las ciudades</option>
-          <option>Zapopan, Jalisco</option>
-          <option>Guadalajara, Jalisco</option>
-          <option>Ciudad de México</option>
-          <option>Monterrey, Nuevo León</option>
         </select>
       </div>
       <div class="search-field">
@@ -413,6 +409,23 @@
     );
     renderCards(filtered);
   }
+
+  (function populateCiudadFilter(){
+    const select = document.getElementById('fCiudad');
+    const MEXICO_ESTADOS = (window.IdoneoListings && window.IdoneoListings.MEXICO_ESTADOS) || {};
+    Object.keys(MEXICO_ESTADOS).forEach(estado => {
+      const group = document.createElement('optgroup');
+      group.label = estado;
+      MEXICO_ESTADOS[estado].forEach(ciudad => {
+        const value = ciudad === estado ? ciudad : `${ciudad}, ${estado}`;
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = ciudad;
+        group.appendChild(opt);
+      });
+      select.appendChild(group);
+    });
+  })();
 
   document.getElementById('btnBuscar').addEventListener('click', applyFilters);
   document.getElementById('fNombre').addEventListener('input', applyFilters);
