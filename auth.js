@@ -465,7 +465,7 @@
     }
   }
 
-  window.IdoneoAuth = { getCurrentUser, onAuthChanged, openAuthModal, closeAuthModal, logOut };
+  window.IdoneoAuth = { getCurrentUser, onAuthChanged, openAuthModal, closeAuthModal, logOut, refreshUI: updateAuthUI };
 
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init);

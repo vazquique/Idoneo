@@ -58,7 +58,43 @@ cualquier cuenta de Google, sin importar de quién sea, faltan dos cosas:
 (El inicio de sesión con correo y contraseña no tiene esta restricción —
 funciona en cualquier dominio sin configuración extra.)
 
-## 4. Marcarte como administrador
+## 4. Activar Storage (fotos de perfil)
+
+Esto es lo que permite que cualquier cuenta suba una foto de perfil real
+desde `mi-cuenta.html` (se guarda en Firebase Storage, no en Firestore).
+Si te lo saltas, el sitio sigue funcionando normal — solo el botón "Subir
+foto" mostrará un mensaje de error en vez de subir la imagen.
+
+1. Menú lateral: **Compilación → Storage**.
+2. "Comenzar" → modo **producción** → misma región que elegiste para
+   Firestore → Listo.
+3. Pestaña **Reglas** → borra lo que haya y pega esto:
+
+```
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /avatars/{uid} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == uid
+                   && request.resource.size < 3 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
+```
+
+4. Clic en **Publicar**.
+
+Qué hace esto: cada cuenta solo puede subir o borrar la foto que vive en
+su propia ruta (`avatars/<su UID>`) — no puede tocar la foto de nadie
+más —, el archivo tiene que ser una imagen, y no puede pesar más de 3MB.
+Cualquier visitante puede **ver** las fotos (son públicas, como cualquier
+foto de perfil en un directorio).
+
+## 5. Marcarte como administrador
 
 Firestore por sí solo no sabe quién eres "el dueño" del sitio — cualquier
 visitante que reseñe también va a tener una cuenta de Firebase. Por eso
@@ -74,7 +110,7 @@ mano) puede tener:
 Si en el futuro quieres que alguien más apruebe registros desde
 `admin.html`, repite esto con el UID de esa persona.
 
-## 5. Pegar las reglas de seguridad
+## 6. Pegar las reglas de seguridad de Firestore
 
 1. Firestore Database → pestaña **Reglas**.
 2. Borra lo que haya y pega exactamente esto:
@@ -204,7 +240,7 @@ Qué hacen estas reglas:
 > **Importante:** haz esto ANTES de anunciar el sitio públicamente — con
 > las reglas viejas, cualquier cuenta nueva podía editar el directorio.
 
-## 6. Copiar la configuración a tu sitio
+## 7. Copiar la configuración a tu sitio
 
 1. Icono de engranaje (arriba a la izquierda) → **Configuración del proyecto**.
 2. Baja hasta "Tus apps" → clic en el ícono **</>** (Web) → ponle un nombre
@@ -215,7 +251,7 @@ Qué hacen estas reglas:
    - `Idoneo/firebase-config.js`
    - `admin/firebase-config.js`
 
-## 7. Probar
+## 8. Probar
 
 1. En `registro.html`, crea una cuenta (o inicia sesión) y llena el
    formulario de un abogado. Al terminar, ve a **Mi cuenta** (menú de tu
@@ -236,6 +272,13 @@ Qué hacen estas reglas:
    a `admin.html`, ni ve nada en "Mi cuenta" salvo la opción de registrar
    su propio despacho — su UID no está en `admins` ni es dueña de ningún
    registro.
+7. En **Mi cuenta**, arriba de tu(s) despacho(s) debe verse una tarjeta con
+   tu nombre y un botón "Subir foto" — sube una imagen (menos de 3MB) y
+   confirma que aparece tu foto ahí, en el menú de tu cuenta (arriba a la
+   derecha, en cualquier página) y junto a tus reseñas en `perfil.html`.
+8. En la tarjeta de tu despacho, llena "Dirección", "Sitio web", "Redes
+   sociales" y "Horario de atención" (los cuatro son opcionales), guarda, y
+   confirma que aparecen en tu `perfil.html` público.
 
 ## Estructura de carpetas
 
@@ -267,9 +310,14 @@ configuración de Firebase hay que aplicarlo en las dos copias.
 
 - El archivo `firebase-config.js` no es secreto — el `apiKey` de Firebase
   está pensado para ser público (la seguridad real vive en las reglas de
-  Firestore del paso 5, no en ocultar esa llave).
+  Firestore del paso 6, no en ocultar esa llave).
 - El plan gratuito de Firebase (Spark) cubre muchísimo tráfico para un
-  directorio como este; no deberías pagar nada al empezar.
+  directorio como este, incluyendo Storage (5GB guardados, 1GB de
+  descarga al día) — no deberías pagar nada al empezar.
+- Solo `mi-cuenta.html` carga el SDK de Firebase Storage
+  (`firebase-storage-compat.js`) — es la única página con botón de subir
+  foto. Si algún día agregas subida de archivos en otra página, agrega ahí
+  también ese `<script>`, antes de `firebase-config.js`.
 - Las cuentas de "reseñador", "abogado/despacho" y "administrador" usan el
   mismo sistema (Firebase Authentication) — es la misma cuenta la que
   puede reseñar Y administrar un despacho, si así lo usa la persona. Lo

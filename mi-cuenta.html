@@ -33,6 +33,23 @@
   .page-title{font-family:'Newsreader', serif; font-size:1.9rem; font-weight:600; margin-bottom:6px;}
   .page-sub{color:rgba(241,234,216,0.68); font-size:0.94rem; max-width:60ch; margin-bottom:36px;}
 
+  /* ---- tarjeta de perfil personal (foto) ---- */
+  .profile-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:26px 32px; margin-bottom:28px; animation:card-in 0.5s ease both; display:flex; align-items:center; gap:22px; flex-wrap:wrap;}
+  .profile-avatar{position:relative; width:64px; height:64px; border-radius:50%; background:var(--brass-light); color:var(--ink); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:1.4rem; overflow:hidden; flex-shrink:0;}
+  .profile-avatar img{width:100%; height:100%; object-fit:cover;}
+  .profile-who{flex:1; min-width:180px;}
+  .profile-name{font-family:'Newsreader', serif; font-size:1.15rem; font-weight:600;}
+  .profile-email{font-size:0.82rem; color:#6b6250; margin-top:2px;}
+  .profile-photo-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .photo-upload-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:10px 18px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; display:inline-block;}
+  .photo-upload-btn:hover{background:var(--ink-2); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+  .photo-remove-btn{background:none; border:1px solid #c98a8a; color:#8a2a2a; border-radius:3px; padding:10px 14px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; transition:background 0.15s ease, transform 0.15s ease;}
+  .photo-remove-btn:hover{background:#f2e6e6; transform:translateY(-1px);}
+  .photo-msg{font-size:0.8rem; margin-top:8px; display:none; width:100%;}
+  .photo-msg.show{display:block;}
+  .photo-msg.ok{color:#2e4a2a;}
+  .photo-msg.err{color:#8a2a2a;}
+
   /* ---- estado: no logueado / vacío ---- */
   .state-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:36px; max-width:520px;}
   .state-card h2{font-family:'Newsreader', serif; font-size:1.2rem; font-weight:600; margin-bottom:10px;}
@@ -153,14 +170,20 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="listings.js"></script>
 <script src="auth.js"></script>
 <script>
+  const storage = typeof firebase !== 'undefined' && firebase.storage ? firebase.storage() : null;
+
   function escapeHtml(str){
     const div = document.createElement('div');
     div.textContent = str == null ? '' : String(str);
     return div.innerHTML;
+  }
+  function initials(name){
+    return (name || '').split(' ').filter(w => w.length > 1).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
   }
   function starString(rating){
     const full = Math.round(rating);
@@ -187,8 +210,8 @@
     document.getElementById('stateLoginBtn').addEventListener('click', () => window.IdoneoAuth.openAuthModal('login'));
   }
 
-  function renderEmpty(){
-    content.innerHTML = `
+  function emptyStateHTML(){
+    return `
       <div class="state-card">
         <h2>Aún no tienes un despacho registrado</h2>
         <p>Registra tu perfil como abogado o despacho — queda ligado a esta cuenta y podrás editarlo aquí en cuanto lo hagas.</p>
@@ -197,11 +220,89 @@
     `;
   }
 
-  async function renderListings(listings){
-    content.innerHTML = listings.map(l => listingCardHTML(l)).join('') +
+  function listingsHTML(listings){
+    return listings.map(l => listingCardHTML(l)).join('') +
       `<div class="state-card" style="max-width:none;"><p style="margin-bottom:0;">¿Tienes otro despacho o consultorio? <a href="registro.html" style="color:var(--brass); text-decoration:underline;">Regístralo aparte</a>.</p></div>`;
+  }
 
-    listings.forEach(l => wireListingCard(l));
+  function profileCardHTML(user){
+    const nombre = user.displayName || user.email || 'Tu cuenta';
+    const avatarInner = user.photoURL ? `<img src="${escapeHtml(user.photoURL)}" alt="">` : escapeHtml(initials(nombre));
+    return `
+      <div class="profile-card">
+        <div class="profile-avatar" id="profileAvatar">${avatarInner}</div>
+        <div class="profile-who">
+          <div class="profile-name">${escapeHtml(nombre)}</div>
+          <div class="profile-email">${escapeHtml(user.email || '')}</div>
+        </div>
+        <div class="profile-photo-actions">
+          <label class="photo-upload-btn" for="photoInput">${user.photoURL ? 'Cambiar foto' : 'Subir foto'}</label>
+          <input type="file" id="photoInput" accept="image/*" style="display:none">
+          ${user.photoURL ? '<button type="button" id="removePhotoBtn" class="photo-remove-btn">Quitar foto</button>' : ''}
+          <span class="photo-msg" id="photoMsg"></span>
+        </div>
+      </div>
+    `;
+  }
+
+  function showPhotoMsg(text, kind){
+    const el = document.getElementById('photoMsg');
+    if(!el) return;
+    el.textContent = text;
+    el.className = 'photo-msg show ' + (kind || '');
+  }
+
+  function wireProfileCard(){
+    const input = document.getElementById('photoInput');
+    if(input){
+      input.addEventListener('change', async () => {
+        const file = input.files[0];
+        if(!file) return;
+        if(!file.type.startsWith('image/')){
+          showPhotoMsg('Selecciona un archivo de imagen (JPG, PNG...).', 'err');
+          return;
+        }
+        if(file.size > 3 * 1024 * 1024){
+          showPhotoMsg('La imagen no puede pesar más de 3MB.', 'err');
+          return;
+        }
+        if(!storage){
+          showPhotoMsg('Firebase Storage no está activado en este proyecto todavía.', 'err');
+          return;
+        }
+        showPhotoMsg('Subiendo foto…', '');
+        try{
+          const user = auth.currentUser;
+          const ref = storage.ref().child('avatars/' + user.uid);
+          await ref.put(file);
+          const url = await ref.getDownloadURL();
+          await user.updateProfile({photoURL: url});
+          if(window.IdoneoAuth) window.IdoneoAuth.refreshUI();
+          refresh(user);
+        } catch(err){
+          console.error(err);
+          showPhotoMsg('No se pudo subir la foto. Intenta de nuevo.', 'err');
+        }
+      });
+    }
+    const removeBtn = document.getElementById('removePhotoBtn');
+    if(removeBtn){
+      removeBtn.addEventListener('click', async () => {
+        if(!confirm('¿Quitar tu foto de perfil?')) return;
+        try{
+          const user = auth.currentUser;
+          await user.updateProfile({photoURL: null});
+          if(storage){
+            try{ await storage.ref().child('avatars/' + user.uid).delete(); } catch(e){ /* puede no existir */ }
+          }
+          if(window.IdoneoAuth) window.IdoneoAuth.refreshUI();
+          refresh(user);
+        } catch(err){
+          console.error(err);
+          alert('No se pudo quitar la foto. Intenta de nuevo.');
+        }
+      });
+    }
   }
 
   function statusPillsHTML(l){
@@ -275,6 +376,25 @@
           <textarea rows="3" data-field="bio" placeholder="Área de práctica, enfoque...">${escapeHtml(l.bio)}</textarea>
         </div>
 
+        <div class="field-grid">
+          <div class="field full">
+            <label>Dirección / colonia (opcional)</label>
+            <input type="text" data-field="direccion" value="${escapeHtml(l.direccion)}" placeholder="Av. Américas 1500, Col. Country Club">
+          </div>
+          <div class="field">
+            <label>Sitio web (opcional)</label>
+            <input type="text" data-field="sitioWeb" value="${escapeHtml(l.sitioWeb)}" placeholder="www.midespacho.com">
+          </div>
+          <div class="field">
+            <label>Redes sociales (opcional)</label>
+            <input type="text" data-field="redesSociales" value="${escapeHtml(l.redesSociales)}" placeholder="instagram.com/midespacho">
+          </div>
+          <div class="field full">
+            <label>Horario de atención (opcional)</label>
+            <input type="text" data-field="horario" value="${escapeHtml(l.horario)}" placeholder="Lun-Vie 9am-6pm">
+          </div>
+        </div>
+
         <div class="listing-actions">
           <button type="button" class="save-btn" data-action="save">Guardar cambios</button>
           <button type="button" class="delete-btn" data-action="delete">Eliminar mi registro</button>
@@ -297,7 +417,11 @@
       telefono: card.querySelector('[data-field="telefono"]').value.trim(),
       precio: card.querySelector('[data-field="precio"]').value,
       experiencia: card.querySelector('[data-field="experiencia"]').value.trim(),
-      bio: card.querySelector('[data-field="bio"]').value.trim()
+      bio: card.querySelector('[data-field="bio"]').value.trim(),
+      direccion: card.querySelector('[data-field="direccion"]').value.trim(),
+      sitioWeb: card.querySelector('[data-field="sitioWeb"]').value.trim(),
+      redesSociales: card.querySelector('[data-field="redesSociales"]').value.trim(),
+      horario: card.querySelector('[data-field="horario"]').value.trim()
     };
   }
 
@@ -384,17 +508,17 @@
       renderLoggedOut();
       return;
     }
-    content.innerHTML = '<p class="empty-note">Cargando tu cuenta…</p>';
+    content.innerHTML = profileCardHTML(user) + '<p class="empty-note">Cargando tu cuenta…</p>';
+    wireProfileCard();
     try{
       const listings = await window.IdoneoListings.getMyListings();
-      if(listings.length === 0){
-        renderEmpty();
-      } else {
-        renderListings(listings);
-      }
+      content.innerHTML = profileCardHTML(user) + (listings.length === 0 ? emptyStateHTML() : listingsHTML(listings));
+      wireProfileCard();
+      listings.forEach(l => wireListingCard(l));
     } catch(err){
       console.error(err);
-      content.innerHTML = '<div class="state-card"><h2>No se pudo cargar tu cuenta</h2><p>Revisa tu conexión e intenta de nuevo.</p></div>';
+      content.innerHTML = profileCardHTML(user) + '<div class="state-card"><h2>No se pudo cargar tu cuenta</h2><p>Revisa tu conexión e intenta de nuevo.</p></div>';
+      wireProfileCard();
     }
   }
 
