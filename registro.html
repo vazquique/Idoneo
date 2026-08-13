@@ -80,6 +80,7 @@
   form{background:var(--parchment); color:var(--ink); border-radius:4px; padding:32px; display:flex; flex-direction:column; gap:15px;}
   form .form-title{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-2); margin-bottom:2px;}
   .field label{display:block; font-size:0.8rem; font-weight:600; margin-bottom:5px; color:var(--ink-2);}
+  .field label .req{color:#b23b3b; margin-left:2px;}
   .field input, .field select{width:100%; padding:11px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.94rem; color:var(--ink);}
   .field input:focus, .field select:focus{outline:2px solid var(--brass); outline-offset:1px;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
@@ -231,12 +232,12 @@
     <form id="regForm" action="https://formspree.io/f/moeadvze" method="POST" style="display:none">
       <div class="form-title">Registro de abogado / despacho</div>
       <div class="field">
-        <label for="nombre">Nombre o razón social</label>
+        <label for="nombre">Nombre o razón social<span class="req">*</span></label>
         <input id="nombre" name="nombre" type="text" placeholder="Lic. María Torres / Torres Abogados" required>
       </div>
       <div class="row2">
         <div class="field">
-          <label for="especialidad">Especialidad principal</label>
+          <label for="especialidad">Especialidad principal<span class="req">*</span></label>
           <select id="especialidad" name="especialidad" required>
             <option value="" disabled selected>Selecciona</option>
             <option>Familiar</option><option>Penal</option><option>Laboral</option><option>Mercantil</option>
@@ -245,12 +246,12 @@
           </select>
         </div>
         <div class="field">
-          <label for="ciudad">Ciudad / estado</label>
+          <label for="ciudad">Ciudad / estado<span class="req">*</span></label>
           <input id="ciudad" name="ciudad" type="text" placeholder="Zapopan, Jalisco" required>
         </div>
       </div>
       <div class="field">
-        <label for="whatsapp">WhatsApp de contacto</label>
+        <label for="whatsapp">WhatsApp de contacto<span class="req">*</span></label>
         <input id="whatsapp" name="whatsapp" type="tel" placeholder="33 1234 5678" required>
       </div>
       <label class="consent-row">

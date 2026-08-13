@@ -82,17 +82,27 @@ service firebase.storage {
                    && request.resource.contentType.matches('image/.*');
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
+    match /logos/{uid}/{listingId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == uid
+                   && request.resource.size < 3 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
   }
 }
 ```
 
 4. Clic en **Publicar**.
 
-Qué hace esto: cada cuenta solo puede subir o borrar la foto que vive en
-su propia ruta (`avatars/<su UID>`) — no puede tocar la foto de nadie
-más —, el archivo tiene que ser una imagen, y no puede pesar más de 3MB.
-Cualquier visitante puede **ver** las fotos (son públicas, como cualquier
-foto de perfil en un directorio).
+Qué hace esto: cada cuenta solo puede subir o borrar fotos que vivan bajo
+su propio UID (`avatars/<su UID>` para su foto personal, `logos/<su
+UID>/<id del despacho>` para la foto de cada despacho que administra) —
+no puede tocar la foto de nadie más —, el archivo tiene que ser una
+imagen, y no puede pesar más de 3MB. Cualquier visitante puede **ver**
+las fotos (son públicas, como cualquier foto de perfil o logo en un
+directorio).
 
 ## 5. Marcarte como administrador
 
@@ -276,9 +286,21 @@ Qué hacen estas reglas:
    tu nombre y un botón "Subir foto" — sube una imagen (menos de 3MB) y
    confirma que aparece tu foto ahí, en el menú de tu cuenta (arriba a la
    derecha, en cualquier página) y junto a tus reseñas en `perfil.html`.
-8. En la tarjeta de tu despacho, llena "Dirección", "Sitio web", "Redes
-   sociales" y "Horario de atención" (los cuatro son opcionales), guarda, y
-   confirma que aparecen en tu `perfil.html` público.
+8. Dentro de la tarjeta de tu despacho, sube también una foto del
+   despacho (botón "Subir foto del despacho") y confirma que aparece en
+   `perfil.html` y en las tarjetas de `buscar.html`.
+9. Llena "Dirección", "Sitio web", "Facebook", "Instagram" y "LinkedIn"
+   (los cinco son opcionales — puedes pegar el link completo o solo tu
+   usuario, ej. `@midespacho`), guarda, y confirma que en tu
+   `perfil.html` público aparecen como botones de colores que llevan a
+   cada red.
+10. En "Horario de atención", prueba el modo guiado (elige días y hora,
+    o marca "Abierto las 24 horas") y confirma que arma el texto solo;
+    prueba también "Prefiero escribirlo yo mismo" para escribirlo a mano.
+11. Intenta guardar la tarjeta de tu despacho después de borrar
+    "Especialidad", "Ciudad" o "WhatsApp" (los tres marcados con `*`) —
+    debe rechazar el guardado y marcar el campo en rojo hasta que lo
+    llenes de nuevo.
 
 ## Estructura de carpetas
 

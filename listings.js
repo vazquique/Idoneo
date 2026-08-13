@@ -127,8 +127,11 @@
       bio: '',
       direccion: '',
       sitioWeb: '',
-      redesSociales: '',
+      facebook: '',
+      instagram: '',
+      linkedin: '',
       horario: '',
+      fotoUrl: '',
       reseñas: [],
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -142,7 +145,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['especialidad', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'redesSociales', 'horario'];
+  const OWNER_EDITABLE_FIELDS = ['especialidad', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};

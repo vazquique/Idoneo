@@ -73,15 +73,33 @@
   .listing-meta{font-size:0.84rem; color:#6b6250; margin-bottom:20px;}
   .view-profile-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--brass); text-decoration:underline; white-space:nowrap;}
 
+  .listing-photo-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:22px; padding-bottom:22px; border-bottom:1px solid #ddd2b0;}
+  .listing-photo{position:relative; width:76px; height:76px; border-radius:6px; background:#ece3cd; color:#8a8069; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
+  .listing-photo img{width:100%; height:100%; object-fit:cover;}
+  .listing-photo svg{width:26px; height:26px;}
+  .listing-photo-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+
   .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
   .field label{display:block; font-size:0.78rem; font-weight:600; margin-bottom:5px; color:var(--ink-2);}
+  .field label .req{color:#b23b3b; margin-left:2px;}
   .field input, .field select, .field textarea{
     width:100%; padding:10px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0;
     font-family:'IBM Plex Sans', sans-serif; font-size:0.92rem; color:var(--ink); resize:vertical;
   }
   .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .field input.field-error, .field select.field-error{border-color:#b23b3b; background:#fbf0f0;}
+  .field-req-note{font-size:0.76rem; color:#b23b3b; margin-top:4px; display:none;}
+  .field-req-note.show{display:block;}
   .field.full{grid-column:1 / -1;}
   .field-locked{font-size:0.82rem; color:#8a8069; background:#ece3cd; border-radius:3px; padding:9px 11px;}
+  .field-hint{font-size:0.76rem; color:#8a8069; margin-top:4px;}
+
+  .horario-builder{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .horario-builder select, .horario-builder input[type="time"]{width:auto; flex:1; min-width:110px;}
+  .horario-sep{font-size:0.82rem; color:#8a8069;}
+  .horario-24-row{display:flex; align-items:center; gap:7px; margin-top:8px; font-size:0.84rem; color:var(--ink-2);}
+  .horario-24-row input{width:auto;}
+  .horario-preview{font-size:0.78rem; color:#6b6250; margin-top:8px; font-style:italic;}
 
   .listing-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:18px;}
   .save-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:11px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; transition:background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;}
@@ -175,7 +193,8 @@
 <script src="listings.js"></script>
 <script src="auth.js"></script>
 <script>
-  const storage = typeof firebase !== 'undefined' && firebase.storage ? firebase.storage() : null;
+  let storage = null;
+  try{ if(typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) storage = firebase.storage(); } catch(e){ /* Storage no disponible */ }
 
   function escapeHtml(str){
     const div = document.createElement('div');
@@ -195,6 +214,36 @@
   function especialidadOptions(selected){
     const opts = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
     return opts.map(o => `<option value="${o}" ${o === selected ? 'selected' : ''}>${o}</option>`).join('');
+  }
+  function formatTime12(t){
+    if(!t) return '';
+    const [h, m] = t.split(':').map(Number);
+    const period = h >= 12 ? 'pm' : 'am';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2, '0')}${period}`;
+  }
+  function horarioBuilderHTML(l){
+    const hasCustom = !!(l.horario && l.horario.trim());
+    return `
+      <div class="horario-builder" data-role="horarioBuilder" style="${hasCustom ? 'display:none' : ''}">
+        <select data-role="horarioDias">
+          <option value="Lun-Vie">Lunes a viernes</option>
+          <option value="Lun-Sáb">Lunes a sábado</option>
+          <option value="Lun-Dom">Todos los días</option>
+        </select>
+        <input type="time" data-role="horarioDesde" value="09:00">
+        <span class="horario-sep">a</span>
+        <input type="time" data-role="horarioHasta" value="18:00">
+      </div>
+      <label class="horario-24-row" data-role="horario24Row" style="${hasCustom ? 'display:none' : ''}">
+        <input type="checkbox" data-role="horario24"> Abierto las 24 horas
+      </label>
+      <input type="text" data-role="horarioCustom" placeholder="Ej. Cerramos miércoles, sábados solo con cita" value="${hasCustom ? escapeHtml(l.horario) : ''}" style="${hasCustom ? '' : 'display:none'}; margin-top:8px;">
+      <div style="margin-top:6px;">
+        <button type="button" class="view-profile-link" style="background:none; border:none; cursor:pointer; font-family:'IBM Plex Mono', monospace;" data-action="toggleHorarioMode">${hasCustom ? '← Usar el modo guiado (días y horas)' : 'Prefiero escribirlo yo mismo →'}</button>
+      </div>
+      <div class="horario-preview" data-role="horarioPreview"></div>
+    `;
   }
 
   const content = document.getElementById('accountContent');
@@ -344,6 +393,18 @@
             : 'Estamos confirmando tu cédula profesional antes de publicar tu perfil — normalmente te contactamos por WhatsApp.'}
         </div>
 
+        <div class="listing-photo-row">
+          <div class="listing-photo" data-role="listingPhoto">
+            ${l.fotoUrl ? `<img src="${escapeHtml(l.fotoUrl)}" alt="">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>`}
+          </div>
+          <div class="listing-photo-actions">
+            <label class="photo-upload-btn" for="listingPhotoInput-${l.id}">${l.fotoUrl ? 'Cambiar foto' : 'Subir foto del despacho'}</label>
+            <input type="file" id="listingPhotoInput-${l.id}" data-role="listingPhotoInput" accept="image/*" style="display:none">
+            ${l.fotoUrl ? '<button type="button" class="photo-remove-btn" data-action="removeListingPhoto">Quitar foto</button>' : ''}
+            <span class="photo-msg" data-role="listingPhotoMsg"></span>
+          </div>
+        </div>
+
         <div class="field full">
           <label>Nombre o razón social</label>
           <div class="field-locked">${escapeHtml(l.nombre)} — para corregir tu nombre, escríbenos (ver pie de página).</div>
@@ -351,16 +412,16 @@
 
         <div class="field-grid" style="margin-top:14px;">
           <div class="field">
-            <label>Especialidad principal</label>
-            <select data-field="especialidad">${especialidadOptions(l.especialidad)}</select>
+            <label>Especialidad principal<span class="req">*</span></label>
+            <select data-field="especialidad" data-required="1">${especialidadOptions(l.especialidad)}</select>
           </div>
           <div class="field">
-            <label>Ciudad / estado</label>
-            <input type="text" data-field="ciudad" value="${escapeHtml(l.ciudad)}">
+            <label>Ciudad / estado<span class="req">*</span></label>
+            <input type="text" data-field="ciudad" data-required="1" value="${escapeHtml(l.ciudad)}">
           </div>
           <div class="field">
-            <label>WhatsApp de contacto</label>
-            <input type="tel" data-field="telefono" value="${escapeHtml(l.telefono)}">
+            <label>WhatsApp de contacto<span class="req">*</span></label>
+            <input type="tel" data-field="telefono" data-required="1" value="${escapeHtml(l.telefono)}">
           </div>
           <div class="field">
             <label>Precio</label>
@@ -371,6 +432,7 @@
             <input type="text" data-field="experiencia" value="${escapeHtml(l.experiencia)}" placeholder="Ej. 8 años">
           </div>
         </div>
+        <div class="field-req-note" data-role="reqNote">Completa los campos marcados con <strong>*</strong> antes de guardar — no pueden quedar vacíos.</div>
         <div class="field full">
           <label>Bio breve</label>
           <textarea rows="3" data-field="bio" placeholder="Área de práctica, enfoque...">${escapeHtml(l.bio)}</textarea>
@@ -386,13 +448,23 @@
             <input type="text" data-field="sitioWeb" value="${escapeHtml(l.sitioWeb)}" placeholder="www.midespacho.com">
           </div>
           <div class="field">
-            <label>Redes sociales (opcional)</label>
-            <input type="text" data-field="redesSociales" value="${escapeHtml(l.redesSociales)}" placeholder="instagram.com/midespacho">
+            <label>Facebook (opcional)</label>
+            <input type="text" data-field="facebook" value="${escapeHtml(l.facebook)}" placeholder="usuario o link">
           </div>
-          <div class="field full">
-            <label>Horario de atención (opcional)</label>
-            <input type="text" data-field="horario" value="${escapeHtml(l.horario)}" placeholder="Lun-Vie 9am-6pm">
+          <div class="field">
+            <label>Instagram (opcional)</label>
+            <input type="text" data-field="instagram" value="${escapeHtml(l.instagram)}" placeholder="usuario o link">
           </div>
+          <div class="field">
+            <label>LinkedIn (opcional)</label>
+            <input type="text" data-field="linkedin" value="${escapeHtml(l.linkedin)}" placeholder="usuario o link">
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>Horario de atención (opcional)</label>
+          ${horarioBuilderHTML(l)}
+          <input type="hidden" data-field="horario" value="${escapeHtml(l.horario)}">
         </div>
 
         <div class="listing-actions">
@@ -420,7 +492,9 @@
       bio: card.querySelector('[data-field="bio"]').value.trim(),
       direccion: card.querySelector('[data-field="direccion"]').value.trim(),
       sitioWeb: card.querySelector('[data-field="sitioWeb"]').value.trim(),
-      redesSociales: card.querySelector('[data-field="redesSociales"]').value.trim(),
+      facebook: card.querySelector('[data-field="facebook"]').value.trim(),
+      instagram: card.querySelector('[data-field="instagram"]').value.trim(),
+      linkedin: card.querySelector('[data-field="linkedin"]').value.trim(),
       horario: card.querySelector('[data-field="horario"]').value.trim()
     };
   }
@@ -431,11 +505,166 @@
     el.className = 'save-msg show ' + kind;
   }
 
+  // Campos marcados con data-required="1" no pueden guardarse vacíos —
+  // se marcan en rojo al instante y bloquean el botón "Guardar cambios".
+  function validateRequired(card){
+    let ok = true;
+    card.querySelectorAll('[data-required="1"]').forEach(el => {
+      const empty = !el.value.trim();
+      el.classList.toggle('field-error', empty);
+      if(empty) ok = false;
+    });
+    const note = card.querySelector('[data-role="reqNote"]');
+    if(note) note.classList.toggle('show', !ok);
+    return ok;
+  }
+
+  function wireRequiredFields(card){
+    card.querySelectorAll('[data-required="1"]').forEach(el => {
+      el.addEventListener('input', () => {
+        if(el.value.trim()) el.classList.remove('field-error');
+      });
+      el.addEventListener('blur', () => {
+        el.classList.toggle('field-error', !el.value.trim());
+      });
+    });
+  }
+
+  function composeHorario(card){
+    const hidden = card.querySelector('[data-field="horario"]');
+    const customInput = card.querySelector('[data-role="horarioCustom"]');
+    const isCustomMode = customInput.style.display !== 'none';
+    const preview = card.querySelector('[data-role="horarioPreview"]');
+    let value;
+    if(isCustomMode){
+      value = customInput.value.trim();
+    } else {
+      const diasSel = card.querySelector('[data-role="horarioDias"]').value;
+      const diasLabel = {'Lun-Vie': 'Lun-Vie', 'Lun-Sáb': 'Lun-Sáb', 'Lun-Dom': 'Todos los días'}[diasSel] || diasSel;
+      const is24 = card.querySelector('[data-role="horario24"]').checked;
+      if(is24){
+        value = `${diasLabel}, abierto las 24 horas`;
+      } else {
+        const desde = card.querySelector('[data-role="horarioDesde"]').value;
+        const hasta = card.querySelector('[data-role="horarioHasta"]').value;
+        value = desde && hasta ? `${diasLabel} ${formatTime12(desde)}-${formatTime12(hasta)}` : diasLabel;
+      }
+    }
+    hidden.value = value;
+    preview.textContent = value ? `Vista previa: "${value}"` : '';
+  }
+
+  function wireHorarioBuilder(card){
+    const builder = card.querySelector('[data-role="horarioBuilder"]');
+    const row24 = card.querySelector('[data-role="horario24Row"]');
+    const customInput = card.querySelector('[data-role="horarioCustom"]');
+    const toggleBtn = card.querySelector('[data-action="toggleHorarioMode"]');
+    const desde = card.querySelector('[data-role="horarioDesde"]');
+    const hasta = card.querySelector('[data-role="horarioHasta"]');
+    const dias = card.querySelector('[data-role="horarioDias"]');
+    const check24 = card.querySelector('[data-role="horario24"]');
+
+    function setMode(custom){
+      builder.style.display = custom ? 'none' : '';
+      row24.style.display = custom ? 'none' : '';
+      customInput.style.display = custom ? '' : 'none';
+      toggleBtn.textContent = custom ? '← Usar el modo guiado (días y horas)' : 'Prefiero escribirlo yo mismo →';
+      composeHorario(card);
+    }
+
+    toggleBtn.addEventListener('click', () => setMode(customInput.style.display === 'none'));
+    [dias, desde, hasta, check24].forEach(el => el.addEventListener('input', () => composeHorario(card)));
+    check24.addEventListener('change', () => {
+      desde.disabled = check24.checked;
+      hasta.disabled = check24.checked;
+      composeHorario(card);
+    });
+    customInput.addEventListener('input', () => composeHorario(card));
+
+    composeHorario(card);
+  }
+
+  function wireListingPhoto(card, l){
+    const input = card.querySelector('[data-role="listingPhotoInput"]');
+    const msgEl = card.querySelector('[data-role="listingPhotoMsg"]');
+    function showListingPhotoMsg(text, kind){
+      msgEl.textContent = text;
+      msgEl.className = 'photo-msg show ' + (kind || '');
+    }
+    if(input){
+      input.addEventListener('change', async () => {
+        const file = input.files[0];
+        if(!file) return;
+        if(!file.type.startsWith('image/')){
+          showListingPhotoMsg('Selecciona un archivo de imagen (JPG, PNG...).', 'err');
+          return;
+        }
+        if(file.size > 3 * 1024 * 1024){
+          showListingPhotoMsg('La imagen no puede pesar más de 3MB.', 'err');
+          return;
+        }
+        if(!storage){
+          showListingPhotoMsg('Firebase Storage no está activado en este proyecto todavía.', 'err');
+          return;
+        }
+        showListingPhotoMsg('Subiendo foto…', '');
+        try{
+          const user = auth.currentUser;
+          const ref = storage.ref().child(`logos/${user.uid}/${l.id}`);
+          await ref.put(file);
+          const url = await ref.getDownloadURL();
+          await window.IdoneoListings.updateMyListing(l.id, {fotoUrl: url});
+          l.fotoUrl = url;
+          refreshOneCard(l);
+        } catch(err){
+          console.error(err);
+          showListingPhotoMsg('No se pudo subir la foto. Intenta de nuevo.', 'err');
+        }
+      });
+    }
+    const removeBtn = card.querySelector('[data-action="removeListingPhoto"]');
+    if(removeBtn){
+      removeBtn.addEventListener('click', async () => {
+        if(!confirm('¿Quitar la foto de este despacho?')) return;
+        try{
+          const user = auth.currentUser;
+          await window.IdoneoListings.updateMyListing(l.id, {fotoUrl: ''});
+          if(storage){
+            try{ await storage.ref().child(`logos/${user.uid}/${l.id}`).delete(); } catch(e){ /* puede no existir */ }
+          }
+          l.fotoUrl = '';
+          refreshOneCard(l);
+        } catch(err){
+          console.error(err);
+          alert('No se pudo quitar la foto. Intenta de nuevo.');
+        }
+      });
+    }
+  }
+
+  function refreshOneCard(l){
+    const old = content.querySelector(`.listing-card[data-id="${l.id}"]`);
+    if(!old) return;
+    const wrap = document.createElement('div');
+    wrap.innerHTML = listingCardHTML(l).trim();
+    const fresh = wrap.firstElementChild;
+    old.replaceWith(fresh);
+    wireListingCard(l);
+  }
+
   function wireListingCard(l){
     const card = content.querySelector(`.listing-card[data-id="${l.id}"]`);
     if(!card) return;
 
+    wireRequiredFields(card);
+    wireHorarioBuilder(card);
+    wireListingPhoto(card, l);
+
     card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
+      if(!validateRequired(card)){
+        showMsg(card, 'Completa los campos obligatorios (*) antes de guardar.', 'err');
+        return;
+      }
       const btn = e.currentTarget;
       btn.disabled = true;
       const original = btn.textContent;
