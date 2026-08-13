@@ -72,6 +72,7 @@
   .status-pill.approved{background:#dcecd6; color:#2e4a2a; border:1px solid #8fc17f;}
   .status-pill.verified{background:#dbe6f5; color:#22406e; border:1px solid #7fa6d9;}
   .status-pill.despacho{background:rgba(61,110,120,0.14); color:var(--despacho); border:1px solid var(--despacho-light);}
+  .status-pill.empresa{background:rgba(185,138,46,0.16); color:#8a6a1f; border:1px solid var(--brass-light);}
   .listing-meta{font-size:0.84rem; color:#6b6250; margin-bottom:20px;}
   .view-profile-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--brass); text-decoration:underline; white-space:nowrap;}
 
@@ -463,6 +464,23 @@
             <label>Año de fundación</label>
             <input type="number" min="1900" max="2026" data-field="anioFundacion" value="${escapeHtml(l.anioFundacion)}" placeholder="Ej. 2011">
           </div>
+          <div class="field full">
+            <label>Verificación del despacho</label>
+            <div>${l.verificado ? '<span class="status-pill verified">Responsable con cédula verificada</span>' : '<span class="field-hint" style="margin:0;">Pendiente de verificar la cédula del responsable.</span>'} ${l.verificadoEmpresa ? '<span class="status-pill empresa">Persona moral verificada</span>' : ''}</div>
+          </div>
+          <div class="field">
+            <label>Nombre del responsable legal<span class="req">*</span></label>
+            <input type="text" data-field="responsableNombre" data-required-despacho="1" value="${escapeHtml(l.responsableNombre)}" placeholder="Lic. Ricardo Torres">
+          </div>
+          <div class="field">
+            <label>Cédula profesional del responsable<span class="req">*</span></label>
+            <input type="text" data-field="responsableCedula" data-required-despacho="1" value="${escapeHtml(l.responsableCedula)}" placeholder="Ej. 5678901">
+          </div>
+          <div class="field full">
+            <label>RFC de persona moral (opcional)</label>
+            <input type="text" data-field="rfcPersonaMoral" value="${escapeHtml(l.rfcPersonaMoral)}" placeholder="Ej. TAS110315AB1">
+            <p class="field-hint">Agrégalo para poder obtener el sello "Persona moral verificada" tras confirmar tu constancia de situación fiscal.</p>
+          </div>
         </div>
 
         <div class="field full" style="margin-top:14px;">
@@ -554,7 +572,10 @@
       horario: card.querySelector('[data-field="horario"]').value.trim(),
       tipo: card.querySelector('[data-field="tipo"]').value,
       numAbogados: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="numAbogados"]').value.trim() : '',
-      anioFundacion: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="anioFundacion"]').value.trim() : ''
+      anioFundacion: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="anioFundacion"]').value.trim() : '',
+      responsableNombre: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="responsableNombre"]').value.trim() : '',
+      responsableCedula: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="responsableCedula"]').value.trim() : '',
+      rfcPersonaMoral: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="rfcPersonaMoral"]').value.trim() : ''
     };
   }
 
@@ -600,13 +621,19 @@
       espHint.textContent = 'Selecciona de 1 a 3 especialidades.';
       espHint.classList.remove('err');
     }
+    const isDespacho = card.querySelector('[data-field="tipo"]').value === 'despacho';
+    card.querySelectorAll('[data-required-despacho="1"]').forEach(el => {
+      const empty = isDespacho && !el.value.trim();
+      el.classList.toggle('field-error', empty);
+      if(empty) ok = false;
+    });
     const note = card.querySelector('[data-role="reqNote"]');
     if(note) note.classList.toggle('show', !ok);
     return ok;
   }
 
   function wireRequiredFields(card){
-    card.querySelectorAll('[data-required="1"]').forEach(el => {
+    card.querySelectorAll('[data-required="1"], [data-required-despacho="1"]').forEach(el => {
       el.addEventListener('input', () => {
         if(el.value.trim()) el.classList.remove('field-error');
       });

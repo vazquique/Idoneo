@@ -168,6 +168,7 @@ service cloud.firestore {
                       && request.resource.data.ownerUid == resource.data.ownerUid
                       && request.resource.data.status == resource.data.status
                       && request.resource.data.verificado == resource.data.verificado
+                      && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
                       && request.resource.data.rating == resource.data.rating
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.nombre == resource.data.nombre
@@ -220,13 +221,23 @@ Qué hacen estas reglas:
   pendiente, sin verificar y sin rating.
 - El **dueño** de un registro (`ownerUid == tu UID`) puede editarlo desde
   "Mi cuenta" — pero las reglas le bloquean cambiar `status`, `verificado`,
-  `rating`, `reviews`, `nombre` u `ownerUid`, aunque lo intente manipulando
-  la petición directamente (no solo escondiendo esos campos en el HTML).
-  Esos campos siguen siendo exclusivos de un admin. El dueño también puede
-  eliminar su propio registro.
+  `verificadoEmpresa`, `rating`, `reviews`, `nombre` u `ownerUid`, aunque lo
+  intente manipulando la petición directamente (no solo escondiendo esos
+  campos en el HTML). Esos campos siguen siendo exclusivos de un admin. El
+  dueño también puede eliminar su propio registro.
 - Solo un admin puede **aprobar** un registro, cambiar su estatus o su
   verificación, y solo un admin puede ocultar/restaurar perfiles de
   ejemplo (`demos_ocultos`).
+- **Verificación de despachos**: como un despacho no tiene cédula propia,
+  el registro le pide el nombre y la cédula profesional de su
+  **responsable legal** — el campo `verificado` para un despacho significa
+  "la cédula de su responsable ya se confirmó", no que el despacho entero
+  esté certificado. Si además proporciona un RFC de persona moral, puede
+  obtener el sello adicional "Persona moral verificada"
+  (`verificadoEmpresa`) una vez que el admin confirme su constancia de
+  situación fiscal por WhatsApp — es un campo aparte de `verificado`,
+  también exclusivo de un admin, para que ambas verificaciones se puedan
+  dar de forma independiente.
 - **Reseñas** (`resenas`): cualquiera puede leerlas. Para crear o editar
   una, hay que tener sesión iniciada, y el id del documento debe ser
   exactamente `<idDelAbogado>_<tuUID>` — eso es lo que impide tener dos

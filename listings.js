@@ -19,7 +19,7 @@
       {autor:"Marcela H.", texto:"Me ayudó con mi divorcio de manera rápida y clara, siempre explicando cada paso.", estrellas:5},
       {autor:"Iván T.", texto:"Buena comunicación, aunque el proceso tardó un poco más de lo esperado.", estrellas:4}
     ]},
-    {id:2, nombre:"Torres & Asociados", tipo:"despacho", numAbogados:"6", anioFundacion:"2011", especialidades:["Mercantil","Fiscal"], ciudad:"Guadalajara, Jalisco", rating:4.6, reviews:18, precio:"$$$", verificado:true, telefono:"523322345678", experiencia:"14 años como despacho", bio:"Despacho enfocado en contratos mercantiles, cobranza judicial y constitución de sociedades para pymes.", reseñas:[
+    {id:2, nombre:"Torres & Asociados", tipo:"despacho", numAbogados:"6", anioFundacion:"2011", responsableNombre:"Lic. Ricardo Torres", responsableCedula:"5678901", rfcPersonaMoral:"TAS110315AB1", verificadoEmpresa:true, especialidades:["Mercantil","Fiscal"], ciudad:"Guadalajara, Jalisco", rating:4.6, reviews:18, precio:"$$$", verificado:true, telefono:"523322345678", experiencia:"14 años como despacho", bio:"Despacho enfocado en contratos mercantiles, cobranza judicial y constitución de sociedades para pymes.", reseñas:[
       {autor:"Roberto C.", texto:"Nos ayudaron a formalizar contratos con proveedores, muy profesionales.", estrellas:5},
       {autor:"Diana L.", texto:"Cumplieron los tiempos que prometieron.", estrellas:4}
     ]},
@@ -33,7 +33,7 @@
     {id:5, nombre:"Lic. Marco Villaseñor", tipo:"individual", especialidades:["Migratorio"], ciudad:"Zapopan, Jalisco", rating:5.0, reviews:12, precio:"$$", verificado:true, telefono:"523312349999", experiencia:"7 años", bio:"Trámites de residencia, naturalización y regularización migratoria.", reseñas:[
       {autor:"Laura P.", texto:"Todo el trámite de residencia salió sin contratiempos.", estrellas:5}
     ]},
-    {id:6, nombre:"Bufete Herrera Legal", tipo:"despacho", numAbogados:"12", anioFundacion:"2005", especialidades:["Corporativo","Mercantil"], ciudad:"Ciudad de México", rating:4.7, reviews:41, precio:"$$$", verificado:true, telefono:"525587654321", experiencia:"20 años como despacho", bio:"Asesoría corporativa integral para empresas medianas y grandes: fusiones, cumplimiento y gobierno corporativo.", reseñas:[
+    {id:6, nombre:"Bufete Herrera Legal", tipo:"despacho", numAbogados:"12", anioFundacion:"2005", responsableNombre:"Lic. Fernanda Herrera", responsableCedula:"3456789", rfcPersonaMoral:"BHL050822CD2", verificadoEmpresa:true, especialidades:["Corporativo","Mercantil"], ciudad:"Ciudad de México", rating:4.7, reviews:41, precio:"$$$", verificado:true, telefono:"525587654321", experiencia:"20 años como despacho", bio:"Asesoría corporativa integral para empresas medianas y grandes: fusiones, cumplimiento y gobierno corporativo.", reseñas:[
       {autor:"Empresa Vertex", texto:"Manejaron nuestra fusión con mucha solidez legal.", estrellas:5}
     ]},
     {id:7, nombre:"Lic. Ana Belén Ruiz", tipo:"individual", especialidades:["Civil","Familiar"], ciudad:"Guadalajara, Jalisco", rating:4.4, reviews:15, precio:"$", verificado:true, telefono:"523398765432", experiencia:"6 años", bio:"Litigio civil: arrendamientos, incumplimiento de contratos y responsabilidad civil.", reseñas:[
@@ -119,6 +119,9 @@
       tipo: data.tipo === 'despacho' ? 'despacho' : 'individual',
       numAbogados: data.tipo === 'despacho' ? (data.numAbogados || '').toString().trim() : '',
       anioFundacion: data.tipo === 'despacho' ? (data.anioFundacion || '').toString().trim() : '',
+      responsableNombre: data.tipo === 'despacho' ? (data.responsableNombre || '').trim() : '',
+      responsableCedula: data.tipo === 'despacho' ? (data.responsableCedula || '').trim() : '',
+      rfcPersonaMoral: data.tipo === 'despacho' ? (data.rfcPersonaMoral || '').trim() : '',
       especialidades: Array.isArray(data.especialidades) ? data.especialidades.slice(0, 3) : [],
       ciudad: (data.ciudad || '').trim(),
       telefono: (data.telefono || '').replace(/\D/g, ''),
@@ -126,6 +129,7 @@
       rating: 0,
       reviews: 0,
       verificado: false,
+      verificadoEmpresa: false,
       experiencia: '',
       bio: '',
       direccion: '',
@@ -148,7 +152,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'especialidades', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
+  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};

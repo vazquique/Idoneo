@@ -312,7 +312,10 @@
           <div>
             <div class="profile-name">${escapeHtml(ab.nombre)}</div>
             <div class="profile-city">${escapeHtml(ab.ciudad)}</div>
-            ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Cédula verificada</div>` : ''}
+            <div style="display:flex; flex-wrap:wrap; gap:4px 14px;">
+              ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>${ab.tipo === 'despacho' ? 'Responsable con cédula verificada' : 'Cédula verificada'}</div>` : ''}
+              ${ab.tipo === 'despacho' && ab.verificadoEmpresa ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Persona moral verificada</div>` : ''}
+            </div>
           </div>
         </div>
         <div class="profile-meta-row">
@@ -326,6 +329,7 @@
         <div class="profile-extra">
           ${ab.tipo === 'despacho' && ab.numAbogados ? `<div class="extra-row despacho-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>${escapeHtml(ab.numAbogados)} abogados en el despacho</div>` : ''}
           ${ab.tipo === 'despacho' && ab.anioFundacion ? `<div class="extra-row despacho-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Fundado en ${escapeHtml(ab.anioFundacion)}</div>` : ''}
+          ${ab.tipo === 'despacho' && ab.responsableNombre ? `<div class="extra-row despacho-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsable: ${escapeHtml(ab.responsableNombre)}${ab.responsableCedula ? ' · Cédula ' + escapeHtml(ab.responsableCedula) : ''}</div>` : ''}
           ${ab.direccion ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escapeHtml(ab.direccion)}</div>` : ''}
           ${ab.horario ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${escapeHtml(ab.horario)}</div>` : ''}
           ${ab.sitioWeb ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg><a href="${escapeHtml(normalizeUrl(ab.sitioWeb))}" target="_blank" rel="noopener">${escapeHtml(ab.sitioWeb)}</a></div>` : ''}
