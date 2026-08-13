@@ -323,6 +323,9 @@
     const full = Math.round(rating);
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
   }
+
+  let reviewStats = {};
+
   function renderCards(list){
     const grid = document.getElementById('cardGrid');
     const noResults = document.getElementById('noResults');
@@ -336,6 +339,7 @@
     noResults.classList.remove('show');
     count.textContent = list.length + (list.length === 1 ? ' resultado' : ' resultados');
     list.forEach(ab => {
+      const stats = reviewStats[ab.id] || {average: 0, total: 0};
       const card = document.createElement('div');
       card.className = 'lawyer-card';
       card.innerHTML = `
@@ -349,7 +353,7 @@
         </div>
         <span class="specialty-chip">${ab.especialidad}</span>
         <div class="lawyer-meta">
-          <span><span class="stars">${starString(ab.rating)}</span><span class="rating-count">(${ab.reviews})</span></span>
+          <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total})</span></span>
           <span class="price-tag">${ab.precio}</span>
         </div>
         <a class="contact-btn" href="perfil.html?id=${ab.id}">Ver perfil</a>
@@ -392,6 +396,12 @@
       abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
     }
     renderCards(abogados);
+    try{
+      reviewStats = await window.IdoneoListings.getStatsForListings(abogados);
+      renderCards(abogados);
+    } catch(err){
+      console.error('No se pudieron cargar los promedios de reseñas.', err);
+    }
   }
   init();
 

@@ -178,6 +178,35 @@
     return seed.concat(live);
   }
 
+  // Trae TODAS las reseñas en una sola consulta y las agrupa por abogado —
+  // mucho más eficiente que pedir las reseñas de cada abogado por separado
+  // cuando se van a mostrar varias tarjetas a la vez (buscador principal).
+  async function getAllReviewsGrouped(){
+    const snap = await requireDb().collection(REVIEWS_COLLECTION).get();
+    const byId = {};
+    snap.docs.forEach(doc => {
+      const data = doc.data();
+      const key = String(data.abogadoId);
+      if(!byId[key]) byId[key] = [];
+      byId[key].push(Object.assign({id: doc.id, seed: false}, data));
+    });
+    return byId;
+  }
+
+  // Devuelve un mapa {abogadoId: {total, average, histogram}} para una
+  // lista de abogados, combinando reseñas semilla (perfiles de ejemplo)
+  // con las reseñas reales de Firestore.
+  async function getStatsForListings(abogados){
+    const grouped = await getAllReviewsGrouped();
+    const statsMap = {};
+    abogados.forEach(ab => {
+      const seed = getSeedReviews(ab.id);
+      const live = grouped[String(ab.id)] || [];
+      statsMap[ab.id] = computeReviewStats(seed.concat(live));
+    });
+    return statsMap;
+  }
+
   function computeReviewStats(reviews){
     const histogram = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
     let sum = 0;
@@ -233,7 +262,8 @@
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
-    getReviews, computeReviewStats, getMyReview, submitReview, deleteMyReview,
+    getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
+    getMyReview, submitReview, deleteMyReview,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };
 })(window);
