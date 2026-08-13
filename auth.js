@@ -1,64 +1,73 @@
 /*
-  Idóneo — inicio de sesión / creación de cuenta.
-  Se incluye en cada página con <script src="auth.js" defer></script>
+  Idóneo — inicio de sesión / creación de cuenta para visitantes del sitio.
+  Se incluye en cada página con:
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js" defer></script>
   y requiere un elemento con id="navAuth" en el header de esa página
   (fuera de .nav-links, para que siga visible aunque el menú colapse en móvil).
 
-  Cuentas por correo/contraseña: se guardan en localStorage del navegador
-  (hash SHA-256 de la contraseña, no texto plano). Esto es un prototipo
-  sin backend — cualquiera con las herramientas de desarrollador puede
-  ver la lista de cuentas. No usar como autenticación real en producción.
+  Usa Firebase Authentication real (mismo proyecto que admin.html usa para
+  el panel) — no localStorage. Esto es lo que permite que "hay que tener
+  cuenta para reseñar" sea una regla de verdad, aplicada por las reglas de
+  seguridad de Firestore (request.auth != null), no solo una pantalla que
+  cualquiera podría saltarse desde la consola del navegador.
 
-  Google: usa Google Identity Services (funciona sin backend). Para
-  activarlo necesitas tu propio Client ID:
-    1. https://console.cloud.google.com/apis/credentials
-    2. Crear credencial → ID de cliente de OAuth → Aplicación web
-    3. En "Orígenes de JavaScript autorizados" agrega el dominio donde
-       sirvas el sitio (o http://localhost:PUERTO si pruebas local con
-       un servidor — no funciona abriendo el archivo directo con file://)
-    4. Copia el Client ID (termina en .apps.googleusercontent.com) y
-       pégalo abajo en GOOGLE_CLIENT_ID.
-  Mientras el Client ID siga siendo el de ejemplo, el botón de Google
-  se reemplaza por una nota discreta (el detalle técnico solo sale en
-  la consola, no se le muestra a quien visita el sitio).
+  Google: usa el proveedor de Google de Firebase Authentication. Actívalo en
+  Firebase Console → Authentication → Sign-in method → Google. No necesita
+  ningún Client ID pegado a mano aquí — Firebase lo maneja solo.
+
+  Cuentas de reseñador vs. cuenta de administrador: son el mismo sistema de
+  autenticación (Firebase Auth), pero NO dan los mismos permisos — quién
+  puede editar el directorio de abogados lo deciden las reglas de Firestore
+  (colección "admins"), no el simple hecho de haber iniciado sesión aquí.
 */
 (function(){
-  const GOOGLE_CLIENT_ID = 'TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-
-  const USERS_KEY = 'idoneo_users';
-  const SESSION_KEY = 'idoneo_session';
-
-  function getUsers(){
-    try{ return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
-    catch(e){ return []; }
-  }
-  function saveUsers(users){ localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
-  function getSession(){
-    try{ return JSON.parse(localStorage.getItem(SESSION_KEY)); }
-    catch(e){ return null; }
-  }
-  function setSession(session){ localStorage.setItem(SESSION_KEY, JSON.stringify(session)); }
-  function clearSession(){ localStorage.removeItem(SESSION_KEY); }
-
-  async function hashPassword(password){
-    if(window.crypto && window.crypto.subtle){
-      try{
-        const enc = new TextEncoder().encode(password);
-        const buf = await window.crypto.subtle.digest('SHA-256', enc);
-        return 'sha256:' + Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-      } catch(e){ /* SubtleCrypto bloqueado (contexto no seguro) — usa el respaldo abajo */ }
+  function requireAuth(){
+    if(typeof auth === 'undefined'){
+      throw new Error('Firebase Auth no está inicializado. Revisa que firebase-config.js esté cargado antes que auth.js.');
     }
-    let hash = 0;
-    for(let i = 0; i < password.length; i++){ hash = ((hash << 5) - hash + password.charCodeAt(i)) | 0; }
-    return 'fnv:' + (hash >>> 0).toString(16);
+    return auth;
   }
 
-  function decodeJwt(token){
-    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    const json = decodeURIComponent(atob(base64).split('').map(c =>
-      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-    ).join(''));
-    return JSON.parse(json);
+  function getCurrentUser(){
+    return typeof auth === 'undefined' ? null : auth.currentUser;
+  }
+  function onAuthChanged(cb){
+    return requireAuth().onAuthStateChanged(cb);
+  }
+  async function signUp(nombre, email, password){
+    const cred = await requireAuth().createUserWithEmailAndPassword(email, password);
+    await cred.user.updateProfile({displayName: nombre});
+    return cred.user;
+  }
+  function logIn(email, password){
+    return requireAuth().signInWithEmailAndPassword(email, password);
+  }
+  function logOut(){
+    return requireAuth().signOut();
+  }
+  function logInWithGoogle(){
+    const provider = new firebase.auth.GoogleAuthProvider();
+    return requireAuth().signInWithPopup(provider);
+  }
+
+  function friendlyAuthError(err){
+    const map = {
+      'auth/email-already-in-use': 'Ya existe una cuenta con ese correo.',
+      'auth/invalid-email': 'Ese correo no es válido.',
+      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+      'auth/wrong-password': 'Contraseña incorrecta.',
+      'auth/user-not-found': 'No hay cuenta con ese correo.',
+      'auth/invalid-login-credentials': 'Correo o contraseña incorrectos.',
+      'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+      'auth/too-many-requests': 'Demasiados intentos. Espera un momento e inténtalo de nuevo.',
+      'auth/network-request-failed': 'Revisa tu conexión a internet.',
+      'auth/popup-blocked': 'Tu navegador bloqueó la ventana de Google. Permite ventanas emergentes e intenta de nuevo.'
+    };
+    return map[err.code] || 'Algo falló. Intenta de nuevo.';
   }
 
   function initials(name){
@@ -78,13 +87,14 @@
     .auth-modal-title{font-family:'Newsreader', serif; font-size:1.25rem; font-weight:600; margin-bottom:18px;}
     .auth-close{position:absolute; top:14px; right:14px; width:30px; height:30px; background:none; border:none; border-radius:50%; font-size:1.3rem; line-height:1; color:var(--ink-2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s ease;}
     .auth-close:hover{background:rgba(24,38,68,0.08);}
-    .auth-close:focus-visible, .auth-trigger:focus-visible, .auth-tab:focus-visible, .nav-account-menu button:focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
+    .auth-close:focus-visible, .auth-trigger:focus-visible, .auth-tab:focus-visible, .nav-account-menu button:focus-visible, .google-auth-btn:focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
     .auth-tabs{display:flex; gap:4px; background:#e4dbc4; border-radius:4px; padding:3px; margin-bottom:20px;}
     .auth-tab{flex:1; background:none; border:none; padding:9px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); cursor:pointer; transition:background 0.15s ease, color 0.15s ease;}
     .auth-tab:hover{color:var(--ink);}
     .auth-tab.active{background:var(--parchment); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,0.15);}
-    .google-btn-container{display:flex; justify-content:center; min-height:40px;}
-    .google-btn-note{width:100%; text-align:center; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:#8a8069; border:1px dashed #c9bd9c; border-radius:4px; padding:12px; line-height:1.4;}
+    .google-auth-btn{width:100%; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; color:#3c4043; border:1px solid #c9bd9c; border-radius:3px; padding:11px 12px; font-family:'IBM Plex Sans', sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:box-shadow 0.15s ease;}
+    .google-auth-btn:hover{box-shadow:0 1px 6px rgba(0,0,0,0.2);}
+    .google-auth-btn:disabled{opacity:0.6; cursor:default;}
     .auth-divider{display:flex; align-items:center; gap:10px; margin:18px 0; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a8069;}
     .auth-divider::before, .auth-divider::after{content:''; flex:1; height:1px; background:#ddd2b0;}
     .auth-form{display:flex; flex-direction:column; gap:13px;}
@@ -130,7 +140,10 @@
           <button class="auth-tab active" data-tab="login" type="button">Iniciar sesión</button>
           <button class="auth-tab" data-tab="signup" type="button">Crear cuenta</button>
         </div>
-        <div id="googleBtnContainer" class="google-btn-container"></div>
+        <button class="google-auth-btn" id="googleAuthBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.5C29.5 35.9 26.9 37 24 37c-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.6 40.6 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.9l6.5 5.5C40.7 36.5 43 30.7 43 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
+          Continuar con Google
+        </button>
         <div class="auth-divider"><span>o con tu correo</span></div>
         <form id="loginForm" class="auth-form" novalidate>
           <div class="field"><label for="loginEmail">Correo</label><input type="email" id="loginEmail" autocomplete="username" required></div>
@@ -163,71 +176,12 @@
     document.body.appendChild(wrap.firstElementChild);
   }
 
-  function loadGSIScript(cb){
-    if(window.google && window.google.accounts && window.google.accounts.id){ cb(); return; }
-    const existing = document.getElementById('gsiScript');
-    if(existing){ existing.addEventListener('load', () => cb()); existing.addEventListener('error', () => cb(new Error('load-failed'))); return; }
-    const s = document.createElement('script');
-    s.id = 'gsiScript';
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.async = true; s.defer = true;
-    s.onload = () => cb();
-    s.onerror = () => cb(new Error('load-failed'));
-    document.head.appendChild(s);
-  }
-
-  async function handleGoogleCredential(response){
-    try{
-      const payload = decodeJwt(response.credential);
-      const email = (payload.email || '').toLowerCase();
-      if(!email) throw new Error('sin-correo');
-      const nombre = payload.name || email;
-      const users = getUsers();
-      let user = users.find(u => u.email.toLowerCase() === email);
-      if(!user){
-        user = {nombre, email, method:'google', avatar: payload.picture || ''};
-        users.push(user);
-        saveUsers(users);
-      }
-      setSession({nombre: user.nombre, email: user.email, avatar: user.avatar || payload.picture || '', method:'google'});
-      closeAuthModal();
-      updateAuthUI();
-    } catch(err){
-      const container = document.getElementById('googleBtnContainer');
-      if(container) container.innerHTML = '<div class="google-btn-note">No se pudo completar el inicio con Google. Intenta con correo y contraseña.</div>';
-    }
-  }
-
-  function renderGoogleButton(){
-    const container = document.getElementById('googleBtnContainer');
-    if(!container) return;
-    if(GOOGLE_CLIENT_ID.indexOf('TU_GOOGLE_CLIENT_ID') === 0){
-      console.info('[Idóneo] Falta configurar GOOGLE_CLIENT_ID en auth.js para activar "Continuar con Google".');
-      container.innerHTML = '<div class="google-btn-note">Muy pronto: acceso directo con tu cuenta de Google.</div>';
-      return;
-    }
-    container.innerHTML = '';
-    loadGSIScript((err) => {
-      if(err){
-        container.innerHTML = '<div class="google-btn-note">No se pudo cargar el inicio con Google. Revisa tu conexión.</div>';
-        return;
-      }
-      try{
-        window.google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential });
-        window.google.accounts.id.renderButton(container, { theme:'outline', size:'large', width:280, text:'continue_with', locale:'es' });
-      } catch(e){
-        container.innerHTML = '<div class="google-btn-note">No se pudo inicializar Google. Verifica el Client ID y el dominio autorizado.</div>';
-      }
-    });
-  }
-
   function openAuthModal(tab){
     injectOnce();
     const overlay = document.getElementById('authOverlay');
     if(!overlay) return;
     overlay.classList.add('show');
     switchTab(tab || 'login');
-    renderGoogleButton();
     const firstInput = overlay.querySelector('form:not([style*="display: none"]) input');
     if(firstInput) firstInput.focus();
   }
@@ -249,8 +203,7 @@
     el.classList.add('show');
   }
 
-  async function withSubmitLock(form, fn){
-    const btn = form.querySelector('.submit-btn');
+  async function withSubmitLock(btn, fn){
     const original = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Un momento…';
@@ -275,11 +228,25 @@
       a.addEventListener('click', () => switchTab(a.dataset.switch));
     });
 
+    document.getElementById('googleAuthBtn').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      await withSubmitLock(btn, async () => {
+        try{
+          await logInWithGoogle();
+          closeAuthModal();
+          updateAuthUI();
+        } catch(err){
+          if(err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') return;
+          const errEl = document.getElementById('loginError');
+          showError(errEl, friendlyAuthError(err));
+        }
+      });
+    });
+
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
       const nombre = document.getElementById('signupNombre').value.trim();
-      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const email = document.getElementById('signupEmail').value.trim();
       const password = document.getElementById('signupPassword').value;
       const errEl = document.getElementById('signupError');
       errEl.classList.remove('show');
@@ -287,45 +254,35 @@
         showError(errEl, 'Completa nombre, correo y una contraseña de al menos 6 caracteres.');
         return;
       }
-      await withSubmitLock(form, async () => {
-        const users = getUsers();
-        if(users.some(u => u.email.toLowerCase() === email)){
-          showError(errEl, 'Ya existe una cuenta con ese correo.');
-          return;
+      const btn = e.target.querySelector('.submit-btn');
+      await withSubmitLock(btn, async () => {
+        try{
+          await signUp(nombre, email, password);
+          e.target.reset();
+          closeAuthModal();
+          updateAuthUI();
+        } catch(err){
+          showError(errEl, friendlyAuthError(err));
         }
-        const passwordHash = await hashPassword(password);
-        users.push({nombre, email, passwordHash, method:'local'});
-        saveUsers(users);
-        setSession({nombre, email, method:'local'});
-        form.reset();
-        closeAuthModal();
-        updateAuthUI();
       });
     });
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
       const errEl = document.getElementById('loginError');
       errEl.classList.remove('show');
-      await withSubmitLock(form, async () => {
-        const users = getUsers();
-        const user = users.find(u => u.email.toLowerCase() === email);
-        if(!user || user.method !== 'local'){
-          showError(errEl, user ? 'Esa cuenta inicia sesión con Google.' : 'No hay cuenta con ese correo.');
-          return;
+      const btn = e.target.querySelector('.submit-btn');
+      await withSubmitLock(btn, async () => {
+        try{
+          await logIn(email, password);
+          e.target.reset();
+          closeAuthModal();
+          updateAuthUI();
+        } catch(err){
+          showError(errEl, friendlyAuthError(err));
         }
-        const passwordHash = await hashPassword(password);
-        if(passwordHash !== user.passwordHash){
-          showError(errEl, 'Contraseña incorrecta.');
-          return;
-        }
-        setSession({nombre: user.nombre, email: user.email, method:'local'});
-        form.reset();
-        closeAuthModal();
-        updateAuthUI();
       });
     });
   }
@@ -341,11 +298,12 @@
     `;
   }
 
-  function loggedInHTML(session){
-    const safeName = escapeHtml(session.nombre);
-    const safeEmail = escapeHtml(session.email);
-    const firstName = escapeHtml((session.nombre || '').split(' ')[0] || session.email);
-    const avatarInner = session.avatar ? `<img src="${escapeHtml(session.avatar)}" alt="">` : escapeHtml(initials(session.nombre));
+  function loggedInHTML(user){
+    const nombre = user.displayName || user.email || 'Tu cuenta';
+    const safeName = escapeHtml(nombre);
+    const safeEmail = escapeHtml(user.email || '');
+    const firstName = escapeHtml(nombre.split(' ')[0]);
+    const avatarInner = user.photoURL ? `<img src="${escapeHtml(user.photoURL)}" alt="">` : escapeHtml(initials(nombre));
     return `
       <button class="auth-trigger" id="navAuthTrigger" type="button" aria-haspopup="menu">
         <span class="auth-avatar is-user">${avatarInner}</span>
@@ -361,15 +319,15 @@
   function updateAuthUI(){
     const slot = document.getElementById('navAuth');
     if(!slot) return;
-    const session = getSession();
-    slot.innerHTML = session ? loggedInHTML(session) : loggedOutHTML();
+    const user = getCurrentUser();
+    slot.innerHTML = user ? loggedInHTML(user) : loggedOutHTML();
   }
 
   function onDocumentClick(e){
     const trigger = e.target.closest('#navAuthTrigger');
     if(trigger){
       e.preventDefault();
-      if(getSession()){
+      if(getCurrentUser()){
         const menu = document.getElementById('navAccountMenu');
         if(menu) menu.classList.toggle('show');
       } else {
@@ -378,8 +336,7 @@
       return;
     }
     if(e.target.closest('#navLogoutBtn')){
-      clearSession();
-      updateAuthUI();
+      logOut();
       return;
     }
     const menu = document.getElementById('navAccountMenu');
@@ -414,13 +371,17 @@
   function init(){
     injectOnce();
     wireModal();
-    updateAuthUI();
     initMobileNav();
     document.addEventListener('click', onDocumentClick);
-    window.addEventListener('storage', (e) => {
-      if(e.key === SESSION_KEY) updateAuthUI();
-    });
+    if(typeof auth !== 'undefined'){
+      onAuthChanged(() => updateAuthUI());
+    } else {
+      console.error('[Idóneo] auth.js no pudo inicializarse: falta firebase-config.js con tu configuración real.');
+      updateAuthUI();
+    }
   }
+
+  window.IdoneoAuth = { getCurrentUser, onAuthChanged, openAuthModal, closeAuthModal, logOut };
 
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init);

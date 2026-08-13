@@ -52,9 +52,51 @@
   .reviews-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;}
   .reviews-head h2{font-family:'Newsreader', serif; font-size:1.2rem; font-weight:500;}
   .review-card{background:rgba(241,234,216,0.06); border:1px solid var(--line); border-radius:4px; padding:18px 20px; margin-bottom:12px;}
-  .review-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .review-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;}
   .review-author{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:rgba(241,234,216,0.85);}
+  .review-own-badge{font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--brass-light); border:1px solid var(--brass-light); border-radius:20px; padding:2px 8px; margin-left:8px;}
+  .review-date{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:rgba(241,234,216,0.45); margin-left:auto;}
   .review-text{font-size:0.92rem; color:rgba(241,234,216,0.72);}
+  .empty-note{color:rgba(241,234,216,0.55); font-size:0.88rem; padding:14px 0;}
+
+  .reviews-summary{display:flex; gap:32px; flex-wrap:wrap; background:rgba(241,234,216,0.06); border:1px solid var(--line); border-radius:6px; padding:24px; margin-bottom:20px;}
+  .reviews-summary-left{text-align:center; min-width:120px;}
+  .reviews-avg{font-family:'Newsreader', serif; font-size:2.6rem; font-weight:600; line-height:1;}
+  .reviews-summary-left .stars{font-size:1.1rem; margin-top:4px; display:block;}
+  .reviews-total{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:rgba(241,234,216,0.6); margin-top:6px;}
+  .reviews-histogram{flex:1; min-width:220px; display:flex; flex-direction:column; gap:6px; justify-content:center;}
+  .hist-row{display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; padding:5px 6px; border-radius:3px; cursor:pointer; color:inherit; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; transition:background 0.15s ease;}
+  .hist-row:hover{background:rgba(241,234,216,0.08);}
+  .hist-row.active{background:rgba(217,171,82,0.16);}
+  .hist-label{width:12px; text-align:right; color:rgba(241,234,216,0.7);}
+  .hist-bar{flex:1; height:8px; background:rgba(241,234,216,0.12); border-radius:4px; overflow:hidden;}
+  .hist-fill{display:block; height:100%; background:var(--brass-light); border-radius:4px;}
+  .hist-count{width:34px; text-align:right; color:rgba(241,234,216,0.55);}
+
+  .reviews-controls{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .review-search-wrap{position:relative; flex:1; min-width:200px;}
+  .review-search-wrap svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:rgba(241,234,216,0.5); pointer-events:none;}
+  .review-search-wrap input{width:100%; padding:10px 12px 10px 34px; border-radius:3px; border:1px solid var(--line-strong); background:rgba(241,234,216,0.06); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; font-size:0.88rem;}
+  .review-search-wrap input::placeholder{color:rgba(241,234,216,0.45);}
+  .review-sort{padding:10px 12px; border-radius:3px; border:1px solid var(--line-strong); background:var(--ink-2); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; font-size:0.85rem;}
+  .active-filter-chip{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; background:rgba(217,171,82,0.16); border:1px solid var(--brass-light); color:var(--brass-light); padding:6px 12px; border-radius:20px; margin-bottom:14px;}
+  .active-filter-chip button{background:none; border:none; color:inherit; cursor:pointer; font-size:0.9rem; line-height:1;}
+
+  .review-form-card{background:rgba(241,234,216,0.06); border:1px solid var(--line); border-radius:6px; padding:20px; margin-bottom:24px;}
+  .review-form-card h3{font-family:'Newsreader', serif; font-size:1.05rem; font-weight:600; margin-bottom:12px;}
+  .star-picker{display:flex; gap:4px; margin-bottom:14px;}
+  .star-picker button{background:none; border:none; padding:2px; cursor:pointer; color:rgba(241,234,216,0.3); font-size:1.6rem; line-height:1; transition:color 0.1s ease;}
+  .star-picker button.filled{color:var(--brass);}
+  .review-form-card textarea{width:100%; padding:11px 12px; border-radius:3px; border:1px solid var(--line-strong); background:rgba(241,234,216,0.06); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; font-size:0.9rem; resize:vertical; margin-bottom:12px;}
+  .review-form-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .review-submit-btn{background:var(--brass-light); color:var(--ink); border:none; border-radius:3px; padding:11px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  .review-submit-btn:disabled{opacity:0.6; cursor:default;}
+  .review-delete-btn{background:none; border:1px solid #c98a8a; color:#e0a0a0; border-radius:3px; padding:11px 16px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  .review-form-msg{font-size:0.8rem; margin-top:10px; display:none; color:#e0a0a0;}
+  .review-form-msg.show{display:block;}
+  .review-login-prompt{background:rgba(241,234,216,0.06); border:1px dashed var(--line-strong); border-radius:6px; padding:18px 20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .review-login-prompt p{font-size:0.88rem; color:rgba(241,234,216,0.75);}
+  .review-login-btn{background:var(--brass-light); color:var(--ink); border:none; border-radius:3px; padding:10px 18px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; white-space:nowrap;}
 
   .not-found{padding:80px 0; text-align:center; color:rgba(241,234,216,0.7);}
 
@@ -64,6 +106,7 @@
 
   @media (max-width: 600px){
     .profile-card{padding:24px;}
+    .reviews-summary{flex-direction:column; gap:18px;}
   }
   @media (max-width: 680px){
     .nav-toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; order:2;}
@@ -114,8 +157,10 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="listings.js"></script>
+<script src="auth.js"></script>
 <script>
   function initials(name){
     return name.replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
@@ -124,9 +169,34 @@
     const full = Math.round(rating);
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
   }
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+  function normalize(str){
+    return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+  function reviewTimeValue(r){
+    if(!r.createdAt) return 0;
+    if(typeof r.createdAt.toMillis === 'function') return r.createdAt.toMillis();
+    return new Date(r.createdAt).getTime() || 0;
+  }
+  function formatReviewDate(r){
+    if(!r.createdAt) return '';
+    const d = typeof r.createdAt.toDate === 'function' ? r.createdAt.toDate() : new Date(r.createdAt);
+    if(isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('es-MX', {year:'numeric', month:'short', day:'numeric'});
+  }
 
   const content = document.getElementById('profileContent');
   content.innerHTML = '<p class="not-found">Cargando perfil…</p>';
+
+  let currentAbogado = null;
+  let currentReviews = [];
+  let starFilter = null;
+  let sortMode = 'recent';
+  let searchTerm = '';
 
   async function init(){
     const params = new URLSearchParams(window.location.search);
@@ -139,55 +209,275 @@
       abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
     }
     const ab = abogados.find(a => String(a.id) === id);
-    renderProfile(ab);
+    if(!ab){
+      content.innerHTML = `<div class="not-found"><p>No encontramos ese perfil.</p></div>`;
+      return;
+    }
+    currentAbogado = ab;
+    try{
+      currentReviews = await window.IdoneoListings.getReviews(ab.id);
+    } catch(err){
+      console.error('No se pudieron cargar las reseñas.', err);
+      currentReviews = [];
+    }
+    renderProfile();
+    if(window.IdoneoAuth){
+      window.IdoneoAuth.onAuthChanged(() => renderReviewForm());
+    }
   }
 
-  function renderProfile(ab){
-  if(!ab){
-    content.innerHTML = `<div class="not-found"><p>No encontramos ese perfil.</p></div>`;
-  } else {
-    const reviewsHtml = ab.reseñas.map(r => `
-      <div class="review-card">
-        <div class="review-top">
-          <span class="review-author">${r.autor}</span>
-          <span class="stars">${starString(r.estrellas)}</span>
-        </div>
-        <div class="review-text">${r.texto}</div>
-      </div>
-    `).join('');
+  function renderProfile(){
+    const ab = currentAbogado;
+    const stats = window.IdoneoListings.computeReviewStats(currentReviews);
 
     content.innerHTML = `
       <div class="profile-card">
         <div class="profile-top">
           <div class="avatar-lg">${initials(ab.nombre)}</div>
           <div>
-            <div class="profile-name">${ab.nombre}</div>
-            <div class="profile-city">${ab.ciudad}</div>
+            <div class="profile-name">${escapeHtml(ab.nombre)}</div>
+            <div class="profile-city">${escapeHtml(ab.ciudad)}</div>
             ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Cédula verificada</div>` : ''}
           </div>
         </div>
         <div class="profile-meta-row">
-          <span class="specialty-chip">${ab.especialidad}</span>
-          <span><span class="stars">${starString(ab.rating)}</span><span class="rating-count">(${ab.reviews} reseñas)</span></span>
-          <span class="price-tag">${ab.precio}</span>
+          <span class="specialty-chip">${escapeHtml(ab.especialidad)}</span>
+          <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total} reseña${stats.total === 1 ? '' : 's'})</span></span>
+          <span class="price-tag">${escapeHtml(ab.precio)}</span>
         </div>
-        <div class="profile-bio">${ab.bio}</div>
-        <div class="profile-exp">Experiencia: ${ab.experiencia}</div>
-        <a class="contact-btn-lg" href="https://wa.me/${ab.telefono}" target="_blank" rel="noopener">
+        <div class="profile-bio">${escapeHtml(ab.bio)}</div>
+        <div class="profile-exp">Experiencia: ${escapeHtml(ab.experiencia)}</div>
+        <a class="contact-btn-lg" href="https://wa.me/${escapeHtml(ab.telefono)}" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.3L2 22l4.9-1.3A10 10 0 1 0 12 2zm0 18.1a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.1 8.1 0 1 1 12 20.1zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5.1a6.6 6.6 0 0 1-1.9-1.2A7.2 7.2 0 0 1 10 11.3c-.1-.2 0-.3.1-.4l.4-.4a1.7 1.7 0 0 0 .3-.5.5.5 0 0 0 0-.5c-.1-.1-.5-1.3-.7-1.8s-.4-.4-.5-.4h-.5a.9.9 0 0 0-.6.3 2.8 2.8 0 0 0-.9 2.1c0 1.2.9 2.4 1 2.6s1.7 2.7 4.2 3.7a5 5 0 0 0 3 .6 2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c-.1-.1-.2-.2-.5-.3z"/></svg>
           Contactar por WhatsApp
         </a>
       </div>
-      <div class="reviews-head"><h2>Reseñas (${ab.reviews})</h2></div>
-      ${reviewsHtml}
+
+      <div class="reviews-head"><h2>Reseñas</h2></div>
+      <div class="reviews-summary">
+        <div class="reviews-summary-left">
+          <div class="reviews-avg">${stats.total ? stats.average.toFixed(1) : '—'}</div>
+          <span class="stars">${starString(stats.average)}</span>
+          <div class="reviews-total">${stats.total} reseña${stats.total === 1 ? '' : 's'}</div>
+        </div>
+        <div class="reviews-histogram" id="reviewsHistogram">
+          ${[5, 4, 3, 2, 1].map(n => `
+            <button class="hist-row" type="button" data-stars="${n}">
+              <span class="hist-label">${n}</span>
+              <span class="hist-bar"><span class="hist-fill" style="width:${stats.total ? (stats.histogram[n] / stats.total * 100) : 0}%"></span></span>
+              <span class="hist-count">${stats.histogram[n]}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="reviews-controls">
+        <div class="review-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="reviewSearch" placeholder="Buscar en las reseñas..." value="${escapeHtml(searchTerm)}">
+        </div>
+        <select class="review-sort" id="reviewSort">
+          <option value="recent">Más recientes</option>
+          <option value="critical">Más críticas primero</option>
+          <option value="positive">Mejor calificadas primero</option>
+        </select>
+      </div>
+      <div class="active-filter-chip" id="activeFilterChip" style="display:none">
+        Mostrando solo <span id="activeFilterLabel"></span>
+        <button type="button" id="clearFilterBtn">Quitar ✕</button>
+      </div>
+
+      <div id="reviewFormSlot"></div>
+
+      <div id="reviewsList"></div>
+      <p class="empty-note" id="reviewsEmpty" style="display:none">No hay reseñas que coincidan con tu búsqueda.</p>
     `;
+
+    wireReviewControls();
+    renderReviewForm();
+    renderReviewsList();
   }
+
+  function wireReviewControls(){
+    document.getElementById('reviewSearch').addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      renderReviewsList();
+    });
+    document.getElementById('reviewSort').value = sortMode;
+    document.getElementById('reviewSort').addEventListener('change', (e) => {
+      sortMode = e.target.value;
+      renderReviewsList();
+    });
+    document.getElementById('reviewsHistogram').addEventListener('click', (e) => {
+      const btn = e.target.closest('.hist-row');
+      if(!btn) return;
+      const stars = Number(btn.dataset.stars);
+      starFilter = (starFilter === stars) ? null : stars;
+      renderReviewsList();
+    });
+    document.getElementById('clearFilterBtn').addEventListener('click', () => {
+      starFilter = null;
+      renderReviewsList();
+    });
+  }
+
+  function renderReviewsList(){
+    document.querySelectorAll('.hist-row').forEach(row => {
+      row.classList.toggle('active', Number(row.dataset.stars) === starFilter);
+    });
+
+    const chip = document.getElementById('activeFilterChip');
+    if(starFilter){
+      chip.style.display = 'inline-flex';
+      document.getElementById('activeFilterLabel').textContent = `reseñas de ${starFilter} estrella${starFilter === 1 ? '' : 's'}`;
+    } else {
+      chip.style.display = 'none';
+    }
+
+    const term = normalize(searchTerm.trim());
+    const currentUser = window.IdoneoAuth ? window.IdoneoAuth.getCurrentUser() : null;
+
+    let list = currentReviews.filter(r => {
+      if(starFilter && Math.round(r.estrellas) !== starFilter) return false;
+      if(term && !normalize(r.texto).includes(term) && !normalize(r.autorNombre).includes(term)) return false;
+      return true;
+    });
+
+    list = list.slice().sort((a, b) => {
+      if(sortMode === 'critical') return (a.estrellas - b.estrellas) || (reviewTimeValue(b) - reviewTimeValue(a));
+      if(sortMode === 'positive') return (b.estrellas - a.estrellas) || (reviewTimeValue(b) - reviewTimeValue(a));
+      return reviewTimeValue(b) - reviewTimeValue(a);
+    });
+
+    const listEl = document.getElementById('reviewsList');
+    const emptyEl = document.getElementById('reviewsEmpty');
+    if(list.length === 0){
+      listEl.innerHTML = '';
+      emptyEl.style.display = 'block';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = list.map(r => `
+      <div class="review-card">
+        <div class="review-top">
+          <span class="review-author">${escapeHtml(r.autorNombre)}${(currentUser && r.autorUid === currentUser.uid) ? '<span class="review-own-badge">Tu reseña</span>' : ''}</span>
+          <span class="stars">${starString(r.estrellas)}</span>
+          <span class="review-date">${escapeHtml(formatReviewDate(r))}</span>
+        </div>
+        <div class="review-text">${escapeHtml(r.texto)}</div>
+      </div>
+    `).join('');
+  }
+
+  let selectedStars = 0;
+
+  async function renderReviewForm(){
+    const slot = document.getElementById('reviewFormSlot');
+    if(!slot) return;
+    const user = window.IdoneoAuth ? window.IdoneoAuth.getCurrentUser() : null;
+
+    if(!user){
+      slot.innerHTML = `
+        <div class="review-login-prompt">
+          <p>Inicia sesión con tu cuenta de Idóneo para escribir una reseña — así evitamos reseñas anónimas o de la competencia.</p>
+          <button class="review-login-btn" type="button" id="reviewLoginBtn">Iniciar sesión</button>
+        </div>
+      `;
+      document.getElementById('reviewLoginBtn').addEventListener('click', () => {
+        window.IdoneoAuth.openAuthModal('login');
+      });
+      return;
+    }
+
+    let myReview = null;
+    try{
+      myReview = await window.IdoneoListings.getMyReview(currentAbogado.id);
+    } catch(err){
+      console.error(err);
+    }
+
+    selectedStars = myReview ? myReview.estrellas : 0;
+
+    slot.innerHTML = `
+      <div class="review-form-card">
+        <h3>${myReview ? 'Tu reseña' : 'Escribe una reseña'}</h3>
+        <div class="star-picker" id="starPicker">
+          ${[1, 2, 3, 4, 5].map(n => `<button type="button" data-star="${n}" aria-label="${n} estrellas">★</button>`).join('')}
+        </div>
+        <textarea id="reviewText" rows="3" placeholder="¿Cómo fue tu experiencia con ${escapeHtml(currentAbogado.nombre)}?">${myReview ? escapeHtml(myReview.texto) : ''}</textarea>
+        <div class="review-form-actions">
+          <button class="review-submit-btn" type="button" id="reviewSubmitBtn">${myReview ? 'Actualizar reseña' : 'Publicar reseña'}</button>
+          ${myReview ? '<button class="review-delete-btn" type="button" id="reviewDeleteBtn">Eliminar mi reseña</button>' : ''}
+        </div>
+        <div class="review-form-msg" id="reviewFormMsg"></div>
+      </div>
+    `;
+
+    paintStars();
+    document.getElementById('starPicker').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-star]');
+      if(!btn) return;
+      selectedStars = Number(btn.dataset.star);
+      paintStars();
+    });
+
+    document.getElementById('reviewSubmitBtn').addEventListener('click', async () => {
+      const msgEl = document.getElementById('reviewFormMsg');
+      msgEl.classList.remove('show');
+      const texto = document.getElementById('reviewText').value.trim();
+      if(selectedStars < 1){
+        msgEl.textContent = 'Elige una calificación de estrellas.';
+        msgEl.classList.add('show');
+        return;
+      }
+      if(!texto){
+        msgEl.textContent = 'Escribe brevemente tu experiencia.';
+        msgEl.classList.add('show');
+        return;
+      }
+      const btn = document.getElementById('reviewSubmitBtn');
+      const original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Guardando…';
+      try{
+        await window.IdoneoListings.submitReview(currentAbogado.id, {estrellas: selectedStars, texto});
+        currentReviews = await window.IdoneoListings.getReviews(currentAbogado.id);
+        renderProfile();
+      } catch(err){
+        console.error(err);
+        msgEl.textContent = 'Algo falló al guardar tu reseña. Intenta de nuevo.';
+        msgEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+
+    const deleteBtn = document.getElementById('reviewDeleteBtn');
+    if(deleteBtn){
+      deleteBtn.addEventListener('click', async () => {
+        if(!confirm('¿Eliminar tu reseña? No se puede deshacer.')) return;
+        deleteBtn.disabled = true;
+        try{
+          await window.IdoneoListings.deleteMyReview(currentAbogado.id);
+          currentReviews = await window.IdoneoListings.getReviews(currentAbogado.id);
+          renderProfile();
+        } catch(err){
+          console.error(err);
+          alert('Algo falló al eliminar tu reseña.');
+          deleteBtn.disabled = false;
+        }
+      });
+    }
+  }
+
+  function paintStars(){
+    document.querySelectorAll('#starPicker button').forEach(btn => {
+      btn.classList.toggle('filled', Number(btn.dataset.star) <= selectedStars);
+    });
   }
 
   init();
 </script>
-
-<script src="auth.js" defer></script>
 
 </body>
 </html>

@@ -45,12 +45,26 @@
 
   const COLLECTION = 'abogados_registrados';
   const HIDDEN_DEMOS_COLLECTION = 'demos_ocultos';
+  const REVIEWS_COLLECTION = 'resenas';
 
   function requireDb(){
     if(typeof db === 'undefined'){
       throw new Error('Firestore no está inicializado. Revisa que firebase-config.js esté cargado antes que listings.js, y que hayas pegado tu configuración real.');
     }
     return db;
+  }
+
+  function requireAuthUser(){
+    if(typeof auth === 'undefined'){
+      throw new Error('Firebase Auth no está inicializado. Revisa que firebase-config.js esté cargado antes que listings.js.');
+    }
+    const user = auth.currentUser;
+    if(!user){
+      const err = new Error('Necesitas iniciar sesión para hacer esto.');
+      err.code = 'not-authenticated';
+      throw err;
+    }
+    return user;
   }
 
   function docToEntry(doc){
@@ -136,6 +150,72 @@
     return DEMO_ABOGADOS.some(d => String(d.id) === String(id));
   }
 
+  // ---- Reseñas ----
+  // Doc id = "<idAbogado>_<uidAutor>": como máximo una reseña por cuenta
+  // por abogado (volver a enviar sobrescribe la anterior, no la duplica).
+  function reviewDocId(abogadoId, uid){
+    return String(abogadoId) + '_' + uid;
+  }
+
+  function getSeedReviews(abogadoId){
+    const demo = DEMO_ABOGADOS.find(d => String(d.id) === String(abogadoId));
+    if(!demo || !Array.isArray(demo.reseñas)) return [];
+    return demo.reseñas.map((r, i) => ({
+      id: 'seed_' + abogadoId + '_' + i,
+      autorNombre: r.autor,
+      texto: r.texto,
+      estrellas: r.estrellas,
+      autorUid: null,
+      createdAt: null,
+      seed: true
+    }));
+  }
+
+  async function getReviews(abogadoId){
+    const seed = getSeedReviews(abogadoId);
+    const snap = await requireDb().collection(REVIEWS_COLLECTION).where('abogadoId', '==', String(abogadoId)).get();
+    const live = snap.docs.map(doc => Object.assign({id: doc.id, seed: false}, doc.data()));
+    return seed.concat(live);
+  }
+
+  function computeReviewStats(reviews){
+    const histogram = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+    let sum = 0;
+    reviews.forEach(r => {
+      const stars = Math.min(5, Math.max(1, Math.round(r.estrellas)));
+      histogram[stars]++;
+      sum += r.estrellas;
+    });
+    const total = reviews.length;
+    return { total, average: total ? sum / total : 0, histogram };
+  }
+
+  async function getMyReview(abogadoId){
+    const user = typeof auth !== 'undefined' ? auth.currentUser : null;
+    if(!user) return null;
+    const doc = await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).get();
+    return doc.exists ? Object.assign({id: doc.id}, doc.data()) : null;
+  }
+
+  async function submitReview(abogadoId, data){
+    const user = requireAuthUser();
+    const texto = (data.texto || '').trim().slice(0, 2000);
+    const estrellas = Math.min(5, Math.max(1, Math.round(Number(data.estrellas) || 0)));
+    await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).set({
+      abogadoId: String(abogadoId),
+      autorUid: user.uid,
+      autorNombre: user.displayName || user.email || 'Usuario de Idóneo',
+      estrellas,
+      texto,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  async function deleteMyReview(abogadoId){
+    const user = requireAuthUser();
+    await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).delete();
+  }
+
   // ---- Sesión de administrador (Firebase Authentication) ----
   function adminSignIn(email, password){
     return auth.signInWithEmailAndPassword(email, password);
@@ -153,6 +233,7 @@
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
+    getReviews, computeReviewStats, getMyReview, submitReview, deleteMyReview,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };
 })(window);
