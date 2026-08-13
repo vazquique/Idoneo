@@ -16,6 +16,8 @@
     --parchment-dim:#e4dbc4;
     --line: rgba(241,234,216,0.18);
     --line-strong: rgba(241,234,216,0.32);
+    --despacho:#3d6e78;
+    --despacho-light:#5f96a0;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -121,7 +123,9 @@
     align-self:flex-start; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; padding:4px 10px;
     border:1px solid #c9bd9c; border-radius:20px; color:var(--ink-2);
   }
-  .despacho-chip{border-color:var(--brass); color:#8a6a1f; background:rgba(185,138,46,0.1);}
+  .despacho-chip{border-color:var(--despacho); color:var(--despacho); background:rgba(61,110,120,0.1);}
+  .lawyer-card.is-despacho{border-left:3px solid var(--despacho);}
+  .lawyer-card.is-despacho .avatar{box-shadow:0 0 0 2px var(--despacho);}
   .contact-btn{
     margin-top:4px; text-align:center; background:var(--ink); color:var(--parchment); text-decoration:none;
     padding:10px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em;
@@ -367,7 +371,7 @@
     list.forEach((ab, i) => {
       const stats = reviewStats[ab.id] || {average: 0, total: 0};
       const card = document.createElement('div');
-      card.className = 'lawyer-card';
+      card.className = 'lawyer-card' + (ab.tipo === 'despacho' ? ' is-despacho' : '');
       card.style.animationDelay = Math.min(i * 0.05, 0.4) + 's';
       card.innerHTML = `
         <div class="lawyer-top">

@@ -11,6 +11,7 @@
     --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
     --parchment:#f1ead8; --parchment-dim:#e4dbc4;
     --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+    --despacho:#3d6e78; --despacho-light:#5f96a0;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5;}
@@ -43,7 +44,10 @@
   .rating-count{color:#8a8069; font-size:0.82rem; margin-left:4px;}
   .price-tag{font-family:'IBM Plex Mono', monospace; font-size:0.88rem; color:var(--ink-2);}
   .specialty-chip{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; padding:5px 12px; border:1px solid #c9bd9c; border-radius:20px; color:var(--ink-2);}
-  .despacho-chip{border-color:var(--brass); color:#8a6a1f; background:rgba(185,138,46,0.1);}
+  .despacho-chip{border-color:var(--despacho); color:var(--despacho); background:rgba(61,110,120,0.1);}
+  .profile-card.is-despacho{border-left:4px solid var(--despacho);}
+  .profile-card.is-despacho .avatar-lg{box-shadow:0 0 0 3px var(--despacho-light);}
+  .extra-row.despacho-info svg{color:var(--despacho);}
   .profile-bio{margin-top:24px; padding-top:24px; border-top:1px solid #ddd2b0; font-size:0.96rem; color:#3a3222; max-width:60ch;}
   .profile-exp{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:#6b6250; margin-top:10px;}
   .profile-extra{display:flex; flex-direction:column; gap:7px; margin-top:14px;}
@@ -302,7 +306,7 @@
     const stats = window.IdoneoListings.computeReviewStats(currentReviews);
 
     content.innerHTML = `
-      <div class="profile-card">
+      <div class="profile-card${ab.tipo === 'despacho' ? ' is-despacho' : ''}">
         <div class="profile-top">
           <div class="avatar-lg">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="">` : initials(ab.nombre)}</div>
           <div>
@@ -320,8 +324,8 @@
         <div class="profile-bio">${escapeHtml(ab.bio)}</div>
         <div class="profile-exp">Experiencia: ${escapeHtml(ab.experiencia)}</div>
         <div class="profile-extra">
-          ${ab.tipo === 'despacho' && ab.numAbogados ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>${escapeHtml(ab.numAbogados)} abogados en el despacho</div>` : ''}
-          ${ab.tipo === 'despacho' && ab.anioFundacion ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Fundado en ${escapeHtml(ab.anioFundacion)}</div>` : ''}
+          ${ab.tipo === 'despacho' && ab.numAbogados ? `<div class="extra-row despacho-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>${escapeHtml(ab.numAbogados)} abogados en el despacho</div>` : ''}
+          ${ab.tipo === 'despacho' && ab.anioFundacion ? `<div class="extra-row despacho-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Fundado en ${escapeHtml(ab.anioFundacion)}</div>` : ''}
           ${ab.direccion ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escapeHtml(ab.direccion)}</div>` : ''}
           ${ab.horario ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${escapeHtml(ab.horario)}</div>` : ''}
           ${ab.sitioWeb ? `<div class="extra-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg><a href="${escapeHtml(normalizeUrl(ab.sitioWeb))}" target="_blank" rel="noopener">${escapeHtml(ab.sitioWeb)}</a></div>` : ''}

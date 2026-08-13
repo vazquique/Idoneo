@@ -11,6 +11,7 @@
     --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
     --parchment:#f1ead8; --parchment-dim:#e4dbc4;
     --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+    --despacho:#3d6e78; --despacho-light:#5f96a0;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -70,14 +71,18 @@
   .status-pill.pending{background:#f3e4c2; color:#8a6a1f; border:1px solid #d9ab52;}
   .status-pill.approved{background:#dcecd6; color:#2e4a2a; border:1px solid #8fc17f;}
   .status-pill.verified{background:#dbe6f5; color:#22406e; border:1px solid #7fa6d9;}
+  .status-pill.despacho{background:rgba(61,110,120,0.14); color:var(--despacho); border:1px solid var(--despacho-light);}
   .listing-meta{font-size:0.84rem; color:#6b6250; margin-bottom:20px;}
   .view-profile-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--brass); text-decoration:underline; white-space:nowrap;}
 
   .listing-photo-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:22px; padding-bottom:22px; border-bottom:1px solid #ddd2b0;}
-  .listing-photo{position:relative; width:76px; height:76px; border-radius:6px; background:#ece3cd; color:#8a8069; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
+  .listing-photo{position:relative; width:76px; height:76px; border-radius:6px; background:#ece3cd; color:#8a8069; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; transition:box-shadow 0.2s ease;}
   .listing-photo img{width:100%; height:100%; object-fit:cover;}
   .listing-photo svg{width:26px; height:26px;}
   .listing-photo-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .listing-card.is-despacho .listing-photo{box-shadow:0 0 0 3px var(--despacho-light);}
+  .listing-card.is-despacho [data-role="tipoSelect"]{border-color:var(--despacho); background:rgba(61,110,120,0.06);}
+  .field-grid[data-role="despachoFields"]{background:rgba(61,110,120,0.06); border:1px solid rgba(61,110,120,0.3); border-radius:4px; padding:14px; margin-bottom:14px;}
 
   .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
   .field label{display:block; font-size:0.78rem; font-weight:600; margin-bottom:5px; color:var(--ink-2);}
@@ -360,6 +365,7 @@
       ? '<span class="status-pill approved">Publicado</span>'
       : '<span class="status-pill pending">Pendiente de revisión</span>';
     if(l.verificado) html += '<span class="status-pill verified">Cédula verificada</span>';
+    if(l.tipo === 'despacho') html += '<span class="status-pill despacho">Despacho</span>';
     return html;
   }
 
@@ -378,7 +384,7 @@
 
   function listingCardHTML(l){
     return `
-      <div class="listing-card${l.status === 'approved' ? ' is-approved' : ''}" data-id="${l.id}">
+      <div class="listing-card${l.status === 'approved' ? ' is-approved' : ''}${l.tipo === 'despacho' ? ' is-despacho' : ''}" data-id="${l.id}">
         ${proRibbonHTML(l)}
         <div class="listing-head">
           <div>
@@ -524,7 +530,15 @@
     const select = card.querySelector('[data-role="tipoSelect"]');
     const despachoFields = card.querySelector('[data-role="despachoFields"]');
     select.addEventListener('change', () => {
-      despachoFields.style.display = select.value === 'despacho' ? '' : 'none';
+      const isDespacho = select.value === 'despacho';
+      despachoFields.style.display = isDespacho ? '' : 'none';
+      card.classList.toggle('is-despacho', isDespacho);
+      const pill = card.querySelector('.status-pill.despacho');
+      if(isDespacho && !pill){
+        card.querySelector('.listing-head > div').insertAdjacentHTML('beforeend', '<span class="status-pill despacho">Despacho</span>');
+      } else if(!isDespacho && pill){
+        pill.remove();
+      }
     });
   }
 
