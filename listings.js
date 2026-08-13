@@ -15,31 +15,31 @@
 */
 (function(global){
   const DEMO_ABOGADOS = [
-    {id:1, nombre:"Lic. Sofía Ramírez", especialidad:"Familiar", ciudad:"Zapopan, Jalisco", rating:4.8, reviews:32, precio:"$$", verificado:true, telefono:"523312345678", experiencia:"9 años", bio:"Especialista en divorcios, pensión alimenticia y custodia. Prioriza resolver por la vía conciliatoria antes de llegar a juicio.", reseñas:[
+    {id:1, nombre:"Lic. Sofía Ramírez", tipo:"individual", especialidad:"Familiar", ciudad:"Zapopan, Jalisco", rating:4.8, reviews:32, precio:"$$", verificado:true, telefono:"523312345678", experiencia:"9 años", bio:"Especialista en divorcios, pensión alimenticia y custodia. Prioriza resolver por la vía conciliatoria antes de llegar a juicio.", reseñas:[
       {autor:"Marcela H.", texto:"Me ayudó con mi divorcio de manera rápida y clara, siempre explicando cada paso.", estrellas:5},
       {autor:"Iván T.", texto:"Buena comunicación, aunque el proceso tardó un poco más de lo esperado.", estrellas:4}
     ]},
-    {id:2, nombre:"Torres & Asociados", especialidad:"Mercantil", ciudad:"Guadalajara, Jalisco", rating:4.6, reviews:18, precio:"$$$", verificado:true, telefono:"523322345678", experiencia:"14 años como despacho", bio:"Despacho enfocado en contratos mercantiles, cobranza judicial y constitución de sociedades para pymes.", reseñas:[
+    {id:2, nombre:"Torres & Asociados", tipo:"despacho", numAbogados:"6", anioFundacion:"2011", especialidad:"Mercantil", ciudad:"Guadalajara, Jalisco", rating:4.6, reviews:18, precio:"$$$", verificado:true, telefono:"523322345678", experiencia:"14 años como despacho", bio:"Despacho enfocado en contratos mercantiles, cobranza judicial y constitución de sociedades para pymes.", reseñas:[
       {autor:"Roberto C.", texto:"Nos ayudaron a formalizar contratos con proveedores, muy profesionales.", estrellas:5},
       {autor:"Diana L.", texto:"Cumplieron los tiempos que prometieron.", estrellas:4}
     ]},
-    {id:3, nombre:"Lic. Daniel Ochoa", especialidad:"Penal", ciudad:"Ciudad de México", rating:4.9, reviews:54, precio:"$$", verificado:true, telefono:"525512345678", experiencia:"12 años", bio:"Defensa penal en delitos patrimoniales y de tránsito. Atención disponible para casos urgentes.", reseñas:[
+    {id:3, nombre:"Lic. Daniel Ochoa", tipo:"individual", especialidad:"Penal", ciudad:"Ciudad de México", rating:4.9, reviews:54, precio:"$$", verificado:true, telefono:"525512345678", experiencia:"12 años", bio:"Defensa penal en delitos patrimoniales y de tránsito. Atención disponible para casos urgentes.", reseñas:[
       {autor:"Fernando A.", texto:"Me atendió un fin de semana cuando más lo necesitaba.", estrellas:5},
       {autor:"Paola G.", texto:"Excelente conocimiento del tema, muy claro en la estrategia.", estrellas:5}
     ]},
-    {id:4, nombre:"Lic. Renata Cabrera", especialidad:"Laboral", ciudad:"Monterrey, Nuevo León", rating:4.3, reviews:9, precio:"$", verificado:false, telefono:"528112345678", experiencia:"4 años", bio:"Asesoría a trabajadores en despidos injustificados y liquidaciones.", reseñas:[
+    {id:4, nombre:"Lic. Renata Cabrera", tipo:"individual", especialidad:"Laboral", ciudad:"Monterrey, Nuevo León", rating:4.3, reviews:9, precio:"$", verificado:false, telefono:"528112345678", experiencia:"4 años", bio:"Asesoría a trabajadores en despidos injustificados y liquidaciones.", reseñas:[
       {autor:"Jesús M.", texto:"Me orientó bien sobre mi liquidación, precio accesible.", estrellas:4}
     ]},
-    {id:5, nombre:"Lic. Marco Villaseñor", especialidad:"Migratorio", ciudad:"Zapopan, Jalisco", rating:5.0, reviews:12, precio:"$$", verificado:true, telefono:"523312349999", experiencia:"7 años", bio:"Trámites de residencia, naturalización y regularización migratoria.", reseñas:[
+    {id:5, nombre:"Lic. Marco Villaseñor", tipo:"individual", especialidad:"Migratorio", ciudad:"Zapopan, Jalisco", rating:5.0, reviews:12, precio:"$$", verificado:true, telefono:"523312349999", experiencia:"7 años", bio:"Trámites de residencia, naturalización y regularización migratoria.", reseñas:[
       {autor:"Laura P.", texto:"Todo el trámite de residencia salió sin contratiempos.", estrellas:5}
     ]},
-    {id:6, nombre:"Bufete Herrera Legal", especialidad:"Corporativo", ciudad:"Ciudad de México", rating:4.7, reviews:41, precio:"$$$", verificado:true, telefono:"525587654321", experiencia:"20 años como despacho", bio:"Asesoría corporativa integral para empresas medianas y grandes: fusiones, cumplimiento y gobierno corporativo.", reseñas:[
+    {id:6, nombre:"Bufete Herrera Legal", tipo:"despacho", numAbogados:"12", anioFundacion:"2005", especialidad:"Corporativo", ciudad:"Ciudad de México", rating:4.7, reviews:41, precio:"$$$", verificado:true, telefono:"525587654321", experiencia:"20 años como despacho", bio:"Asesoría corporativa integral para empresas medianas y grandes: fusiones, cumplimiento y gobierno corporativo.", reseñas:[
       {autor:"Empresa Vertex", texto:"Manejaron nuestra fusión con mucha solidez legal.", estrellas:5}
     ]},
-    {id:7, nombre:"Lic. Ana Belén Ruiz", especialidad:"Civil", ciudad:"Guadalajara, Jalisco", rating:4.4, reviews:15, precio:"$", verificado:true, telefono:"523398765432", experiencia:"6 años", bio:"Litigio civil: arrendamientos, incumplimiento de contratos y responsabilidad civil.", reseñas:[
+    {id:7, nombre:"Lic. Ana Belén Ruiz", tipo:"individual", especialidad:"Civil", ciudad:"Guadalajara, Jalisco", rating:4.4, reviews:15, precio:"$", verificado:true, telefono:"523398765432", experiencia:"6 años", bio:"Litigio civil: arrendamientos, incumplimiento de contratos y responsabilidad civil.", reseñas:[
       {autor:"Carlos V.", texto:"Resolvió un conflicto de arrendamiento sin llegar a juicio.", estrellas:4}
     ]},
-    {id:8, nombre:"Lic. Pablo Serrano", especialidad:"Fiscal", ciudad:"Monterrey, Nuevo León", rating:4.5, reviews:22, precio:"$$", verificado:false, telefono:"528187654321", experiencia:"10 años", bio:"Defensa fiscal ante el SAT y planeación tributaria para personas físicas y morales.", reseñas:[
+    {id:8, nombre:"Lic. Pablo Serrano", tipo:"individual", especialidad:"Fiscal", ciudad:"Monterrey, Nuevo León", rating:4.5, reviews:22, precio:"$$", verificado:false, telefono:"528187654321", experiencia:"10 años", bio:"Defensa fiscal ante el SAT y planeación tributaria para personas físicas y morales.", reseñas:[
       {autor:"Gabriela S.", texto:"Me ayudó a resolver un requerimiento del SAT sin multas.", estrellas:5}
     ]},
   ];
@@ -116,6 +116,9 @@
     const entry = {
       ownerUid: user.uid,
       nombre: (data.nombre || '').trim(),
+      tipo: data.tipo === 'despacho' ? 'despacho' : 'individual',
+      numAbogados: data.tipo === 'despacho' ? (data.numAbogados || '').toString().trim() : '',
+      anioFundacion: data.tipo === 'despacho' ? (data.anioFundacion || '').toString().trim() : '',
       especialidad: data.especialidad || '',
       ciudad: (data.ciudad || '').trim(),
       telefono: (data.telefono || '').replace(/\D/g, ''),
@@ -145,7 +148,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['especialidad', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
+  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'especialidad', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};

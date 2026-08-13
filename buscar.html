@@ -55,7 +55,7 @@
   /* Search card */
   .search-card{
     margin-top:40px; background:var(--parchment); color:var(--ink); border-radius:6px 6px 0 0;
-    padding:24px; display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:14px; align-items:end;
+    padding:24px; display:grid; grid-template-columns:1.1fr 0.85fr 0.85fr 0.85fr auto; gap:14px; align-items:end;
     box-shadow:0 20px 50px rgba(0,0,0,0.25);
     animation:fade-up-in 0.6s ease 0.24s both;
   }
@@ -121,6 +121,7 @@
     align-self:flex-start; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; padding:4px 10px;
     border:1px solid #c9bd9c; border-radius:20px; color:var(--ink-2);
   }
+  .despacho-chip{border-color:var(--brass); color:#8a6a1f; background:rgba(185,138,46,0.1);}
   .contact-btn{
     margin-top:4px; text-align:center; background:var(--ink); color:var(--parchment); text-decoration:none;
     padding:10px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em;
@@ -185,6 +186,10 @@
   .footer-inner{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
   footer .mono{font-size:0.72rem; color:rgba(241,234,216,0.5);}
 
+  @media (max-width: 1060px){
+    .search-card{grid-template-columns:1fr 1fr; }
+    .search-btn{grid-column:1 / -1;}
+  }
   @media (max-width: 860px){
     .seal-wrap{display:none;}
     .search-card{grid-template-columns:1fr; border-radius:6px;}
@@ -273,6 +278,14 @@
           <option>Corporativo</option>
           <option>Civil</option>
           <option>Fiscal</option>
+        </select>
+      </div>
+      <div class="search-field">
+        <label for="fTipoCuenta">Tipo de cuenta</label>
+        <select id="fTipoCuenta">
+          <option value="">Individuales y despachos</option>
+          <option value="individual">Solo abogados individuales</option>
+          <option value="despacho">Solo despachos</option>
         </select>
       </div>
       <button class="search-btn" id="btnBuscar">Buscar</button>
@@ -365,7 +378,10 @@
             ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
           </div>
         </div>
-        <span class="specialty-chip">${ab.especialidad}</span>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <span class="specialty-chip">${ab.especialidad}</span>
+          ${ab.tipo === 'despacho' ? '<span class="specialty-chip despacho-chip">Despacho</span>' : ''}
+        </div>
         <div class="lawyer-meta">
           <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total})</span></span>
           <span class="price-tag">${ab.precio}</span>
@@ -384,10 +400,12 @@
     const nombre = normalize(document.getElementById('fNombre').value.trim());
     const ciudad = document.getElementById('fCiudad').value;
     const especialidad = document.getElementById('fEspecialidad').value;
+    const tipoCuenta = document.getElementById('fTipoCuenta').value;
     const filtered = abogados.filter(ab =>
       (nombre === '' || normalize(ab.nombre).includes(nombre)) &&
       (ciudad === '' || ab.ciudad === ciudad) &&
-      (especialidad === '' || ab.especialidad === especialidad)
+      (especialidad === '' || ab.especialidad === especialidad) &&
+      (tipoCuenta === '' || (ab.tipo || 'individual') === tipoCuenta)
     );
     renderCards(filtered);
   }

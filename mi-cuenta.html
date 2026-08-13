@@ -410,6 +410,24 @@
           <div class="field-locked">${escapeHtml(l.nombre)} — para corregir tu nombre, escríbenos (ver pie de página).</div>
         </div>
 
+        <div class="field full">
+          <label>Tipo de cuenta</label>
+          <select data-field="tipo" data-role="tipoSelect">
+            <option value="individual" ${l.tipo === 'despacho' ? '' : 'selected'}>Abogado individual</option>
+            <option value="despacho" ${l.tipo === 'despacho' ? 'selected' : ''}>Despacho / firma</option>
+          </select>
+        </div>
+        <div class="field-grid" data-role="despachoFields" style="${l.tipo === 'despacho' ? '' : 'display:none'}">
+          <div class="field">
+            <label>Número de abogados</label>
+            <input type="number" min="2" data-field="numAbogados" value="${escapeHtml(l.numAbogados)}" placeholder="Ej. 6">
+          </div>
+          <div class="field">
+            <label>Año de fundación</label>
+            <input type="number" min="1900" max="2026" data-field="anioFundacion" value="${escapeHtml(l.anioFundacion)}" placeholder="Ej. 2011">
+          </div>
+        </div>
+
         <div class="field-grid" style="margin-top:14px;">
           <div class="field">
             <label>Especialidad principal<span class="req">*</span></label>
@@ -495,8 +513,19 @@
       facebook: card.querySelector('[data-field="facebook"]').value.trim(),
       instagram: card.querySelector('[data-field="instagram"]').value.trim(),
       linkedin: card.querySelector('[data-field="linkedin"]').value.trim(),
-      horario: card.querySelector('[data-field="horario"]').value.trim()
+      horario: card.querySelector('[data-field="horario"]').value.trim(),
+      tipo: card.querySelector('[data-field="tipo"]').value,
+      numAbogados: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="numAbogados"]').value.trim() : '',
+      anioFundacion: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="anioFundacion"]').value.trim() : ''
     };
+  }
+
+  function wireTipoToggle(card){
+    const select = card.querySelector('[data-role="tipoSelect"]');
+    const despachoFields = card.querySelector('[data-role="despachoFields"]');
+    select.addEventListener('change', () => {
+      despachoFields.style.display = select.value === 'despacho' ? '' : 'none';
+    });
   }
 
   function showMsg(card, text, kind){
@@ -659,6 +688,7 @@
     wireRequiredFields(card);
     wireHorarioBuilder(card);
     wireListingPhoto(card, l);
+    wireTipoToggle(card);
 
     card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
       if(!validateRequired(card)){
