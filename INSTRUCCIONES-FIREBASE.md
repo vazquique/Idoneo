@@ -66,12 +66,30 @@ service cloud.firestore {
     }
 
     match /abogados_registrados/{docId} {
-      allow read: if resource.data.status == 'approved' || isAdmin();
-      allow create: if request.resource.data.status == 'pending'
+      allow read: if resource.data.status == 'approved'
+                  || isAdmin()
+                  || (request.auth != null && resource.data.ownerUid == request.auth.uid);
+
+      allow create: if request.auth != null
+                    && request.resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.status == 'pending'
                     && request.resource.data.verificado == false
                     && request.resource.data.rating == 0
                     && request.resource.data.reviews == 0;
-      allow update, delete: if isAdmin();
+
+      allow update: if isAdmin()
+                    || (
+                      request.auth != null
+                      && resource.data.ownerUid == request.auth.uid
+                      && request.resource.data.ownerUid == resource.data.ownerUid
+                      && request.resource.data.status == resource.data.status
+                      && request.resource.data.verificado == resource.data.verificado
+                      && request.resource.data.rating == resource.data.rating
+                      && request.resource.data.reviews == resource.data.reviews
+                      && request.resource.data.nombre == resource.data.nombre
+                    );
+
+      allow delete: if isAdmin() || (request.auth != null && resource.data.ownerUid == request.auth.uid);
     }
 
     match /demos_ocultos/{docId} {
@@ -109,13 +127,21 @@ service cloud.firestore {
 Qué hacen estas reglas:
 - `isAdmin()` solo es verdad si tu UID está en la colección `admins` — no
   basta con tener sesión iniciada, así que una cuenta creada para reseñar
-  **no** puede tocar el directorio de abogados.
-- Cualquier visitante puede **leer** perfiles ya aprobados; solo un admin
-  puede leer los **pendientes**.
-- Cualquiera puede **crear** un registro de abogado, pero solo como
+  o para registrar un despacho **no** puede tocar el directorio entero.
+- Cualquier visitante puede **leer** perfiles ya aprobados. Los pendientes
+  solo los puede leer un admin o el dueño de ese registro (`ownerUid`).
+- Para **crear** un registro de abogado hay que tener sesión iniciada, y el
+  registro queda automáticamente ligado a esa cuenta (`ownerUid`), como
   pendiente, sin verificar y sin rating.
-- Solo un admin puede **aprobar, editar o eliminar** abogados, y solo un
-  admin puede ocultar/restaurar perfiles de ejemplo (`demos_ocultos`).
+- El **dueño** de un registro (`ownerUid == tu UID`) puede editarlo desde
+  "Mi cuenta" — pero las reglas le bloquean cambiar `status`, `verificado`,
+  `rating`, `reviews`, `nombre` u `ownerUid`, aunque lo intente manipulando
+  la petición directamente (no solo escondiendo esos campos en el HTML).
+  Esos campos siguen siendo exclusivos de un admin. El dueño también puede
+  eliminar su propio registro.
+- Solo un admin puede **aprobar** un registro, cambiar su estatus o su
+  verificación, y solo un admin puede ocultar/restaurar perfiles de
+  ejemplo (`demos_ocultos`).
 - **Reseñas** (`resenas`): cualquiera puede leerlas. Para crear o editar
   una, hay que tener sesión iniciada, y el id del documento debe ser
   exactamente `<idDelAbogado>_<tuUID>` — eso es lo que impide tener dos
@@ -141,19 +167,25 @@ Qué hacen estas reglas:
 
 ## 7. Probar
 
-1. Abre `registro.html` en tu navegador y llena el formulario de un abogado.
+1. En `registro.html`, crea una cuenta (o inicia sesión) y llena el
+   formulario de un abogado. Al terminar, ve a **Mi cuenta** (menú de tu
+   cuenta, arriba a la derecha) — deberías ver tu registro como
+   "Pendiente de revisión", editable.
 2. Abre `admin.html` (carpeta `admin`, junto a `Idoneo`), inicia sesión con
    el correo/contraseña del paso 3 — deberías ver el registro en
    "Pendientes de revisión". Apruébalo.
-3. Confirma que el abogado aparece en `index.html` y en su `perfil.html`.
-4. En `index.html` o `perfil.html`, crea una cuenta de visitante (botón
-   "Iniciar sesión" → "Crear cuenta", o "Continuar con Google").
-5. Entra al perfil de un abogado y escribe una reseña con estrellas — debe
-   aparecer de inmediato en la lista, en el promedio y en el conteo por
-   estrellas.
-6. Repite el paso 4 desde otro navegador/dispositivo y confirma que esa
-   cuenta **no puede** entrar a `admin.html` (debe rechazar el acceso,
-   porque su UID no está en `admins`).
+3. Confirma que el abogado aparece en `index.html` y en su `perfil.html`, y
+   que en **Mi cuenta** (con la cuenta del abogado) ahora se ve como
+   "Publicado", con un link a "Ver mi perfil público".
+4. Con esa misma cuenta, edita algún campo (ciudad, bio) desde Mi cuenta y
+   confirma que se refleja en `perfil.html`.
+5. Crea una **segunda** cuenta distinta (otro correo, o modo incógnito) y
+   escribe una reseña con estrellas para ese abogado — debe aparecer de
+   inmediato en la lista, en el promedio y en el conteo por estrellas.
+6. Confirma que esa segunda cuenta (la que solo reseñó) **no puede** entrar
+   a `admin.html`, ni ve nada en "Mi cuenta" salvo la opción de registrar
+   su propio despacho — su UID no está en `admins` ni es dueña de ningún
+   registro.
 
 ## Estructura de carpetas
 
@@ -163,9 +195,10 @@ Escritorio/
     index.html
     registro.html
     perfil.html
+    mi-cuenta.html          ← panel del abogado/despacho (editar, ver reseñas, eliminar)
     listings.js            ← lógica compartida con Firestore
     firebase-config.js      ← tus llaves reales
-    auth.js                 ← login de visitantes (para reseñar)
+    auth.js                 ← login de visitantes (para reseñar y registrar despacho)
   admin/                  ← panel de administración (se publica solo en Netlify)
     admin.html
     listings.js             ← copia idéntica a la de Idoneo/
@@ -186,8 +219,15 @@ configuración de Firebase hay que aplicarlo en las dos copias.
   Firestore del paso 5, no en ocultar esa llave).
 - El plan gratuito de Firebase (Spark) cubre muchísimo tráfico para un
   directorio como este; no deberías pagar nada al empezar.
-- Las cuentas de "reseñador" (visitantes) y la cuenta de "administrador"
-  usan el mismo sistema (Firebase Authentication), pero son cosas
-  distintas: cualquiera puede crear la primera desde el sitio público;
-  solo tú puedes crear la segunda desde la consola de Firebase, y solo
-  ella aparece en la colección `admins`.
+- Las cuentas de "reseñador", "abogado/despacho" y "administrador" usan el
+  mismo sistema (Firebase Authentication) — es la misma cuenta la que
+  puede reseñar Y administrar un despacho, si así lo usa la persona. Lo
+  que las distingue es a qué está ligada cada cosa: un registro de
+  despacho queda ligado a la cuenta que lo creó (`ownerUid`), y el panel
+  de administración solo a las cuentas en la colección `admins`.
+- Si tienes registros de abogados hechos **antes** de que existiera este
+  sistema de cuentas (sin `ownerUid`), nadie puede administrarlos desde
+  "Mi cuenta" hasta que tú los ligues manualmente: en `admin.html`, cada
+  tarjeta tiene un campo "Cuenta dueña (UID)" — pídele al abogado su UID
+  (Firebase Console → Authentication → Users, o que te lo comparta si él
+  mismo se metió a crear su cuenta) y pégalo ahí con "Vincular".

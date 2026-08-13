@@ -83,6 +83,8 @@
   .consent-row{display:flex; align-items:flex-start; gap:9px; font-size:0.8rem; color:#6b6250; cursor:pointer;}
   .consent-row input{width:15px; height:15px; margin-top:2px; flex-shrink:0;}
   .consent-row a{color:var(--brass); text-decoration:underline;}
+  .registro-login-prompt{background:var(--parchment); color:var(--ink); border-radius:4px; padding:32px;}
+  .registro-login-prompt p{margin:14px 0 20px; color:#6b6250; font-size:0.92rem; max-width:44ch;}
   .success-msg{display:none; align-items:center; gap:10px; background:#e9f2e6; color:#2e4a2a; padding:13px 15px; border-radius:2px; font-size:0.86rem;}
   .success-msg.show{display:flex;}
   .error-msg{display:none; align-items:center; gap:10px; background:#f2e6e6; color:#6b2a2a; padding:13px 15px; border-radius:2px; font-size:0.86rem;}
@@ -209,7 +211,12 @@
       <h2>Sé de los primeros en aparecer.</h2>
       <p>Los perfiles registrados antes del lanzamiento aparecen primero en resultados de su ciudad durante los primeros tres meses, sin costo.</p>
     </div>
-    <form id="regForm" action="https://formspree.io/f/moeadvze" method="POST">
+    <div class="registro-login-prompt" id="registroLoginPrompt" style="display:none">
+      <div class="form-title">Registro de abogado / despacho</div>
+      <p>Para registrar tu despacho primero necesitas una cuenta de Idóneo — así tu perfil queda ligado a ti y podrás editarlo, revisar tus reseñas, o darlo de baja después desde <strong>Mi cuenta</strong>.</p>
+      <button type="button" class="submit-btn" id="registroLoginBtn">Iniciar sesión o crear cuenta</button>
+    </div>
+    <form id="regForm" action="https://formspree.io/f/moeadvze" method="POST" style="display:none">
       <div class="form-title">Registro de abogado / despacho</div>
       <div class="field">
         <label for="nombre">Nombre o razón social</label>
@@ -240,7 +247,7 @@
       </label>
       <button type="submit" class="submit-btn">Apartar mi lugar</button>
       <p class="fine-print">Tu registro queda pendiente de revisión: confirmamos tu cédula antes de publicar tu perfil.</p>
-      <div class="success-msg" id="successMsg">✓ Listo — tu registro quedó pendiente de revisión. Te contactaremos por WhatsApp para verificar tu cédula antes de publicar tu perfil.</div>
+      <div class="success-msg" id="successMsg">✓ Listo — tu registro quedó pendiente de revisión. Te contactaremos por WhatsApp para verificar tu cédula antes de publicar tu perfil. Puedes ver y editar tu registro cuando quieras desde <a href="mi-cuenta.html" style="color:inherit; text-decoration:underline;">Mi cuenta</a>.</div>
       <div class="error-msg" id="errorMsg">Algo falló al guardar tu registro. Intenta de nuevo o escríbenos por WhatsApp.</div>
     </form>
   </div>
@@ -271,9 +278,25 @@
   });
 
   const form = document.getElementById('regForm');
+  const loginPrompt = document.getElementById('registroLoginPrompt');
   const successMsg = document.getElementById('successMsg');
   const errorMsg = document.getElementById('errorMsg');
   const submitBtn = form.querySelector('.submit-btn');
+
+  document.getElementById('registroLoginBtn').addEventListener('click', () => {
+    window.IdoneoAuth.openAuthModal('login');
+  });
+
+  if(window.IdoneoAuth){
+    window.IdoneoAuth.onAuthChanged((user) => {
+      if(successMsg.classList.contains('show')) return; // no reemplazar el formulario tras un envío exitoso
+      loginPrompt.style.display = user ? 'none' : 'block';
+      form.style.display = user ? 'flex' : 'none';
+    });
+  } else {
+    loginPrompt.style.display = 'block';
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.classList.remove('show');

@@ -111,7 +111,9 @@
   }
 
   async function submitRegistration(data){
+    const user = requireAuthUser();
     const entry = {
+      ownerUid: user.uid,
       nombre: (data.nombre || '').trim(),
       especialidad: data.especialidad || '',
       ciudad: (data.ciudad || '').trim(),
@@ -128,6 +130,45 @@
     };
     const ref = await requireDb().collection(COLLECTION).add(entry);
     return ref.id;
+  }
+
+  // ---- Panel del abogado/despacho (dueño de un registro) ----
+  // Campos que un dueño puede editar de su propio perfil. status, verificado,
+  // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
+  // admin (o, en el caso de nombre, requieren contactar al admin para evitar
+  // que alguien cambie de identidad después de ser verificado).
+  const OWNER_EDITABLE_FIELDS = ['especialidad', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio'];
+
+  function pickOwnerEditableFields(edits){
+    const clean = {};
+    OWNER_EDITABLE_FIELDS.forEach(key => {
+      if(Object.prototype.hasOwnProperty.call(edits, key)) clean[key] = edits[key];
+    });
+    if(typeof clean.telefono === 'string') clean.telefono = clean.telefono.replace(/\D/g, '');
+    return clean;
+  }
+
+  async function getMyListings(){
+    const user = requireAuthUser();
+    const snap = await requireDb().collection(COLLECTION).where('ownerUid', '==', user.uid).get();
+    return snap.docs.map(docToEntry);
+  }
+
+  async function updateMyListing(id, edits){
+    requireAuthUser();
+    await requireDb().collection(COLLECTION).doc(id).update(pickOwnerEditableFields(edits || {}));
+  }
+
+  async function deleteMyListing(id){
+    requireAuthUser();
+    await requireDb().collection(COLLECTION).doc(id).delete();
+  }
+
+  // Conveniencia para el panel de admin: ligar manualmente un registro
+  // existente (de antes de que existiera este sistema de cuentas) a la
+  // cuenta de su dueño, a partir del UID que el abogado te confirme.
+  async function adminSetOwner(id, uid){
+    await requireDb().collection(COLLECTION).doc(id).update({ownerUid: (uid || '').trim()});
   }
 
   async function approveRegistration(id, edits){
@@ -264,6 +305,7 @@
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
     getMyReview, submitReview, deleteMyReview,
+    getMyListings, updateMyListing, deleteMyListing, adminSetOwner,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };
 })(window);

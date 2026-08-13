@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi cuenta — Idóneo Abogados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
+    --parchment:#f1ead8; --parchment-dim:#e4dbc4;
+    --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5; overflow-x:hidden; min-height:100vh;}
+  a{color:inherit;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  .header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 28px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; text-decoration:none;}
+  .brand-mark{width:24px; height:24px; flex-shrink:0;}
+  .nav-right{display:flex; align-items:center; gap:14px; position:relative;}
+  .nav-links{display:flex; align-items:center; gap:10px;}
+  .nav-toggle{display:none;}
+  .nav-link{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.07em; padding:9px 16px; border-radius:2px; text-decoration:none; color:rgba(241,234,216,0.8); transition:color 0.2s ease, background 0.2s ease;}
+  .nav-link:hover{color:var(--parchment);}
+  .nav-link.primary{border:1px solid var(--brass-light); color:var(--parchment);}
+
+  main{padding:48px 0 80px;}
+  .page-title{font-family:'Newsreader', serif; font-size:1.9rem; font-weight:600; margin-bottom:6px;}
+  .page-sub{color:rgba(241,234,216,0.68); font-size:0.94rem; max-width:60ch; margin-bottom:36px;}
+
+  /* ---- estado: no logueado / vacío ---- */
+  .state-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:36px; max-width:520px;}
+  .state-card h2{font-family:'Newsreader', serif; font-size:1.2rem; font-weight:600; margin-bottom:10px;}
+  .state-card p{color:#6b6250; font-size:0.92rem; margin-bottom:20px; max-width:44ch;}
+  .state-card .submit-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:12px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; text-decoration:none; display:inline-block;}
+  .state-card .submit-btn:hover{background:var(--ink-2);}
+
+  /* ---- tarjeta de despacho ---- */
+  .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px;}
+  .listing-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:6px;}
+  .listing-name{font-family:'Newsreader', serif; font-size:1.4rem; font-weight:600;}
+  .status-pill{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; padding:4px 11px; border-radius:20px; margin-left:10px; vertical-align:middle;}
+  .status-pill.pending{background:#f3e4c2; color:#8a6a1f; border:1px solid #d9ab52;}
+  .status-pill.approved{background:#dcecd6; color:#2e4a2a; border:1px solid #8fc17f;}
+  .status-pill.verified{background:#dbe6f5; color:#22406e; border:1px solid #7fa6d9;}
+  .listing-meta{font-size:0.84rem; color:#6b6250; margin-bottom:20px;}
+  .view-profile-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--brass); text-decoration:underline; white-space:nowrap;}
+
+  .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
+  .field label{display:block; font-size:0.78rem; font-weight:600; margin-bottom:5px; color:var(--ink-2);}
+  .field input, .field select, .field textarea{
+    width:100%; padding:10px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0;
+    font-family:'IBM Plex Sans', sans-serif; font-size:0.92rem; color:var(--ink); resize:vertical;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .field.full{grid-column:1 / -1;}
+  .field-locked{font-size:0.82rem; color:#8a8069; background:#ece3cd; border-radius:3px; padding:9px 11px;}
+
+  .listing-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:18px;}
+  .save-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:11px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  .save-btn:hover{background:var(--ink-2);}
+  .save-btn:disabled{opacity:0.6; cursor:default;}
+  .delete-btn{background:none; border:1px solid #c98a8a; color:#8a2a2a; border-radius:3px; padding:11px 18px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  .delete-btn:hover{background:#f2e6e6;}
+  .save-msg{font-size:0.82rem; margin-left:4px; display:none;}
+  .save-msg.show{display:inline;}
+  .save-msg.ok{color:#2e4a2a;}
+  .save-msg.err{color:#8a2a2a;}
+
+  .reviews-mini-head{display:flex; align-items:baseline; justify-content:space-between; margin:26px 0 12px; padding-top:22px; border-top:1px solid #ddd2b0;}
+  .reviews-mini-head h3{font-family:'Newsreader', serif; font-size:1.05rem; font-weight:600;}
+  .reviews-mini-summary{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:#6b6250;}
+  .stars{color:var(--brass); font-size:0.95rem;}
+  .mini-review{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:14px 16px; margin-bottom:10px;}
+  .mini-review-top{display:flex; justify-content:space-between; gap:10px; margin-bottom:4px; font-size:0.8rem;}
+  .mini-review-author{font-family:'IBM Plex Mono', monospace; color:var(--ink-2);}
+  .mini-review-text{font-size:0.88rem; color:#3a3222;}
+  .empty-note{color:#8a8069; font-size:0.86rem;}
+
+  footer{padding:36px 0; border-top:1px solid var(--line);}
+  .footer-inner{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  footer .mono{font-size:0.72rem; color:rgba(241,234,216,0.5); font-family:'IBM Plex Mono', monospace;}
+  footer a.mono{text-decoration:none;}
+  footer a.mono:hover{color:rgba(241,234,216,0.8);}
+
+  @media (max-width: 680px){
+    .nav-toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; order:2;}
+    .nav-toggle:hover{border-color:var(--brass-light);}
+    .auth-slot{order:1;}
+    .nav-links{
+      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
+      border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+    }
+    .nav-links.open{display:flex;}
+    .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
+    .field-grid{grid-template-columns:1fr;}
+    .listing-card{padding:22px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
+    <a href="index.html" class="brand" style="text-decoration:none;">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7l-3 6a4 4 0 0 0 8 0l-3-6m14 0l-3 6a4 4 0 0 0 8 0l-3-6M4 7h6m4 0h6M8 21h8"/></svg>
+      Idóneo <span style="opacity:0.55; font-weight:400; margin-left:6px;">Abogados</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link" href="index.html">Buscar abogado</a>
+        <a class="nav-link primary" href="registro.html">Regístrate como abogado</a>
+      </div>
+      <div class="auth-slot" id="navAuth"></div>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-title">Mi cuenta</div>
+  <div class="page-sub">Administra tu despacho o perfil de abogado registrado en Idóneo: edita tu información, revisa tus reseñas, o dalo de baja.</div>
+  <div id="accountContent"></div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html">TÉRMINOS</a></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="listings.js"></script>
+<script src="auth.js"></script>
+<script>
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+  function starString(rating){
+    const full = Math.round(rating);
+    return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
+  }
+  function priceOptions(selected){
+    return ['$', '$$', '$$$'].map(p => `<option value="${p}" ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
+  }
+  function especialidadOptions(selected){
+    const opts = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
+    return opts.map(o => `<option value="${o}" ${o === selected ? 'selected' : ''}>${o}</option>`).join('');
+  }
+
+  const content = document.getElementById('accountContent');
+
+  function renderLoggedOut(){
+    content.innerHTML = `
+      <div class="state-card">
+        <h2>Inicia sesión para continuar</h2>
+        <p>Tu panel de administración de despacho está ligado a tu cuenta de Idóneo. Inicia sesión (o crea una cuenta) para ver tu perfil registrado.</p>
+        <button type="button" class="submit-btn" id="stateLoginBtn">Iniciar sesión</button>
+      </div>
+    `;
+    document.getElementById('stateLoginBtn').addEventListener('click', () => window.IdoneoAuth.openAuthModal('login'));
+  }
+
+  function renderEmpty(){
+    content.innerHTML = `
+      <div class="state-card">
+        <h2>Aún no tienes un despacho registrado</h2>
+        <p>Registra tu perfil como abogado o despacho — queda ligado a esta cuenta y podrás editarlo aquí en cuanto lo hagas.</p>
+        <a class="submit-btn" href="registro.html">Registrar mi despacho</a>
+      </div>
+    `;
+  }
+
+  async function renderListings(listings){
+    content.innerHTML = listings.map(l => listingCardHTML(l)).join('') +
+      `<div class="state-card" style="max-width:none;"><p style="margin-bottom:0;">¿Tienes otro despacho o consultorio? <a href="registro.html" style="color:var(--brass); text-decoration:underline;">Regístralo aparte</a>.</p></div>`;
+
+    listings.forEach(l => wireListingCard(l));
+  }
+
+  function statusPillsHTML(l){
+    let html = '';
+    html += l.status === 'approved'
+      ? '<span class="status-pill approved">Publicado</span>'
+      : '<span class="status-pill pending">Pendiente de revisión</span>';
+    if(l.verificado) html += '<span class="status-pill verified">Cédula verificada</span>';
+    return html;
+  }
+
+  function listingCardHTML(l){
+    return `
+      <div class="listing-card" data-id="${l.id}">
+        <div class="listing-head">
+          <div>
+            <span class="listing-name">${escapeHtml(l.nombre)}</span>
+            ${statusPillsHTML(l)}
+          </div>
+          ${l.status === 'approved' ? `<a class="view-profile-link" href="perfil.html?id=${l.id}" target="_blank" rel="noopener">Ver mi perfil público ↗</a>` : ''}
+        </div>
+        <div class="listing-meta">
+          ${l.status === 'approved'
+            ? 'Tu perfil está visible en el buscador.'
+            : 'Estamos confirmando tu cédula profesional antes de publicar tu perfil — normalmente te contactamos por WhatsApp.'}
+        </div>
+
+        <div class="field full">
+          <label>Nombre o razón social</label>
+          <div class="field-locked">${escapeHtml(l.nombre)} — para corregir tu nombre, escríbenos (ver pie de página).</div>
+        </div>
+
+        <div class="field-grid" style="margin-top:14px;">
+          <div class="field">
+            <label>Especialidad principal</label>
+            <select data-field="especialidad">${especialidadOptions(l.especialidad)}</select>
+          </div>
+          <div class="field">
+            <label>Ciudad / estado</label>
+            <input type="text" data-field="ciudad" value="${escapeHtml(l.ciudad)}">
+          </div>
+          <div class="field">
+            <label>WhatsApp de contacto</label>
+            <input type="tel" data-field="telefono" value="${escapeHtml(l.telefono)}">
+          </div>
+          <div class="field">
+            <label>Precio</label>
+            <select data-field="precio">${priceOptions(l.precio)}</select>
+          </div>
+          <div class="field">
+            <label>Experiencia</label>
+            <input type="text" data-field="experiencia" value="${escapeHtml(l.experiencia)}" placeholder="Ej. 8 años">
+          </div>
+        </div>
+        <div class="field full">
+          <label>Bio breve</label>
+          <textarea rows="3" data-field="bio" placeholder="Área de práctica, enfoque...">${escapeHtml(l.bio)}</textarea>
+        </div>
+
+        <div class="listing-actions">
+          <button type="button" class="save-btn" data-action="save">Guardar cambios</button>
+          <button type="button" class="delete-btn" data-action="delete">Eliminar mi registro</button>
+          <span class="save-msg" data-role="msg"></span>
+        </div>
+
+        <div class="reviews-mini-head">
+          <h3>Tus reseñas</h3>
+          <span class="reviews-mini-summary" data-role="reviews-summary">Cargando…</span>
+        </div>
+        <div data-role="reviews-list"><p class="empty-note">Cargando reseñas…</p></div>
+      </div>
+    `;
+  }
+
+  function readFields(card){
+    return {
+      especialidad: card.querySelector('[data-field="especialidad"]').value,
+      ciudad: card.querySelector('[data-field="ciudad"]').value.trim(),
+      telefono: card.querySelector('[data-field="telefono"]').value.trim(),
+      precio: card.querySelector('[data-field="precio"]').value,
+      experiencia: card.querySelector('[data-field="experiencia"]').value.trim(),
+      bio: card.querySelector('[data-field="bio"]').value.trim()
+    };
+  }
+
+  function showMsg(card, text, kind){
+    const el = card.querySelector('[data-role="msg"]');
+    el.textContent = text;
+    el.className = 'save-msg show ' + kind;
+  }
+
+  function wireListingCard(l){
+    const card = content.querySelector(`.listing-card[data-id="${l.id}"]`);
+    if(!card) return;
+
+    card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Guardando…';
+      try{
+        await window.IdoneoListings.updateMyListing(l.id, readFields(card));
+        showMsg(card, '✓ Guardado', 'ok');
+      } catch(err){
+        console.error(err);
+        showMsg(card, 'Algo falló al guardar. Intenta de nuevo.', 'err');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+
+    card.querySelector('[data-action="delete"]').addEventListener('click', async (e) => {
+      if(!confirm(`¿Eliminar tu registro "${l.nombre}" de Idóneo? Esto quita tu perfil del buscador de forma permanente y no se puede deshacer.`)) return;
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      try{
+        await window.IdoneoListings.deleteMyListing(l.id);
+        card.remove();
+      } catch(err){
+        console.error(err);
+        alert('Algo falló al eliminar tu registro. Intenta de nuevo.');
+        btn.disabled = false;
+      }
+    });
+
+    loadMiniReviews(card, l.id);
+  }
+
+  async function loadMiniReviews(card, abogadoId){
+    const summaryEl = card.querySelector('[data-role="reviews-summary"]');
+    const listEl = card.querySelector('[data-role="reviews-list"]');
+    try{
+      const reviews = await window.IdoneoListings.getReviews(abogadoId);
+      const stats = window.IdoneoListings.computeReviewStats(reviews);
+      summaryEl.innerHTML = stats.total
+        ? `<span class="stars">${starString(stats.average)}</span> ${stats.average.toFixed(1)} · ${stats.total} reseña${stats.total === 1 ? '' : 's'}`
+        : 'Aún sin reseñas';
+      if(reviews.length === 0){
+        listEl.innerHTML = '<p class="empty-note">Todavía no tienes reseñas.</p>';
+        return;
+      }
+      const recent = reviews.slice().sort((a, b) => {
+        const ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+        const tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+        return tb - ta;
+      }).slice(0, 5);
+      listEl.innerHTML = recent.map(r => `
+        <div class="mini-review">
+          <div class="mini-review-top">
+            <span class="mini-review-author">${escapeHtml(r.autorNombre)}</span>
+            <span class="stars">${starString(r.estrellas)}</span>
+          </div>
+          <div class="mini-review-text">${escapeHtml(r.texto)}</div>
+        </div>
+      `).join('');
+    } catch(err){
+      console.error(err);
+      summaryEl.textContent = '';
+      listEl.innerHTML = '<p class="empty-note">No se pudieron cargar tus reseñas.</p>';
+    }
+  }
+
+  async function refresh(user){
+    if(!user){
+      renderLoggedOut();
+      return;
+    }
+    content.innerHTML = '<p class="empty-note">Cargando tu cuenta…</p>';
+    try{
+      const listings = await window.IdoneoListings.getMyListings();
+      if(listings.length === 0){
+        renderEmpty();
+      } else {
+        renderListings(listings);
+      }
+    } catch(err){
+      console.error(err);
+      content.innerHTML = '<div class="state-card"><h2>No se pudo cargar tu cuenta</h2><p>Revisa tu conexión e intenta de nuevo.</p></div>';
+    }
+  }
+
+  if(window.IdoneoAuth){
+    window.IdoneoAuth.onAuthChanged((user) => refresh(user));
+  } else {
+    content.innerHTML = '<p class="empty-note">No se pudo cargar la sesión. Revisa que firebase-config.js tenga tu configuración real.</p>';
+  }
+</script>
+
+</body>
+</html>

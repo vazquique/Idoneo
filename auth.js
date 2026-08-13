@@ -127,8 +127,8 @@
     .nav-account-menu .who{padding:8px 10px; font-size:0.8rem; border-bottom:1px solid #ddd2b0; margin-bottom:6px; word-break:break-word;}
     .nav-account-menu .who .name{font-weight:600;}
     .nav-account-menu .who .email{color:#6b6250; font-size:0.74rem;}
-    .nav-account-menu button{width:100%; text-align:left; background:none; border:none; padding:9px 10px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); cursor:pointer;}
-    .nav-account-menu button:hover{background:#e9e0c8;}
+    .nav-account-menu button, .nav-account-menu a{display:block; width:100%; text-align:left; background:none; border:none; padding:9px 10px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); cursor:pointer; text-decoration:none; box-sizing:border-box;}
+    .nav-account-menu button:hover, .nav-account-menu a:hover{background:#e9e0c8;}
 
     @media (max-width: 560px){
       .auth-label{display:none;}
@@ -326,6 +326,7 @@
       </button>
       <div class="nav-account-menu" id="navAccountMenu" role="menu">
         <div class="who"><div class="name">${safeName}</div><div class="email">${safeEmail}</div></div>
+        <a href="mi-cuenta.html" role="menuitem">Mi cuenta</a>
         <button type="button" id="navLogoutBtn" role="menuitem">Cerrar sesión</button>
       </div>
     `;
