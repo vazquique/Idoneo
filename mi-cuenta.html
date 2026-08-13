@@ -43,7 +43,10 @@
 
   /* ---- tarjeta de despacho ---- */
   @keyframes card-in{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
-  .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px; animation:card-in 0.5s ease both;}
+  .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px; animation:card-in 0.5s ease both; border-left:4px solid #c9bd9c;}
+  .listing-card.is-approved{border-left:4px solid var(--brass-light); box-shadow:0 10px 28px rgba(185,138,46,0.16);}
+  .pro-ribbon{display:flex; align-items:center; gap:9px; background:rgba(185,138,46,0.14); border:1px solid var(--brass-light); color:#8a6a1f; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; padding:10px 14px; border-radius:4px; margin-bottom:20px;}
+  .pro-ribbon svg{flex-shrink:0; color:var(--brass);}
   .listing-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:6px;}
   .listing-name{font-family:'Newsreader', serif; font-size:1.4rem; font-weight:600;}
   .status-pill{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; padding:4px 11px; border-radius:20px; margin-left:10px; vertical-align:middle;}
@@ -210,9 +213,23 @@
     return html;
   }
 
+  function proRibbonHTML(l){
+    if(l.status !== 'approved') return '';
+    const label = l.verificado
+      ? 'Despacho aceptado y verificado por Idóneo — tu cédula fue confirmada'
+      : 'Despacho aceptado por Idóneo — tu perfil ya es visible para clientes';
+    return `
+      <div class="pro-ribbon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
+        ${label}
+      </div>
+    `;
+  }
+
   function listingCardHTML(l){
     return `
-      <div class="listing-card" data-id="${l.id}">
+      <div class="listing-card${l.status === 'approved' ? ' is-approved' : ''}" data-id="${l.id}">
+        ${proRibbonHTML(l)}
         <div class="listing-head">
           <div>
             <span class="listing-name">${escapeHtml(l.nombre)}</span>

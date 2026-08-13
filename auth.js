@@ -133,10 +133,14 @@
     .auth-trigger{display:inline-flex; align-items:center; gap:8px; background:none; border:1px solid var(--line-strong); border-radius:20px; padding:4px 14px 4px 4px; cursor:pointer; color:rgba(241,234,216,0.9); font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; transition:border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;}
     .auth-trigger:hover{border-color:var(--brass-light); background:rgba(241,234,216,0.06); transform:translateY(-1px);}
     .auth-trigger:active{transform:translateY(0);}
-    .auth-avatar{width:26px; height:26px; border-radius:50%; background:rgba(241,234,216,0.14); color:var(--parchment); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
+    .auth-trigger.is-pro{border-color:var(--brass-light); background:rgba(217,171,82,0.1);}
+    .auth-avatar{position:relative; width:26px; height:26px; border-radius:50%; background:rgba(241,234,216,0.14); color:var(--parchment); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
     .auth-avatar.is-user{background:var(--brass-light); color:var(--ink); font-family:'Newsreader', serif; font-weight:600; font-size:0.72rem;}
     .auth-avatar img{width:100%; height:100%; object-fit:cover;}
+    .auth-avatar.is-pro{box-shadow:0 0 0 2px var(--brass-light);}
+    .pro-badge{position:absolute; bottom:-3px; right:-3px; width:13px; height:13px; border-radius:50%; background:var(--brass-light); color:var(--ink); display:flex; align-items:center; justify-content:center; border:2px solid var(--ink); font-size:8px; line-height:1; font-weight:700;}
     .auth-label{white-space:nowrap;}
+    .nav-account-menu .who .pro-tag{display:inline-flex; align-items:center; gap:4px; margin-top:6px; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a6a1f; background:rgba(185,138,46,0.14); border:1px solid var(--brass-light); padding:3px 9px; border-radius:20px;}
     .nav-account-menu{
       position:absolute; top:calc(100% + 8px); right:0; background:var(--parchment); color:var(--ink); border-radius:6px; min-width:190px; box-shadow:0 12px 32px rgba(0,0,0,0.32); padding:8px; z-index:60;
       opacity:0; visibility:hidden; transform:translateY(-6px) scale(0.98); transform-origin:top right;
@@ -354,11 +358,53 @@
     `;
   }
 
+  // Distingue, en el header de TODO el sitio, a las cuentas que ya
+  // administran al menos un despacho/perfil aceptado (status: 'approved')
+  // — para que se note que Idóneo ya los aceptó como abogados, no solo
+  // en su propio panel sino en cualquier página donde estén logueados.
+  async function checkProfessionalBadge(user){
+    if(!user || typeof IdoneoListings === 'undefined') return null;
+    try{
+      const listings = await IdoneoListings.getMyListings();
+      const approved = listings.filter(l => l.status === 'approved');
+      if(!approved.length) return null;
+      return { verificado: approved.some(l => l.verificado) };
+    } catch(err){
+      return null;
+    }
+  }
+
+  let renderToken = 0;
+  async function applyProfessionalBadge(user, token){
+    const info = await checkProfessionalBadge(user);
+    if(token !== renderToken || !info) return;
+    const avatar = document.querySelector('#navAuthTrigger .auth-avatar');
+    const trigger = document.getElementById('navAuthTrigger');
+    const who = document.querySelector('#navAccountMenu .who');
+    if(avatar && !avatar.querySelector('.pro-badge')){
+      avatar.classList.add('is-pro');
+      const badge = document.createElement('span');
+      badge.className = 'pro-badge';
+      badge.title = info.verificado ? 'Cédula profesional verificada por Idóneo' : 'Despacho aceptado por Idóneo';
+      badge.textContent = '✓';
+      avatar.appendChild(badge);
+    }
+    if(trigger) trigger.classList.add('is-pro');
+    if(who && !who.querySelector('.pro-tag')){
+      const tag = document.createElement('div');
+      tag.className = 'pro-tag';
+      tag.textContent = info.verificado ? '✓ Cédula verificada' : 'Despacho aceptado';
+      who.appendChild(tag);
+    }
+  }
+
   function updateAuthUI(){
     const slot = document.getElementById('navAuth');
     if(!slot) return;
     const user = getCurrentUser();
+    const token = ++renderToken;
     slot.innerHTML = user ? loggedInHTML(user) : loggedOutHTML();
+    if(user) applyProfessionalBadge(user, token);
   }
 
   function onDocumentClick(e){
