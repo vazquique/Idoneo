@@ -20,8 +20,11 @@
 
   header{position:sticky; top:0; z-index:50; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
   .header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 28px;}
-  .brand{display:flex; align-items:center; gap:10px; font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600;}
-  .brand-mark{width:24px; height:24px; flex-shrink:0;}
+  .brand{display:flex; align-items:center; gap:11px; text-decoration:none;}
+  .brand-mark{width:26px; height:26px; flex-shrink:0; color:var(--brass-light);}
+  .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
+  .brand-name{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.13em; color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); border-radius:20px; padding:2px 8px; align-self:flex-start; background:rgba(217,171,82,0.08);}
   .nav-right{display:flex; align-items:center; gap:14px; position:relative;}
   .nav-links{display:flex; align-items:center; gap:10px;}
   .nav-toggle{display:none;}
@@ -79,9 +82,12 @@
 
 <header>
   <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
-    <a href="index.html" class="brand" style="text-decoration:none;">
+    <a href="index.html" class="brand">
       <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7l-3 6a4 4 0 0 0 8 0l-3-6m14 0l-3 6a4 4 0 0 0 8 0l-3-6M4 7h6m4 0h6M8 21h8"/></svg>
-      Idóneo <span style="opacity:0.55; font-weight:400; margin-left:6px;">Abogados</span>
+      <span class="brand-text">
+        <span class="brand-name">Idóneo</span>
+        <span class="brand-niche">Abogados</span>
+      </span>
     </a>
     <div class="nav-right">
       <div class="nav-links" id="navLinks">
