@@ -109,6 +109,11 @@
     .auth-switch{margin-top:14px; text-align:center; font-size:0.82rem; color:#6b6250;}
     .auth-switch a{color:var(--brass); text-decoration:none; font-weight:600; cursor:pointer;}
     .auth-switch a:hover{text-decoration:underline;}
+    .auth-consent-row{display:flex; align-items:flex-start; gap:8px; font-size:0.78rem; color:#6b6250; cursor:pointer;}
+    .auth-consent-row input{width:14px; height:14px; margin-top:2px; flex-shrink:0;}
+    .auth-consent-row a{color:var(--brass); text-decoration:underline; font-weight:400;}
+    .google-consent-note{font-size:0.72rem; color:#8a8069; text-align:center; margin-top:8px; line-height:1.4;}
+    .google-consent-note a{color:var(--brass); text-decoration:underline;}
 
     .auth-slot{position:relative; display:flex; align-items:center;}
     .auth-trigger{display:inline-flex; align-items:center; gap:8px; background:none; border:1px solid var(--line-strong); border-radius:20px; padding:4px 14px 4px 4px; cursor:pointer; color:rgba(241,234,216,0.9); font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; transition:border-color 0.2s ease, background 0.2s ease;}
@@ -144,6 +149,7 @@
           <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.5C29.5 35.9 26.9 37 24 37c-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.6 40.6 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.9l6.5 5.5C40.7 36.5 43 30.7 43 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
           Continuar con Google
         </button>
+        <p class="google-consent-note">Al continuar con Google, aceptas nuestro <a href="aviso-privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a> y <a href="terminos.html" target="_blank" rel="noopener">Términos y Condiciones</a>.</p>
         <div class="auth-divider"><span>o con tu correo</span></div>
         <form id="loginForm" class="auth-form" novalidate>
           <div class="field"><label for="loginEmail">Correo</label><input type="email" id="loginEmail" autocomplete="username" required></div>
@@ -156,6 +162,10 @@
           <div class="field"><label for="signupNombre">Nombre</label><input type="text" id="signupNombre" autocomplete="name" required></div>
           <div class="field"><label for="signupEmail">Correo</label><input type="email" id="signupEmail" autocomplete="username" required></div>
           <div class="field"><label for="signupPassword">Contraseña (mínimo 6 caracteres)</label><input type="password" id="signupPassword" autocomplete="new-password" required minlength="6"></div>
+          <label class="auth-consent-row">
+            <input type="checkbox" id="signupConsent">
+            <span>Acepto el <a href="aviso-privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="terminos.html" target="_blank" rel="noopener">Términos y Condiciones</a>.</span>
+          </label>
           <div class="auth-msg" id="signupError" role="alert"></div>
           <button type="submit" class="submit-btn">Crear cuenta</button>
           <div class="auth-switch">¿Ya tienes cuenta? <a data-switch="login">Inicia sesión</a></div>
@@ -248,10 +258,15 @@
       const nombre = document.getElementById('signupNombre').value.trim();
       const email = document.getElementById('signupEmail').value.trim();
       const password = document.getElementById('signupPassword').value;
+      const consent = document.getElementById('signupConsent').checked;
       const errEl = document.getElementById('signupError');
       errEl.classList.remove('show');
       if(!nombre || !email || password.length < 6){
         showError(errEl, 'Completa nombre, correo y una contraseña de al menos 6 caracteres.');
+        return;
+      }
+      if(!consent){
+        showError(errEl, 'Debes aceptar el Aviso de Privacidad y los Términos y Condiciones para crear tu cuenta.');
         return;
       }
       const btn = e.target.querySelector('.submit-btn');

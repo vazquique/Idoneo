@@ -80,6 +80,9 @@
   .submit-btn{margin-top:4px; background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:14px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.2s ease;}
   .submit-btn:hover{background:var(--ink-2);}
   .fine-print{font-size:0.75rem; color:#6b6250;}
+  .consent-row{display:flex; align-items:flex-start; gap:9px; font-size:0.8rem; color:#6b6250; cursor:pointer;}
+  .consent-row input{width:15px; height:15px; margin-top:2px; flex-shrink:0;}
+  .consent-row a{color:var(--brass); text-decoration:underline;}
   .success-msg{display:none; align-items:center; gap:10px; background:#e9f2e6; color:#2e4a2a; padding:13px 15px; border-radius:2px; font-size:0.86rem;}
   .success-msg.show{display:flex;}
   .error-msg{display:none; align-items:center; gap:10px; background:#f2e6e6; color:#6b2a2a; padding:13px 15px; border-radius:2px; font-size:0.86rem;}
@@ -231,6 +234,10 @@
         <label for="whatsapp">WhatsApp de contacto</label>
         <input id="whatsapp" name="whatsapp" type="tel" placeholder="33 1234 5678" required>
       </div>
+      <label class="consent-row">
+        <input type="checkbox" id="consentCheck" name="consentimiento" required>
+        <span>He leído y acepto el <a href="aviso-privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="terminos.html" target="_blank" rel="noopener">Términos y Condiciones</a>, incluyendo que mi información de contacto y perfil se publicará públicamente una vez aprobada.</span>
+      </label>
       <button type="submit" class="submit-btn">Apartar mi lugar</button>
       <p class="fine-print">Tu registro queda pendiente de revisión: confirmamos tu cédula antes de publicar tu perfil.</p>
       <div class="success-msg" id="successMsg">✓ Listo — tu registro quedó pendiente de revisión. Te contactaremos por WhatsApp para verificar tu cédula antes de publicar tu perfil.</div>
@@ -242,7 +249,7 @@
 <footer>
   <div class="wrap footer-inner">
     <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
-    <span class="mono">AVISO DE PRIVACIDAD · TÉRMINOS</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html" style="text-decoration:none;">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html" style="text-decoration:none;">TÉRMINOS</a></span>
   </div>
 </footer>
 
