@@ -55,6 +55,7 @@
   .review-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;}
   .review-author{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:rgba(241,234,216,0.85);}
   .review-own-badge{font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--brass-light); border:1px solid var(--brass-light); border-radius:20px; padding:2px 8px; margin-left:8px;}
+  .review-lawyer-badge{font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.04em; color:#d99a6a; border:1px solid #d99a6a; border-radius:20px; padding:2px 8px; margin-left:8px; cursor:help;}
   .review-date{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:rgba(241,234,216,0.45); margin-left:auto;}
   .review-text{font-size:0.92rem; color:rgba(241,234,216,0.72);}
   .empty-note{color:rgba(241,234,216,0.55); font-size:0.88rem; padding:14px 0;}
@@ -197,6 +198,7 @@
   let starFilter = null;
   let sortMode = 'recent';
   let searchTerm = '';
+  let despachoOwnerUids = new Set();
 
   async function init(){
     const params = new URLSearchParams(window.location.search);
@@ -208,6 +210,9 @@
       console.error('No se pudieron cargar los perfiles registrados, mostrando solo los de ejemplo.', err);
       abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
     }
+    // Cuentas dueñas de algún despacho publicado — para marcar en las
+    // reseñas cuando quien escribe también tiene un perfil en Idóneo.
+    despachoOwnerUids = new Set(abogados.filter(a => a.ownerUid).map(a => a.ownerUid));
     const ab = abogados.find(a => String(a.id) === id);
     if(!ab){
       content.innerHTML = `<div class="not-found"><p>No encontramos ese perfil.</p></div>`;
@@ -357,16 +362,20 @@
       return;
     }
     emptyEl.style.display = 'none';
-    listEl.innerHTML = list.map(r => `
+    listEl.innerHTML = list.map(r => {
+      const isMine = currentUser && r.autorUid === currentUser.uid;
+      const isDespacho = !isMine && r.autorUid && despachoOwnerUids.has(r.autorUid);
+      return `
       <div class="review-card">
         <div class="review-top">
-          <span class="review-author">${escapeHtml(r.autorNombre)}${(currentUser && r.autorUid === currentUser.uid) ? '<span class="review-own-badge">Tu reseña</span>' : ''}</span>
+          <span class="review-author">${escapeHtml(r.autorNombre)}${isMine ? '<span class="review-own-badge">Tu reseña</span>' : ''}${isDespacho ? '<span class="review-lawyer-badge" title="Esta cuenta también tiene un despacho publicado en Idóneo">Cuenta de despacho registrado</span>' : ''}</span>
           <span class="stars">${starString(r.estrellas)}</span>
           <span class="review-date">${escapeHtml(formatReviewDate(r))}</span>
         </div>
         <div class="review-text">${escapeHtml(r.texto)}</div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   let selectedStars = 0;
@@ -386,6 +395,15 @@
       document.getElementById('reviewLoginBtn').addEventListener('click', () => {
         window.IdoneoAuth.openAuthModal('login');
       });
+      return;
+    }
+
+    if(currentAbogado.ownerUid && currentAbogado.ownerUid === user.uid){
+      slot.innerHTML = `
+        <div class="review-login-prompt">
+          <p>Este es tu propio perfil registrado en Idóneo — no puedes escribir una reseña sobre ti mismo.</p>
+        </div>
+      `;
       return;
     }
 

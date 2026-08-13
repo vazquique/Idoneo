@@ -106,7 +106,11 @@ service cloud.firestore {
                     && request.resource.data.estrellas >= 1
                     && request.resource.data.estrellas <= 5
                     && request.resource.data.texto is string
-                    && request.resource.data.texto.size() <= 2000;
+                    && request.resource.data.texto.size() <= 2000
+                    && !(
+                      exists(/databases/$(database)/documents/abogados_registrados/$(request.resource.data.abogadoId))
+                      && get(/databases/$(database)/documents/abogados_registrados/$(request.resource.data.abogadoId)).data.ownerUid == request.auth.uid
+                    );
       allow update: if request.auth != null
                     && resource.data.autorUid == request.auth.uid
                     && request.resource.data.autorUid == request.auth.uid
@@ -148,6 +152,17 @@ Qué hacen estas reglas:
   reseñas de la misma cuenta para el mismo abogado (la segunda sobrescribe
   la primera, no la duplica) y que alguien firme una reseña con el nombre
   de otra persona. Solo el autor de la reseña (o un admin) puede borrarla.
+- **Auto-reseña bloqueada de verdad**: la regla de `create` en `resenas`
+  consulta el registro del abogado (`get(...)`) y rechaza la reseña si
+  quien la escribe es el mismo `ownerUid` de ese despacho — no es solo que
+  la interfaz oculte el botón, Firestore la rechaza aunque alguien intente
+  crearla directamente. (No aplica a los 8 perfiles de ejemplo, que no
+  tienen dueño real.)
+- Además, en `perfil.html`, si quien escribe una reseña también es dueño
+  de **otro** despacho publicado en Idóneo, su reseña se marca con la
+  etiqueta "Cuenta de despacho registrado" — no se bloquea (podría ser una
+  reseña legítima, como un abogado contratando a otro para su propio
+  caso), pero queda visible que no es un cliente cualquiera.
 
 > Si ya habías publicado unas reglas antes de que existieran `admins` o
 > `resenas`, vuelve a pegar este bloque completo y publica de nuevo.
