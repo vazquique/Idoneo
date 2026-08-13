@@ -316,7 +316,7 @@
           </div>
         </div>
         <div class="profile-meta-row">
-          <span class="specialty-chip">${escapeHtml(ab.especialidad)}</span>
+          ${(ab.especialidades || []).map(e => `<span class="specialty-chip">${escapeHtml(e)}</span>`).join('')}
           ${ab.tipo === 'despacho' ? '<span class="specialty-chip despacho-chip">Despacho</span>' : ''}
           <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total} reseña${stats.total === 1 ? '' : 's'})</span></span>
           <span class="price-tag">${escapeHtml(ab.precio)}</span>

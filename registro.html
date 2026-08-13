@@ -92,6 +92,12 @@
   .tipo-tabs .tipo-tab.active{border-color:var(--brass); background:rgba(185,138,46,0.08); box-shadow:0 0 0 1px var(--brass);}
   .despacho-fields{overflow:hidden; max-height:0; transition:max-height 0.25s ease;}
   .despacho-fields.show{max-height:200px;}
+  .especialidad-picker{display:flex; flex-wrap:wrap; gap:8px;}
+  .esp-chip{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; padding:7px 14px; border:1px solid #c9bd9c; border-radius:20px; background:#fbf8f0; color:var(--ink-2); cursor:pointer; transition:background 0.15s ease, border-color 0.15s ease, color 0.15s ease;}
+  .esp-chip:hover{border-color:var(--brass);}
+  .esp-chip.selected{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink); font-weight:600;}
+  .esp-hint{font-size:0.76rem; color:#8a8069; margin-top:6px;}
+  .esp-hint.err{color:#b23b3b;}
   .submit-btn{margin-top:4px; background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:14px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.2s ease, transform 0.15s ease;}
   .submit-btn:hover:not(:disabled){background:var(--ink-2); transform:translateY(-1px);}
   .submit-btn:active:not(:disabled){transform:translateY(0);}
@@ -270,20 +276,14 @@
           </div>
         </div>
       </div>
-      <div class="row2">
-        <div class="field">
-          <label for="especialidad">Especialidad principal<span class="req">*</span></label>
-          <select id="especialidad" name="especialidad" required>
-            <option value="" disabled selected>Selecciona</option>
-            <option>Familiar</option><option>Penal</option><option>Laboral</option><option>Mercantil</option>
-            <option>Migratorio</option><option>Corporativo</option><option>Civil</option><option>Fiscal</option>
-            <option>Bienes raíces</option><option>Amparo</option><option>Otra</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="ciudad">Ciudad / estado<span class="req">*</span></label>
-          <input id="ciudad" name="ciudad" type="text" placeholder="Zapopan, Jalisco" required>
-        </div>
+      <div class="field">
+        <label>Especialidades (elige hasta 3)<span class="req">*</span></label>
+        <div class="especialidad-picker" id="especialidadPicker"></div>
+        <div class="esp-hint" id="espHint">Selecciona de 1 a 3 especialidades.</div>
+      </div>
+      <div class="field">
+        <label for="ciudad">Ciudad / estado<span class="req">*</span></label>
+        <input id="ciudad" name="ciudad" type="text" placeholder="Zapopan, Jalisco" required>
       </div>
       <div class="field">
         <label for="whatsapp">WhatsApp de contacto<span class="req">*</span></label>
@@ -345,6 +345,31 @@
     });
   });
 
+  const ESPECIALIDADES_OPTS = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
+  const MAX_ESPECIALIDADES = 3;
+  const espPicker = document.getElementById('especialidadPicker');
+  const espHint = document.getElementById('espHint');
+  espPicker.innerHTML = ESPECIALIDADES_OPTS.map(e => `<button type="button" class="esp-chip" data-esp="${e}">${e}</button>`).join('');
+  espPicker.querySelectorAll('.esp-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const selectedCount = espPicker.querySelectorAll('.esp-chip.selected').length;
+      if(chip.classList.contains('selected')){
+        chip.classList.remove('selected');
+      } else if(selectedCount >= MAX_ESPECIALIDADES){
+        espHint.textContent = `Máximo ${MAX_ESPECIALIDADES} especialidades — quita una para agregar otra.`;
+        espHint.classList.add('err');
+        return;
+      } else {
+        chip.classList.add('selected');
+      }
+      espHint.textContent = 'Selecciona de 1 a 3 especialidades.';
+      espHint.classList.remove('err');
+    });
+  });
+  function getSelectedEspecialidades(){
+    return Array.from(espPicker.querySelectorAll('.esp-chip.selected')).map(c => c.dataset.esp);
+  }
+
   if(window.IdoneoAuth){
     window.IdoneoAuth.onAuthChanged((user) => {
       if(successMsg.classList.contains('show')) return; // no reemplazar el formulario tras un envío exitoso
@@ -358,6 +383,13 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.classList.remove('show');
+    const especialidades = getSelectedEspecialidades();
+    if(especialidades.length === 0){
+      espHint.textContent = 'Elige al menos una especialidad.';
+      espHint.classList.add('err');
+      espPicker.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
     submitBtn.textContent = 'Enviando...';
     submitBtn.disabled = true;
     try{
@@ -366,14 +398,16 @@
         tipo: form.querySelector('input[name="tipo"]:checked').value,
         numAbogados: document.getElementById('numAbogados').value,
         anioFundacion: document.getElementById('anioFundacion').value,
-        especialidad: document.getElementById('especialidad').value,
+        especialidades: especialidades,
         ciudad: document.getElementById('ciudad').value.trim(),
         telefono: document.getElementById('whatsapp').value.trim()
       });
       // Aviso por correo al dueño del sitio — best effort, no bloquea el registro si falla.
       fetch(form.action, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} }).catch(() => {});
       successMsg.classList.add('show');
-      form.querySelectorAll('input, select').forEach(el => el.disabled = true);
+      form.querySelectorAll('input, select, .esp-chip, .tipo-tab').forEach(el => el.disabled = true);
+      espPicker.style.pointerEvents = 'none';
+      document.querySelectorAll('.tipo-tab').forEach(t => t.style.pointerEvents = 'none');
       submitBtn.textContent = 'Registrado ✓';
     } catch(err){
       console.error('No se pudo guardar el registro en Firestore.', err);

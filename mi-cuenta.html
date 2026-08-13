@@ -98,6 +98,12 @@
   .field.full{grid-column:1 / -1;}
   .field-locked{font-size:0.82rem; color:#8a8069; background:#ece3cd; border-radius:3px; padding:9px 11px;}
   .field-hint{font-size:0.76rem; color:#8a8069; margin-top:4px;}
+  .especialidad-picker{display:flex; flex-wrap:wrap; gap:8px;}
+  .esp-chip{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; padding:7px 14px; border:1px solid #c9bd9c; border-radius:20px; background:#fbf8f0; color:var(--ink-2); cursor:pointer; transition:background 0.15s ease, border-color 0.15s ease, color 0.15s ease;}
+  .esp-chip:hover{border-color:var(--brass);}
+  .esp-chip.selected{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink); font-weight:600;}
+  .esp-hint{font-size:0.76rem; color:#8a8069; margin-top:6px;}
+  .esp-hint.err{color:#b23b3b;}
 
   .horario-builder{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .horario-builder select, .horario-builder input[type="time"]{width:auto; flex:1; min-width:110px;}
@@ -216,9 +222,34 @@
   function priceOptions(selected){
     return ['$', '$$', '$$$'].map(p => `<option value="${p}" ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
   }
-  function especialidadOptions(selected){
-    const opts = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
-    return opts.map(o => `<option value="${o}" ${o === selected ? 'selected' : ''}>${o}</option>`).join('');
+  const ESPECIALIDADES_OPTS = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
+  const MAX_ESPECIALIDADES = 3;
+  function especialidadPickerHTML(selected){
+    const sel = Array.isArray(selected) ? selected : [];
+    return ESPECIALIDADES_OPTS.map(e => `<button type="button" class="esp-chip${sel.includes(e) ? ' selected' : ''}" data-esp="${e}">${e}</button>`).join('');
+  }
+  function wireEspecialidadPicker(card){
+    const picker = card.querySelector('[data-role="especialidadPicker"]');
+    const hint = card.querySelector('[data-role="espHint"]');
+    picker.querySelectorAll('.esp-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const selectedCount = picker.querySelectorAll('.esp-chip.selected').length;
+        if(chip.classList.contains('selected')){
+          chip.classList.remove('selected');
+        } else if(selectedCount >= MAX_ESPECIALIDADES){
+          hint.textContent = `Máximo ${MAX_ESPECIALIDADES} especialidades — quita una para agregar otra.`;
+          hint.classList.add('err');
+          return;
+        } else {
+          chip.classList.add('selected');
+        }
+        hint.textContent = 'Selecciona de 1 a 3 especialidades.';
+        hint.classList.remove('err');
+      });
+    });
+  }
+  function getSelectedEspecialidades(card){
+    return Array.from(card.querySelectorAll('[data-role="especialidadPicker"] .esp-chip.selected')).map(c => c.dataset.esp);
   }
   function formatTime12(t){
     if(!t) return '';
@@ -434,11 +465,12 @@
           </div>
         </div>
 
-        <div class="field-grid" style="margin-top:14px;">
-          <div class="field">
-            <label>Especialidad principal<span class="req">*</span></label>
-            <select data-field="especialidad" data-required="1">${especialidadOptions(l.especialidad)}</select>
-          </div>
+        <div class="field full" style="margin-top:14px;">
+          <label>Especialidades (elige hasta 3)<span class="req">*</span></label>
+          <div class="especialidad-picker" data-role="especialidadPicker">${especialidadPickerHTML(l.especialidades)}</div>
+          <div class="esp-hint" data-role="espHint">Selecciona de 1 a 3 especialidades.</div>
+        </div>
+        <div class="field-grid">
           <div class="field">
             <label>Ciudad / estado<span class="req">*</span></label>
             <input type="text" data-field="ciudad" data-required="1" value="${escapeHtml(l.ciudad)}">
@@ -508,7 +540,7 @@
 
   function readFields(card){
     return {
-      especialidad: card.querySelector('[data-field="especialidad"]').value,
+      especialidades: getSelectedEspecialidades(card),
       ciudad: card.querySelector('[data-field="ciudad"]').value.trim(),
       telefono: card.querySelector('[data-field="telefono"]').value.trim(),
       precio: card.querySelector('[data-field="precio"]').value,
@@ -557,6 +589,17 @@
       el.classList.toggle('field-error', empty);
       if(empty) ok = false;
     });
+    const espHint = card.querySelector('[data-role="espHint"]');
+    if(getSelectedEspecialidades(card).length === 0){
+      ok = false;
+      if(espHint){
+        espHint.textContent = 'Elige al menos una especialidad.';
+        espHint.classList.add('err');
+      }
+    } else if(espHint){
+      espHint.textContent = 'Selecciona de 1 a 3 especialidades.';
+      espHint.classList.remove('err');
+    }
     const note = card.querySelector('[data-role="reqNote"]');
     if(note) note.classList.toggle('show', !ok);
     return ok;
@@ -702,6 +745,7 @@
     wireRequiredFields(card);
     wireHorarioBuilder(card);
     wireListingPhoto(card, l);
+    wireEspecialidadPicker(card);
     wireTipoToggle(card);
 
     card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
