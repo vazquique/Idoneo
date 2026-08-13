@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buscar abogado — Idóneo Abogados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182644;
+    --ink-2:#233258;
+    --brass:#b98a2e;
+    --brass-light:#d9ab52;
+    --parchment:#f1ead8;
+    --parchment-dim:#e4dbc4;
+    --line: rgba(241,234,216,0.18);
+    --line-strong: rgba(241,234,216,0.32);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5; overflow-x:hidden;}
+  .display{font-family:'Newsreader', serif;}
+  .mono{font-family:'IBM Plex Mono', monospace; letter-spacing:0.04em;}
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- Header ---------- */
+  header{position:sticky; top:0; z-index:50; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  .header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 28px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600;}
+  .brand-mark{width:24px; height:24px; flex-shrink:0;}
+  .nav-right{display:flex; align-items:center; gap:14px; position:relative;}
+  .nav-links{display:flex; align-items:center; gap:10px;}
+  .nav-toggle{display:none;}
+  .nav-link{
+    font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.07em;
+    padding:9px 16px; border-radius:2px; text-decoration:none; color:rgba(241,234,216,0.8);
+    transition:color 0.2s ease, background 0.2s ease;
+  }
+  .nav-link:hover{color:var(--parchment);}
+  .nav-link.primary{border:1px solid var(--brass-light); color:var(--parchment);}
+  .nav-link.primary:hover{background:var(--brass-light); color:var(--ink);}
+
+  /* ---------- Hero + buscador ---------- */
+  .hero{position:relative; padding:72px 0 0; border-bottom:1px solid var(--line);
+    background: radial-gradient(ellipse 700px 380px at 85% -10%, rgba(217,171,82,0.14), transparent 60%);}
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px;}
+  .eyebrow::before{content:''; width:24px; height:1px; background:var(--brass-light);}
+  h1{font-size:clamp(2.1rem, 4.4vw, 3.4rem); font-weight:500; line-height:1.1; max-width:17ch; letter-spacing:-0.01em;}
+  h1 em{font-style:italic; color:var(--brass-light); font-weight:500;}
+  .hero-sub{margin-top:20px; max-width:50ch; font-size:1.02rem; color:rgba(241,234,216,0.78);}
+
+  /* Search card */
+  .search-card{
+    margin-top:40px; background:var(--parchment); color:var(--ink); border-radius:6px 6px 0 0;
+    padding:24px; display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:14px; align-items:end;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+  }
+  .search-field label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-2); margin-bottom:6px;}
+  .search-field select{
+    width:100%; padding:12px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0;
+    font-family:'IBM Plex Sans', sans-serif; font-size:0.95rem; color:var(--ink);
+  }
+  .search-field select:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .search-field .input-icon-wrap{position:relative;}
+  .search-field .input-icon-wrap svg{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:#8a8069; pointer-events:none;
+  }
+  .search-field input[type="text"]{
+    width:100%; padding:12px 12px 12px 36px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0;
+    font-family:'IBM Plex Sans', sans-serif; font-size:0.95rem; color:var(--ink);
+  }
+  .search-field input[type="text"]:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .search-btn{
+    background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:13px 26px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em;
+    cursor:pointer; white-space:nowrap; transition:background 0.2s ease;
+  }
+  .search-btn:hover{background:var(--ink-2);}
+
+  /* ---------- Seal ---------- */
+  .seal-wrap{position:absolute; top:60px; right:28px; width:120px; height:120px; opacity:0.9;}
+  .seal{width:100%; height:100%; animation:seal-idle 7s ease-in-out infinite;}
+  @keyframes seal-idle{0%,100%{transform:rotate(0deg);} 50%{transform:rotate(-4deg);}}
+  .seal.stamped{animation:seal-stamp 0.55s cubic-bezier(.2,1.4,.4,1) both;}
+  @keyframes seal-stamp{0%{transform:scale(2.4) rotate(-14deg); opacity:0;} 60%{transform:scale(0.92) rotate(-2deg); opacity:1;} 100%{transform:scale(1) rotate(-4deg); opacity:1;}}
+
+  /* ---------- Resultados ---------- */
+  .resultados{background:var(--parchment); color:var(--ink); padding:32px 0 64px;}
+  .resultados-head{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:22px;}
+  .resultados-count{font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:#6b6250;}
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;}
+  .lawyer-card{
+    background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:20px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .lawyer-top{display:flex; gap:12px; align-items:flex-start;}
+  .avatar{
+    width:44px; height:44px; border-radius:50%; background:var(--ink); color:var(--brass-light);
+    display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:1.05rem;
+    flex-shrink:0;
+  }
+  .lawyer-name{font-family:'Newsreader', serif; font-weight:600; font-size:1.08rem; line-height:1.25;}
+  .lawyer-city{font-size:0.82rem; color:#6b6250; margin-top:2px;}
+  .verified-tag{display:inline-flex; align-items:center; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#5c7a4f; margin-top:4px;}
+  .verified-tag svg{width:12px; height:12px;}
+  .lawyer-meta{display:flex; align-items:center; justify-content:space-between; font-size:0.85rem;}
+  .stars{color:var(--brass); font-size:0.9rem;}
+  .rating-count{color:#8a8069; font-size:0.78rem; margin-left:4px;}
+  .price-tag{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:var(--ink-2);}
+  .specialty-chip{
+    align-self:flex-start; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; padding:4px 10px;
+    border:1px solid #c9bd9c; border-radius:20px; color:var(--ink-2);
+  }
+  .contact-btn{
+    margin-top:4px; text-align:center; background:var(--ink); color:var(--parchment); text-decoration:none;
+    padding:10px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em;
+    transition:background 0.2s ease;
+  }
+  .contact-btn:hover{background:var(--ink-2);}
+  .no-results{display:none; text-align:center; padding:50px 20px; color:#6b6250;}
+  .no-results.show{display:block;}
+
+  /* ---------- Puente hacia abogados ---------- */
+  .puente{padding:80px 0; border-bottom:1px solid var(--line); text-align:center;}
+  .puente .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); display:block; margin-bottom:14px;}
+  .puente h2{font-family:'Newsreader', serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:500; max-width:26ch; margin:0 auto;}
+  .puente p{margin-top:16px; max-width:52ch; margin-left:auto; margin-right:auto; color:rgba(241,234,216,0.72);}
+  .puente-cta{
+    display:inline-block; margin-top:26px; background:var(--brass-light); color:var(--ink); text-decoration:none;
+    padding:13px 28px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em;
+  }
+
+  section.for-lawyers{padding:80px 0;}
+  .section-head{max-width:640px; margin-bottom:48px;}
+  .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); display:block; margin-bottom:14px;}
+  h2{font-family:'Newsreader', serif; font-size:clamp(1.6rem,2.8vw,2.2rem); font-weight:500; letter-spacing:-0.01em;}
+  .section-head p{margin-top:14px; color:rgba(241,234,216,0.72); font-size:1rem; max-width:52ch;}
+
+  .articulos{border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .articulo{display:grid; grid-template-columns:140px 1fr; gap:26px; padding:26px 0; border-top:1px solid var(--line); opacity:0; transform:translateY(14px); transition:opacity 0.6s ease, transform 0.6s ease;}
+  .articulo.visible{opacity:1; transform:translateY(0);}
+  .articulo:last-child{border-bottom:1px solid var(--line);}
+  .art-label{font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:var(--brass-light);}
+  .articulo h3{font-family:'Newsreader', serif; font-size:1.25rem; font-weight:500; margin-bottom:6px;}
+  .articulo p{color:rgba(241,234,216,0.72); font-size:0.95rem; max-width:56ch;}
+
+  .beneficios-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .beneficio{background:var(--ink); padding:28px 24px;}
+  .beneficio-icon{width:26px; height:26px; margin-bottom:16px; color:var(--brass-light);}
+  .beneficio h3{font-family:'Newsreader', serif; font-weight:500; font-size:1.05rem; margin-bottom:8px;}
+  .beneficio p{font-size:0.88rem; color:rgba(241,234,216,0.68);}
+
+  .chip-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;}
+  .chip{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; padding:8px 15px; border:1px solid var(--line-strong); border-radius:20px; color:rgba(241,234,216,0.85);}
+
+  .registro{border-top:1px solid var(--line);}
+  .registro-inner{display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:start;}
+  .registro h2{max-width:14ch;}
+  .registro-copy p{margin-top:16px; color:rgba(241,234,216,0.72); max-width:40ch;}
+  form{background:var(--parchment); color:var(--ink); border-radius:4px; padding:32px; display:flex; flex-direction:column; gap:15px;}
+  form .form-title{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-2); margin-bottom:2px;}
+  .field label{display:block; font-size:0.8rem; font-weight:600; margin-bottom:5px; color:var(--ink-2);}
+  .field input, .field select{width:100%; padding:11px 12px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.94rem; color:var(--ink);}
+  .field input:focus, .field select:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .submit-btn{margin-top:4px; background:var(--ink); color:var(--parchment); border:none; border-radius:2px; padding:14px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.2s ease;}
+  .submit-btn:hover{background:var(--ink-2);}
+  .fine-print{font-size:0.75rem; color:#6b6250;}
+  .success-msg{display:none; align-items:center; gap:10px; background:#e9f2e6; color:#2e4a2a; padding:13px 15px; border-radius:2px; font-size:0.86rem;}
+  .success-msg.show{display:flex;}
+  .error-msg{display:none; align-items:center; gap:10px; background:#f2e6e6; color:#6b2a2a; padding:13px 15px; border-radius:2px; font-size:0.86rem;}
+  .error-msg.show{display:flex;}
+
+  footer{padding:36px 0; border-top:1px solid var(--line);}
+  .footer-inner{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  footer .mono{font-size:0.72rem; color:rgba(241,234,216,0.5);}
+
+  @media (max-width: 860px){
+    .seal-wrap{display:none;}
+    .search-card{grid-template-columns:1fr; border-radius:6px;}
+    .beneficios-grid{grid-template-columns:1fr;}
+    .articulo{grid-template-columns:1fr; gap:6px;}
+    .registro-inner{grid-template-columns:1fr;}
+    .row2{grid-template-columns:1fr;}
+  }
+  @media (max-width: 680px){
+    .nav-toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; order:2;}
+    .nav-toggle:hover{border-color:var(--brass-light);}
+    .auth-slot{order:1;}
+    .nav-links{
+      display:none; position:absolute; top:calc(100% + 12px); right:0; min-width:230px; max-width:calc(100vw - 40px); z-index:55;
+      flex-direction:column; align-items:stretch; gap:4px; background:var(--ink-2); border:1px solid var(--line-strong);
+      border-radius:6px; padding:10px; box-shadow:0 16px 36px rgba(0,0,0,0.35);
+    }
+    .nav-links.open{display:flex;}
+    .nav-links .nav-link{width:100%; text-align:center; padding:12px 10px;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
+    <a href="index.html" class="brand" style="text-decoration:none;">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7l-3 6a4 4 0 0 0 8 0l-3-6m14 0l-3 6a4 4 0 0 0 8 0l-3-6M4 7h6m4 0h6M8 21h8"/></svg>
+      Idóneo <span style="opacity:0.55; font-weight:400; margin-left:6px;">Abogados</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link" href="#resultados" id="navBuscar" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          Buscar abogado
+        </a>
+        <a class="nav-link primary" href="registro.html">Regístrate como abogado</a>
+      </div>
+      <div class="auth-slot" id="navAuth"></div>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Directorio legal · Jalisco, próximamente todo México</span>
+    <h1>Encuentra al abogado <em>idóneo</em> para tu caso.</h1>
+    <p class="hero-sub">Filtra por ciudad y especialidad, compara reseñas y precio entre despachos verificados, y contacta directo por WhatsApp — tú eliges, nadie te reparte a ciegas.</p>
+
+    <div class="search-card" id="searchCard">
+      <div class="search-field">
+        <label for="fNombre">Buscar por nombre</label>
+        <div class="input-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="fNombre" placeholder="Nombre del abogado o despacho">
+        </div>
+      </div>
+      <div class="search-field">
+        <label for="fCiudad">Ciudad</label>
+        <select id="fCiudad">
+          <option value="">Todas las ciudades</option>
+          <option>Zapopan, Jalisco</option>
+          <option>Guadalajara, Jalisco</option>
+          <option>Ciudad de México</option>
+          <option>Monterrey, Nuevo León</option>
+        </select>
+      </div>
+      <div class="search-field">
+        <label for="fEspecialidad">Tipo de abogado</label>
+        <select id="fEspecialidad">
+          <option value="">Todas las especialidades</option>
+          <option>Familiar</option>
+          <option>Penal</option>
+          <option>Laboral</option>
+          <option>Mercantil</option>
+          <option>Migratorio</option>
+          <option>Corporativo</option>
+          <option>Civil</option>
+          <option>Fiscal</option>
+        </select>
+      </div>
+      <button class="search-btn" id="btnBuscar">Buscar</button>
+    </div>
+  </div>
+  <div class="seal-wrap">
+    <svg class="seal" id="heroSeal" viewBox="0 0 200 200">
+      <defs><path id="sealCircle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+      <circle cx="100" cy="100" r="94" fill="none" stroke="#d9ab52" stroke-width="1.5"/>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#d9ab52" stroke-width="1"/>
+      <text font-family="IBM Plex Mono" font-size="10.5" fill="#d9ab52" letter-spacing="3">
+        <textPath href="#sealCircle" startOffset="0%">· IDÓNEO · CÉDULA VERIFICADA · IDÓNEO · CÉDULA VERIFICADA</textPath>
+      </text>
+      <path d="M100 55v78M78 62l-13 26a17 17 0 0 0 34 0l-13-26m48 0l-13 26a17 17 0 0 0 34 0l-13-26M65 62h26m18 0h26M75 133h34" stroke="#d9ab52" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<section class="resultados" id="resultados">
+  <div class="wrap">
+    <div class="resultados-head">
+      <div>
+        <h2 style="font-size:1.3rem;">Despachos y abogados</h2>
+        <div class="resultados-count" id="resultsCount"></div>
+      </div>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+    <div class="no-results" id="noResults">No hay resultados para esa combinación. Prueba con otra ciudad o especialidad.</div>
+  </div>
+</section>
+
+<section class="puente">
+  <div class="wrap">
+    <span class="kicker">¿Eres abogado o despacho?</span>
+    <h2>Este es el lugar donde tus futuros clientes ya te están buscando.</h2>
+    <p>Regístrate gratis, verifica tu cédula profesional, y empieza a aparecer en resultados como los de arriba — con tus propias reseñas construyendo tu reputación con el tiempo.</p>
+    <a href="registro.html" class="puente-cta">Regístrate como abogado</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html" style="text-decoration:none;">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html" style="text-decoration:none;">TÉRMINOS</a></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="listings.js"></script>
+<script src="auth.js"></script>
+<script>
+  let abogados = [];
+
+  function initials(name){
+    return name.replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  }
+  function starString(rating){
+    const full = Math.round(rating);
+    return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
+  }
+
+  let reviewStats = {};
+
+  function renderCards(list){
+    const grid = document.getElementById('cardGrid');
+    const noResults = document.getElementById('noResults');
+    const count = document.getElementById('resultsCount');
+    grid.innerHTML = '';
+    if(list.length === 0){
+      noResults.classList.add('show');
+      count.textContent = '0 resultados';
+      return;
+    }
+    noResults.classList.remove('show');
+    count.textContent = list.length + (list.length === 1 ? ' resultado' : ' resultados');
+    list.forEach(ab => {
+      const stats = reviewStats[ab.id] || {average: 0, total: 0};
+      const card = document.createElement('div');
+      card.className = 'lawyer-card';
+      card.innerHTML = `
+        <div class="lawyer-top">
+          <div class="avatar">${initials(ab.nombre)}</div>
+          <div>
+            <div class="lawyer-name">${ab.nombre}</div>
+            <div class="lawyer-city">${ab.ciudad}</div>
+            ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
+          </div>
+        </div>
+        <span class="specialty-chip">${ab.especialidad}</span>
+        <div class="lawyer-meta">
+          <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total})</span></span>
+          <span class="price-tag">${ab.precio}</span>
+        </div>
+        <a class="contact-btn" href="perfil.html?id=${ab.id}">Ver perfil</a>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function normalize(str){
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  function applyFilters(){
+    const nombre = normalize(document.getElementById('fNombre').value.trim());
+    const ciudad = document.getElementById('fCiudad').value;
+    const especialidad = document.getElementById('fEspecialidad').value;
+    const filtered = abogados.filter(ab =>
+      (nombre === '' || normalize(ab.nombre).includes(nombre)) &&
+      (ciudad === '' || ab.ciudad === ciudad) &&
+      (especialidad === '' || ab.especialidad === especialidad)
+    );
+    renderCards(filtered);
+  }
+
+  document.getElementById('btnBuscar').addEventListener('click', applyFilters);
+  document.getElementById('fNombre').addEventListener('input', applyFilters);
+  document.getElementById('fNombre').addEventListener('keydown', e => { if(e.key === 'Enter') applyFilters(); });
+  document.getElementById('navBuscar').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('searchCard').scrollIntoView({behavior:'smooth', block:'center'});
+    document.getElementById('fNombre').focus();
+  });
+
+  async function init(){
+    document.getElementById('resultsCount').textContent = 'Cargando…';
+    try{
+      abogados = await window.IdoneoListings.getAllListings();
+    } catch(err){
+      console.error('No se pudieron cargar los perfiles registrados, mostrando solo los de ejemplo.', err);
+      abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
+    }
+    renderCards(abogados);
+    try{
+      reviewStats = await window.IdoneoListings.getStatsForListings(abogados);
+      renderCards(abogados);
+    } catch(err){
+      console.error('No se pudieron cargar los promedios de reseñas.', err);
+    }
+  }
+  init();
+
+  // Stamp animation on load
+  window.addEventListener('load', () => {
+    document.getElementById('heroSeal').classList.add('stamped');
+  });
+</script>
+
+</body>
+</html>

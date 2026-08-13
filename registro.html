@@ -126,7 +126,7 @@
     </a>
     <div class="nav-right">
       <div class="nav-links" id="navLinks">
-        <a class="nav-link" href="index.html">Buscar abogado</a>
+        <a class="nav-link" href="buscar.html">Buscar abogado</a>
         <a class="nav-link primary" href="#registro">Regístrate como abogado</a>
       </div>
       <div class="auth-slot" id="navAuth"></div>
@@ -192,7 +192,7 @@
 <section class="especialidades">
   <div class="wrap">
     <div class="section-head">
-      <span class="kicker">Cobertura al lanzamiento</span>
+      <span class="kicker">Especialidades disponibles</span>
       <h2>Especialidades que ya puedes registrar.</h2>
       <p>Si tu área no aparece, regístrate de todas formas — la iremos ampliando con las especialidades más buscadas.</p>
     </div>
@@ -207,9 +207,9 @@
 <section class="registro" id="registro">
   <div class="wrap registro-inner">
     <div class="registro-copy">
-      <span class="kicker">Apartar lugar</span>
-      <h2>Sé de los primeros en aparecer.</h2>
-      <p>Los perfiles registrados antes del lanzamiento aparecen primero en resultados de su ciudad durante los primeros tres meses, sin costo.</p>
+      <span class="kicker">Regístrate</span>
+      <h2>Aparece en el buscador.</h2>
+      <p>El registro es gratuito. Confirmamos tu cédula profesional y tu perfil se publica en los resultados de tu ciudad.</p>
     </div>
     <div class="registro-login-prompt" id="registroLoginPrompt" style="display:none">
       <div class="form-title">Registro de abogado / despacho</div>
@@ -245,7 +245,7 @@
         <input type="checkbox" id="consentCheck" name="consentimiento" required>
         <span>He leído y acepto el <a href="aviso-privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="terminos.html" target="_blank" rel="noopener">Términos y Condiciones</a>, incluyendo que mi información de contacto y perfil se publicará públicamente una vez aprobada.</span>
       </label>
-      <button type="submit" class="submit-btn">Apartar mi lugar</button>
+      <button type="submit" class="submit-btn">Registrar mi despacho</button>
       <p class="fine-print">Tu registro queda pendiente de revisión: confirmamos tu cédula antes de publicar tu perfil.</p>
       <div class="success-msg" id="successMsg">✓ Listo — tu registro quedó pendiente de revisión. Te contactaremos por WhatsApp para verificar tu cédula antes de publicar tu perfil. Puedes ver y editar tu registro cuando quieras desde <a href="mi-cuenta.html" style="color:inherit; text-decoration:underline;">Mi cuenta</a>.</div>
       <div class="error-msg" id="errorMsg">Algo falló al guardar tu registro. Intenta de nuevo o escríbenos por WhatsApp.</div>
@@ -317,7 +317,7 @@
     } catch(err){
       console.error('No se pudo guardar el registro en Firestore.', err);
       errorMsg.classList.add('show');
-      submitBtn.textContent = 'Apartar mi lugar';
+      submitBtn.textContent = 'Registrar mi despacho';
       submitBtn.disabled = false;
     }
   });

@@ -23,12 +23,40 @@ completes esto.
 1. Menú lateral: **Compilación → Authentication**.
 2. "Comenzar" → pestaña **Sign-in method** → habilita **Correo electrónico/contraseña**.
 3. En la misma pestaña, habilita también **Google** (lo van a usar tanto tú
-   como cualquier visitante que quiera reseñar con un clic). Firebase pide
-   un correo de soporte del proyecto — pon el tuyo y guarda.
+   como cualquier visitante que quiera reseñar o registrar su despacho con
+   un clic). Firebase pide un correo de soporte del proyecto — pon el tuyo
+   y guarda.
 4. Pestaña **Users** → "Agregar usuario" → pon tu correo y una contraseña
    segura. Esta es la cuenta con la que vas a entrar a `admin.html`.
 5. Haz clic en el usuario que acabas de crear y **copia su "User UID"**
    (una cadena larga tipo `aB3xY...`). La necesitas en el siguiente paso.
+
+### Que Google funcione para cualquier persona, no solo para ti
+
+Con solo activar el proveedor Google, el botón "Continuar con Google" ya
+funciona **para ti** (el dueño del proyecto) — pero para que funcione con
+cualquier cuenta de Google, sin importar de quién sea, faltan dos cosas:
+
+1. **Publicar la pantalla de consentimiento OAuth**: ve a
+   https://console.cloud.google.com/apis/credentials/consent (con el mismo
+   proyecto que Firebase creó por ti — el selector de proyecto arriba debe
+   decir el nombre de tu proyecto de Firebase). Si el "Estado de
+   publicación" dice **Pruebas**, solo las cuentas que agregues a mano en
+   "Usuarios de prueba" pueden iniciar sesión — cualquier otra persona ve
+   un error o una advertencia. Dale clic a **Publicar aplicación**. Para
+   los permisos básicos que usa Idóneo (correo, nombre, foto de perfil) no
+   te va a pedir la revisión larga de Google — pasa a "Producción" de
+   inmediato.
+2. **Agregar el dominio de tu sitio a "Dominios autorizados"**: Firebase
+   Console → Authentication → pestaña **Settings** → **Authorized
+   domains**. Ahí ya vienen `localhost` y tu dominio de Firebase por
+   default — agrega también el dominio de Netlify donde publiques
+   `Idoneo/` (ej. `idoneo-abogados.netlify.app`, o tu dominio propio si
+   usas uno). Sin este paso, el botón de Google falla con un error
+   `auth/unauthorized-domain` en cualquier dominio que no esté en la lista.
+
+(El inicio de sesión con correo y contraseña no tiene esta restricción —
+funciona en cualquier dominio sin configuración extra.)
 
 ## 4. Marcarte como administrador
 
@@ -58,6 +86,16 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null
              && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Dueño del despacho abogadoId, o null si ese id no existe como
+    // documento real (por ejemplo, uno de los 8 perfiles de ejemplo).
+    // El operador ?: evalúa el segundo get() solo si exists() es cierto,
+    // así nunca se intenta leer un documento que no existe.
+    function ownerOf(abogadoId) {
+      return exists(/databases/$(database)/documents/abogados_registrados/$(abogadoId))
+        ? get(/databases/$(database)/documents/abogados_registrados/$(abogadoId)).data.ownerUid
+        : null;
     }
 
     match /admins/{uid} {
@@ -107,10 +145,7 @@ service cloud.firestore {
                     && request.resource.data.estrellas <= 5
                     && request.resource.data.texto is string
                     && request.resource.data.texto.size() <= 2000
-                    && !(
-                      exists(/databases/$(database)/documents/abogados_registrados/$(request.resource.data.abogadoId))
-                      && get(/databases/$(database)/documents/abogados_registrados/$(request.resource.data.abogadoId)).data.ownerUid == request.auth.uid
-                    );
+                    && ownerOf(request.resource.data.abogadoId) != request.auth.uid;
       allow update: if request.auth != null
                     && resource.data.autorUid == request.auth.uid
                     && request.resource.data.autorUid == request.auth.uid
@@ -189,7 +224,7 @@ Qué hacen estas reglas:
 2. Abre `admin.html` (carpeta `admin`, junto a `Idoneo`), inicia sesión con
    el correo/contraseña del paso 3 — deberías ver el registro en
    "Pendientes de revisión". Apruébalo.
-3. Confirma que el abogado aparece en `index.html` y en su `perfil.html`, y
+3. Confirma que el abogado aparece en `buscar.html` y en su `perfil.html`, y
    que en **Mi cuenta** (con la cuenta del abogado) ahora se ve como
    "Publicado", con un link a "Ver mi perfil público".
 4. Con esa misma cuenta, edita algún campo (ciudad, bio) desde Mi cuenta y
@@ -207,7 +242,8 @@ Qué hacen estas reglas:
 ```
 Escritorio/
   Idoneo/                 ← sitio público (se publica solo en Netlify)
-    index.html
+    index.html              ← portada / landing
+    buscar.html             ← buscador y resultados
     registro.html
     perfil.html
     mi-cuenta.html          ← panel del abogado/despacho (editar, ver reseñas, eliminar)

@@ -3,7 +3,8 @@
   lanzamiento (fijos, en este archivo) + los registros reales, que ahora
   viven en Firestore (compartidos de verdad entre cualquier dispositivo).
 
-  Se incluye en index.html, perfil.html, registro.html y admin.html
+  Se incluye en index.html, buscar.html, perfil.html, registro.html,
+  mi-cuenta.html y admin.html
   DESPUÉS de firebase-app-compat.js, firebase-firestore-compat.js,
   firebase-auth-compat.js y firebase-config.js (ese orden importa: este
   archivo usa `db` y `auth`, definidos en firebase-config.js).
