@@ -143,6 +143,15 @@
     animation:badge-shine 3.4s ease-in-out infinite;
   }
   @keyframes badge-shine{0%,40%{left:-60%;} 75%,100%{left:130%;}}
+  .fav-toggle{
+    position:absolute; top:12px; left:12px; z-index:2; width:30px; height:30px; border-radius:50%;
+    background:rgba(255,255,255,0.9); border:1px solid #ddd2b0; color:#8a8069;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s ease; padding:0;
+  }
+  .fav-toggle svg{width:15px; height:15px;}
+  .fav-toggle:hover{border-color:var(--brass); color:var(--brass);}
+  .fav-toggle.is-active{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
+  .fav-toggle.is-active svg{fill:currentColor;}
   .disponible-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#4d8c4d; margin-top:4px;}
   .disponible-dot{width:7px; height:7px; border-radius:50%; background:#5cb85c; flex-shrink:0; animation:pulse-dot 2s ease-in-out infinite;}
   @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
@@ -529,6 +538,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="listings.js"></script>
+<script src="favorites.js"></script>
 <script src="auth.js"></script>
 <script>
   let abogados = [];
@@ -577,6 +587,9 @@
       card.style.animationDelay = Math.min(i * 0.05, 0.4) + 's';
       card.innerHTML = `
         ${ab.destacado ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
+        <button class="fav-toggle${window.IdoneoFavorites && window.IdoneoFavorites.isFavorite(ab.id) ? ' is-active' : ''}" data-fav-id="${escapeHtml(ab.id)}" type="button" aria-label="Guardar perfil" aria-pressed="${window.IdoneoFavorites && window.IdoneoFavorites.isFavorite(ab.id) ? 'true' : 'false'}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+        </button>
         <div class="lawyer-top">
           <div class="avatar">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="" loading="lazy">` : escapeHtml(initials(ab.nombre))}</div>
           <div>
@@ -678,6 +691,17 @@
   }
 
   document.getElementById('cardGrid').addEventListener('click', e => {
+    const favBtn = e.target.closest('.fav-toggle');
+    if(favBtn){
+      const id = favBtn.dataset.favId;
+      const ab = abogados.find(a => a.id === id);
+      const active = window.IdoneoFavorites.toggle(id, {
+        nombre: ab.nombre, ciudad: ab.ciudad, especialidades: ab.especialidades, fotoUrl: ab.fotoUrl, tipo: ab.tipo
+      });
+      favBtn.classList.toggle('is-active', active);
+      favBtn.setAttribute('aria-pressed', String(active));
+      return;
+    }
     const btn = e.target.closest('.compare-toggle');
     if(!btn) return;
     const id = btn.dataset.id;

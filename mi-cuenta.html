@@ -79,6 +79,30 @@
   .state-card .submit-btn:hover{background:var(--ink-2); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.2);}
   .state-card .submit-btn:active{transform:translateY(0); box-shadow:none;}
 
+  .cliente-section{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;}
+  .cliente-col{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:20px; color:var(--ink);}
+  .cliente-col-head{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .cliente-col-head svg{width:19px; height:19px; color:var(--brass); flex-shrink:0;}
+  .cliente-col-head h2{font-family:'Newsreader', serif; font-size:1.05rem; font-weight:600;}
+  .guardado-item{display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid #ddd2b0;}
+  .guardado-item:first-child{border-top:none;}
+  .guardado-avatar{width:36px; height:36px; border-radius:50%; background:var(--ink); color:var(--brass-light); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:0.82rem; flex-shrink:0; overflow:hidden;}
+  .guardado-avatar img{width:100%; height:100%; object-fit:cover;}
+  .guardado-info{flex:1; min-width:0;}
+  .guardado-name{font-size:0.86rem; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .guardado-city{font-size:0.74rem; color:#8a8069;}
+  .guardado-actions{display:flex; gap:6px; flex-shrink:0;}
+  .guardado-actions a, .guardado-actions button{font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; padding:5px 9px; border-radius:3px; text-decoration:none; cursor:pointer; border:1px solid #c9bd9c; background:none; color:var(--ink-2); transition:border-color 0.15s ease;}
+  .guardado-actions a:hover, .guardado-actions button:hover{border-color:var(--brass);}
+  .mi-resena-item{padding:10px 0; border-top:1px solid #ddd2b0;}
+  .mi-resena-item:first-child{border-top:none;}
+  .mi-resena-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap;}
+  .mi-resena-abogado{font-size:0.86rem; font-weight:600; color:var(--ink);}
+  .mi-resena-texto{font-size:0.8rem; color:#6b6250; margin-top:4px; line-height:1.5;}
+  @media (max-width:720px){
+    .cliente-section{grid-template-columns:1fr;}
+  }
+
   /* ---- tarjeta de despacho ---- */
   @keyframes card-in{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
   .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px; animation:card-in 0.5s ease both; border-left:4px solid #c9bd9c;}
@@ -385,6 +409,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="listings.js"></script>
+<script src="favorites.js"></script>
 <script src="auth.js"></script>
 <script>
   let storage = null;
@@ -530,6 +555,87 @@
       </div>
     `;
     document.getElementById('stateLoginBtn').addEventListener('click', () => window.IdoneoAuth.openAuthModal('login'));
+  }
+
+  function clienteSectionHTML(){
+    return `
+      <div class="cliente-section">
+        <div class="cliente-col">
+          <div class="cliente-col-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+            <h2>Guardados</h2>
+          </div>
+          <div id="guardadosList"><p class="empty-note">Cargando…</p></div>
+        </div>
+        <div class="cliente-col">
+          <div class="cliente-col-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.3l-6.2 3.6 1.6-7-5.4-4.7 7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7z"/></svg>
+            <h2>Mis reseñas</h2>
+          </div>
+          <div id="misResenasList"><p class="empty-note">Cargando…</p></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function guardadoItemHTML(g){
+    return `
+      <div class="guardado-item">
+        <div class="guardado-avatar">${g.fotoUrl ? `<img src="${escapeHtml(g.fotoUrl)}" alt="">` : escapeHtml(initials(g.nombre || ''))}</div>
+        <div class="guardado-info">
+          <div class="guardado-name">${escapeHtml(g.nombre || 'Perfil')}</div>
+          <div class="guardado-city">${escapeHtml(g.ciudad || '')}</div>
+        </div>
+        <div class="guardado-actions">
+          <a href="perfil.html?id=${encodeURIComponent(g.id)}">Ver</a>
+          <button type="button" data-action="remove-guardado" data-id="${escapeHtml(g.id)}">Quitar</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderGuardados(){
+    const el = document.getElementById('guardadosList');
+    if(!el || !window.IdoneoFavorites) return;
+    const list = window.IdoneoFavorites.list();
+    if(list.length === 0){
+      el.innerHTML = '<p class="empty-note">Aún no guardas ningún perfil — el ícono de marcador en cada tarjeta del buscador lo agrega aquí.</p>';
+      return;
+    }
+    el.innerHTML = list.map(guardadoItemHTML).join('');
+    el.querySelectorAll('[data-action="remove-guardado"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.IdoneoFavorites.remove(btn.dataset.id);
+        renderGuardados();
+      });
+    });
+  }
+
+  function miResenaItemHTML(r){
+    return `
+      <div class="mi-resena-item">
+        <div class="mi-resena-head">
+          <span class="mi-resena-abogado">${escapeHtml(r.abogadoNombre)}</span>
+          <span class="stars">${starString(r.estrellas)}</span>
+        </div>
+        <p class="mi-resena-texto">${escapeHtml(r.texto)}</p>
+        ${r.respuesta ? `<p class="mi-resena-texto" style="color:var(--brass);"><strong>Respuesta del abogado:</strong> ${escapeHtml(r.respuesta)}</p>` : ''}
+      </div>
+    `;
+  }
+
+  async function loadMisResenas(){
+    const el = document.getElementById('misResenasList');
+    if(!el) return;
+    try{
+      const reviews = await window.IdoneoListings.getMyReviewsAll();
+      el.innerHTML = reviews.length === 0
+        ? '<p class="empty-note">Aún no has dejado ninguna reseña.</p>'
+        : reviews.map(miResenaItemHTML).join('');
+    } catch(err){
+      console.error(err);
+      el.innerHTML = '<p class="empty-note">No se pudieron cargar tus reseñas.</p>';
+    }
   }
 
   function emptyStateHTML(){
@@ -783,8 +889,11 @@
         </div>
 
         <div class="field full">
-          <label>Nombre o razón social</label>
-          <div class="field-locked">${escapeHtml(l.nombre)} — para corregir tu nombre, escríbenos (ver pie de página).</div>
+          <label>Nombre o razón social${l.verificado ? '' : '<span class="req">*</span>'}</label>
+          ${l.verificado
+            ? `<div class="field-locked">${escapeHtml(l.nombre)} — tu cédula ya está verificada con este nombre, escríbenos para corregirlo (ver pie de página).</div>`
+            : `<input type="text" data-field="nombre" data-required="1" value="${escapeHtml(l.nombre)}" placeholder="Lic. María Torres / Torres Abogados">
+               <p class="field-hint">Puedes corregirlo libremente mientras tu perfil no esté verificado — por ejemplo, si cambias a "Despacho" y necesitas poner el nombre de la firma.</p>`}
         </div>
 
         <div class="field full">
@@ -987,7 +1096,9 @@
   }
 
   function readFields(card){
+    const nombreInput = card.querySelector('[data-field="nombre"]');
     return {
+      ...(nombreInput ? {nombre: nombreInput.value.trim()} : {}),
       especialidades: getSelectedEspecialidades(card),
       ciudad: `${card.querySelector('[data-role="ciudadCitySelect"]').value}, ${card.querySelector('[data-role="estadoSelect"]').value}`,
       telefono: card.querySelector('[data-field="telefono"]').value.trim(),
@@ -1417,8 +1528,10 @@
     wireProfileCard();
     try{
       const listings = await window.IdoneoListings.getMyListings();
-      content.innerHTML = profileCardHTML(user) + (listings.length === 0 ? emptyStateHTML() : listingsHTML(listings));
+      content.innerHTML = profileCardHTML(user) + clienteSectionHTML() + (listings.length === 0 ? emptyStateHTML() : listingsHTML(listings));
       wireProfileCard();
+      renderGuardados();
+      loadMisResenas();
       listings.forEach(l => wireListingCard(l));
     } catch(err){
       console.error(err);

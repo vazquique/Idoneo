@@ -201,7 +201,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible'];
+  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};
@@ -214,6 +214,13 @@
     // del servidor — cortar aquí a 3 le rompería el beneficio a las
     // cuentas Destacado.
     if(typeof clean.telefono === 'string') clean.telefono = clean.telefono.replace(/\D/g, '');
+    if(typeof clean.nombre === 'string'){
+      clean.nombre = clean.nombre.trim().slice(0, 120);
+      // Nunca se manda un nombre vacío — las reglas de Firestore de todas
+      // formas bloquean el cambio una vez que el perfil está verificado,
+      // pero esto evita un guardado accidental en blanco mientras no lo está.
+      if(!clean.nombre) delete clean.nombre;
+    }
     if(Object.prototype.hasOwnProperty.call(clean, 'disponible')) clean.disponible = !!clean.disponible;
     if(Object.prototype.hasOwnProperty.call(clean, 'consultaDesde')){
       clean.consultaDesde = (clean.consultaDesde === '' || clean.consultaDesde === null || clean.consultaDesde === undefined)
@@ -368,6 +375,26 @@
     return doc.exists ? Object.assign({id: doc.id}, doc.data()) : null;
   }
 
+  // Todas las reseñas que ha escrito el usuario actual, sin importar a qué
+  // abogado — para la sección "Mis reseñas" en Mi cuenta. También trae el
+  // nombre del abogado reseñado, porque la reseña sola no lo incluye.
+  async function getMyReviewsAll(){
+    const user = requireAuthUser();
+    const snap = await requireDb().collection(REVIEWS_COLLECTION).where('autorUid', '==', user.uid).get();
+    const reviews = snap.docs.map(doc => Object.assign({id: doc.id}, doc.data()));
+    const abogadoIds = [...new Set(reviews.map(r => String(r.abogadoId)))];
+    const nombres = {};
+    await Promise.all(abogadoIds.map(async id => {
+      try{
+        const doc = await requireDb().collection(COLLECTION).doc(id).get();
+        nombres[id] = doc.exists ? doc.data().nombre : 'Perfil eliminado';
+      } catch(err){
+        nombres[id] = 'Perfil eliminado';
+      }
+    }));
+    return reviews.map(r => Object.assign({}, r, {abogadoNombre: nombres[String(r.abogadoId)] || 'Perfil eliminado'}));
+  }
+
   async function submitReview(abogadoId, data){
     const user = requireAuthUser();
     const texto = (data.texto || '').trim().slice(0, 2000);
@@ -449,7 +476,7 @@
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
-    getMyReview, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick,
+    getMyReview, getMyReviewsAll, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner, addToGaleria, removeFromGaleria,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };

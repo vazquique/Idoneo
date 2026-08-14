@@ -186,7 +186,13 @@ service cloud.firestore {
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.get('views', 0) == resource.data.get('views', 0)
                       && request.resource.data.get('contactClicks', 0) == resource.data.get('contactClicks', 0)
-                      && request.resource.data.nombre == resource.data.nombre
+                      // El nombre solo se bloquea despues de que el perfil ya
+                      // esta verificado (evita que alguien cambie de identidad
+                      // luego de que confirmamos su cedula). Antes de eso, el
+                      // dueno puede corregirlo o renombrarlo libremente -- por
+                      // ejemplo, al cambiar de "abogado individual" a "despacho"
+                      // y necesitar poner el nombre de la firma.
+                      && (resource.data.verificado == false || request.resource.data.nombre == resource.data.nombre)
                       // Tope de especialidades: 3 gratis, 5 si el despacho es
                       // "Destacado" (pagó) — el dueño no puede subir su propio
                       // tope cambiando `destacado`, porque ese campo está
