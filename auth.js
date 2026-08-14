@@ -77,7 +77,10 @@
   function escapeHtml(str){
     const div = document.createElement('div');
     div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
+    // .innerHTML por sí solo no escapa comillas — hay que hacerlo a mano
+    // para que este helper también sea seguro dentro de atributos
+    // (src="...", etc.), no solo en texto.
+    return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   const styles = `

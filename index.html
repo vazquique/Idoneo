@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#182644">
 <title>Idóneo Abogados — Encuentra al abogado idóneo para tu caso</title>
 <meta name="description" content="Directorio de abogados y despachos verificados en México. Compara especialidad, precio y reseñas reales, y contacta directo por WhatsApp — sin intermediarios.">
 <link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/">
@@ -514,6 +515,14 @@
   function initials(name){
     return (name || '').replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   }
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    // .innerHTML por sí solo no escapa comillas — hay que hacerlo a mano
+    // para que este helper también sea seguro dentro de atributos
+    // (src="...", href="...", aria-label="...", etc.), no solo en texto.
+    return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
   function starString(rating){
     const full = Math.round(rating);
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
@@ -521,7 +530,7 @@
   function priceDisplay(ab){
     if(ab.consultaDesde === 0) return 'Consulta gratis';
     if(typeof ab.consultaDesde === 'number' && ab.consultaDesde > 0) return `Consulta desde $${ab.consultaDesde.toLocaleString('es-MX')}`;
-    return ab.precio || 'Honorarios a consultar';
+    return escapeHtml(ab.precio) || 'Honorarios a consultar';
   }
   const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
   function destacadoCardHTML(ab, stats){
@@ -529,20 +538,20 @@
       <div class="destacado-card">
         <div class="destacado-ribbon">${SPARKLE_ICON}Destacado</div>
         <div class="dc-top">
-          <div class="dc-avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="" loading="lazy">` : initials(ab.nombre)}</div>
+          <div class="dc-avatar">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="" loading="lazy">` : escapeHtml(initials(ab.nombre))}</div>
           <div>
-            <div class="dc-name">${ab.nombre}</div>
-            <div class="dc-city">${ab.ciudad}</div>
+            <div class="dc-name">${escapeHtml(ab.nombre)}</div>
+            <div class="dc-city">${escapeHtml(ab.ciudad)}</div>
             ${ab.verificado ? `<div class="dc-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
             ${ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
           </div>
         </div>
-        <div class="dc-chips">${(ab.especialidades || []).slice(0,3).map(e => `<span class="dc-chip">${e}</span>`).join('')}</div>
+        <div class="dc-chips">${(ab.especialidades || []).slice(0,3).map(e => `<span class="dc-chip">${escapeHtml(e)}</span>`).join('')}</div>
         <div class="dc-meta">
           <span><span class="dc-stars">${starString(stats.average)}</span><span class="dc-rating-count">(${stats.total})</span></span>
           <span class="dc-rating-count">${priceDisplay(ab)}</span>
         </div>
-        <a class="dc-cta" href="perfil.html?id=${ab.id}">Ver perfil</a>
+        <a class="dc-cta" href="perfil.html?id=${encodeURIComponent(ab.id)}">Ver perfil</a>
       </div>
     `;
   }
