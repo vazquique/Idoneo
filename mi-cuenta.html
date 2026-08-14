@@ -204,17 +204,61 @@
     .servicio-remove{grid-column:2 / 3; grid-row:2;}
   }
 
-  .destacado-cta{background:var(--ink); color:var(--parchment); border-radius:6px; padding:20px 22px; margin-bottom:20px;}
-  .destacado-cta-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
-  .destacado-cta-head svg{width:22px; height:22px; color:var(--brass-light); flex-shrink:0;}
-  .destacado-cta-head strong{font-family:'Newsreader', serif; font-size:1.1rem;}
-  .destacado-cta-list{list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:16px;}
-  .destacado-cta-list li{font-size:0.86rem; color:rgba(241,234,216,0.82); padding-left:20px; position:relative;}
-  .destacado-cta-list li::before{content:'✓'; position:absolute; left:0; color:var(--brass-light); font-weight:700;}
+  .destacado-showcase{position:relative; background:var(--ink); color:var(--parchment); border-radius:6px; padding:32px; margin-bottom:20px; overflow:hidden;}
+  .destacado-showcase::before{content:''; position:absolute; inset:0; background:radial-gradient(ellipse 420px 240px at 92% -10%, rgba(217,171,82,0.18), transparent 60%); pointer-events:none;}
+  .destacado-showcase-close{position:absolute; top:14px; right:14px; z-index:2; width:30px; height:30px; border-radius:50%; border:1px solid var(--line-strong); background:rgba(241,234,216,0.06); color:var(--parchment); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color 0.15s ease, background 0.15s ease;}
+  .destacado-showcase-close:hover{border-color:var(--brass-light); background:rgba(217,171,82,0.14);}
+  .destacado-showcase-close svg{width:14px; height:14px;}
+  .destacado-showcase-head{position:relative; z-index:1; margin-bottom:26px; max-width:75%;}
+  .destacado-showcase-head .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--brass-light); margin-bottom:8px; display:block;}
+  .destacado-showcase-head h3{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; margin-bottom:8px;}
+  .destacado-showcase-head p{font-size:0.88rem; color:rgba(241,234,216,0.72); max-width:48ch;}
+  .destacado-showcase-body{position:relative; z-index:1; display:grid; grid-template-columns:230px 1fr; gap:28px; align-items:start;}
+
+  .preview-label{font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; color:rgba(241,234,216,0.45); margin-bottom:10px;}
+  .preview-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:16px; position:relative; overflow:hidden; box-shadow:0 16px 32px rgba(0,0,0,0.32);}
+  .preview-badge{position:absolute; top:10px; right:10px; display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,var(--brass-light),var(--brass)); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:0.58rem; font-weight:700; text-transform:uppercase; padding:4px 8px; border-radius:20px;}
+  .preview-badge svg{width:8px; height:8px;}
+  .preview-top{display:flex; gap:10px; align-items:center; margin-bottom:10px; padding-top:16px;}
+  .preview-avatar{width:38px; height:38px; border-radius:50%; background:var(--ink); color:var(--brass-light); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:0.9rem; flex-shrink:0; overflow:hidden;}
+  .preview-avatar img{width:100%; height:100%; object-fit:cover;}
+  .preview-name{font-family:'Newsreader', serif; font-weight:600; font-size:0.9rem; line-height:1.25;}
+  .preview-city{font-size:0.74rem; color:#6b6250;}
+  .preview-disponible{display:inline-flex; align-items:center; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:0.6rem; text-transform:uppercase; color:#4d8c4d; margin-top:3px;}
+  .preview-disponible-dot{width:6px; height:6px; border-radius:50%; background:#5cb85c; flex-shrink:0;}
+  .preview-chips{display:flex; flex-wrap:wrap; gap:5px;}
+  .preview-chip{font-family:'IBM Plex Mono', monospace; font-size:0.64rem; padding:3px 8px; border:1px solid #c9bd9c; border-radius:20px; color:var(--ink-2);}
+
+  .feature-list{position:relative; z-index:1; display:flex; flex-direction:column; gap:8px;}
+  .feature-row{display:flex; align-items:flex-start; gap:10px; font-size:0.86rem; padding:9px 12px; border-radius:4px;}
+  .feature-row.unlocked{background:rgba(241,234,216,0.05);}
+  .feature-row.locked{background:rgba(241,234,216,0.02);}
+  .feature-row svg{width:15px; height:15px; flex-shrink:0; margin-top:1px;}
+  .feature-row.unlocked svg{color:#8fc47a;}
+  .feature-row.locked svg{color:rgba(241,234,216,0.28);}
+  .feature-row-label{flex:1; min-width:0;}
+  .feature-row.unlocked .feature-row-label{color:rgba(241,234,216,0.88);}
+  .feature-row.locked .feature-row-label{color:rgba(241,234,216,0.38);}
+  .feature-row-tag{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--brass-light); flex-shrink:0; padding-top:1px;}
+
+  .destacado-showcase-footer{position:relative; z-index:1; margin-top:26px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .destacado-showcase-price{font-family:'Newsreader', serif; font-size:1.1rem; font-weight:600;}
+  .destacado-showcase-price span{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:rgba(241,234,216,0.55); font-weight:400;}
   .destacado-cta-btn{display:inline-block; background:var(--brass-light); color:var(--ink); text-decoration:none; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; padding:11px 22px; border-radius:3px; transition:background 0.15s ease, transform 0.15s ease;}
   .destacado-cta-btn:hover{background:#e6bd6f; transform:translateY(-1px);}
   .destacado-cta-btn:active{transform:translateY(0);}
-  .destacado-cta-note{font-size:0.76rem; color:rgba(241,234,216,0.55); margin-top:10px;}
+  .destacado-cta-note{font-size:0.76rem; color:rgba(241,234,216,0.55); margin-top:12px; position:relative; z-index:1;}
+
+  .destacado-reminder{display:flex; align-items:center; justify-content:space-between; gap:14px; background:rgba(185,138,46,0.08); border:1px solid rgba(185,138,46,0.25); border-radius:6px; padding:14px 18px; margin-bottom:20px; flex-wrap:wrap;}
+  .destacado-reminder-text{display:flex; align-items:center; gap:10px; font-size:0.86rem; color:var(--ink-2);}
+  .destacado-reminder-text svg{width:16px; height:16px; color:var(--brass); flex-shrink:0;}
+  .destacado-reminder button{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--brass); background:none; border:none; text-decoration:underline; cursor:pointer; flex-shrink:0;}
+
+  @media (max-width:720px){
+    .destacado-showcase-body{grid-template-columns:1fr;}
+    .destacado-showcase-head{max-width:100%;}
+    .preview-card{max-width:260px;}
+  }
   .listing-meta{font-size:0.84rem; color:#6b6250; margin-bottom:20px;}
   .view-profile-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--brass); text-decoration:underline; white-space:nowrap;}
 
@@ -450,6 +494,20 @@
     return (name || '').split(' ').filter(w => w.length > 1).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
   }
   const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
+
+  // Vitrina de Destacado: se puede cerrar con la X y queda recordada por
+  // listado en localStorage -- así no se le muestra el mismo bloque grande
+  // cada vez que entra a "Mi cuenta", pero puede reabrirla cuando quiera.
+  function isDestacadoDismissed(id){
+    try{ return localStorage.getItem('idoneo_destacado_dismissed_' + id) === '1'; }
+    catch(err){ return false; }
+  }
+  function setDestacadoDismissed(id, val){
+    try{
+      if(val) localStorage.setItem('idoneo_destacado_dismissed_' + id, '1');
+      else localStorage.removeItem('idoneo_destacado_dismissed_' + id);
+    } catch(err){ /* localStorage no disponible, no truena */ }
+  }
   function starString(rating){
     const full = Math.round(rating);
     return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
@@ -847,22 +905,98 @@
         </div>
       `;
     }
-    return `
-      <div class="destacado-cta" id="destacado-cta">
-        <div class="destacado-cta-head">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
-          <strong>Destaca tu perfil — $299 MXN/mes</strong>
+    if(isDestacadoDismissed(l.id)){
+      return `
+        <div class="destacado-reminder" id="destacado-cta">
+          <div class="destacado-reminder-text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
+            <span>Puedes destacar tu perfil cuando quieras — $299 MXN/mes.</span>
+          </div>
+          <button type="button" data-action="reopen-destacado">Ver detalles</button>
         </div>
-        <ul class="destacado-cta-list">
-          <li>Aparece primero en los resultados de tu ciudad y especialidad</li>
-          <li>Insignia dorada "Destacado" en tu tarjeta y tu perfil</li>
-          <li>Sin anuncios de terceros en tu perfil público</li>
-          <li>Etiqueta "Disponible ahora" para avisar cuando tienes capacidad de tomar casos</li>
-          <li>Hasta 5 especialidades en vez de 3</li>
-          <li>Panel de estadísticas: clics a WhatsApp, tasa de conversión y desglose de tus reseñas</li>
-          <li>Galería de hasta 4 fotos en carrusel rotativo en tu perfil público</li>
-        </ul>
-        <a class="destacado-cta-btn" href="${STRIPE_DESTACADO_LINK}" target="_blank" rel="noopener">Destacar mi perfil</a>
+      `;
+    }
+    return `
+      <div class="destacado-showcase" id="destacado-cta">
+        <button type="button" class="destacado-showcase-close" data-action="dismiss-destacado" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="destacado-showcase-head">
+          <span class="kicker">Idóneo Destacado</span>
+          <h3>Así se vería tu tarjeta con Destacado</h3>
+          <p>Una vista previa real con tu nombre, tu ciudad y tus especialidades — así aparecerías primero frente a quien te está comparando con otros abogados.</p>
+        </div>
+        <div class="destacado-showcase-body">
+          <div>
+            <span class="preview-label">Vista previa</span>
+            <div class="preview-card">
+              <span class="preview-badge">${SPARKLE_ICON}Destacado</span>
+              <div class="preview-top">
+                <div class="preview-avatar">${l.fotoUrl ? `<img src="${escapeHtml(l.fotoUrl)}" alt="">` : escapeHtml(initials(l.nombre))}</div>
+                <div>
+                  <div class="preview-name">${escapeHtml(l.nombre || 'Tu nombre')}</div>
+                  <div class="preview-city">${escapeHtml(l.ciudad || 'Tu ciudad')}</div>
+                  <div class="preview-disponible"><span class="preview-disponible-dot"></span>Disponible ahora</div>
+                </div>
+              </div>
+              <div class="preview-chips">
+                ${(l.especialidades && l.especialidades.length ? l.especialidades : ['Tu especialidad']).slice(0, 3).map(e => `<span class="preview-chip">${escapeHtml(e)}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="feature-list">
+            <div class="feature-row unlocked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <div class="feature-row-label">Perfil visible en el buscador de tu ciudad</div>
+            </div>
+            <div class="feature-row unlocked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <div class="feature-row-label">Reseñas reales de tus clientes, con respuesta pública</div>
+            </div>
+            <div class="feature-row unlocked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <div class="feature-row-label">Idiomas, promoción temporal y precios de referencia</div>
+            </div>
+            <div class="feature-row unlocked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <div class="feature-row-label">Hasta 3 especialidades</div>
+            </div>
+            <div class="feature-row locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <div class="feature-row-label">Apareces primero en los resultados de tu ciudad</div>
+              <span class="feature-row-tag">Destacado</span>
+            </div>
+            <div class="feature-row locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <div class="feature-row-label">Insignia dorada "Destacado" y etiqueta "Disponible ahora"</div>
+              <span class="feature-row-tag">Destacado</span>
+            </div>
+            <div class="feature-row locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <div class="feature-row-label">Hasta 5 especialidades en vez de 3</div>
+              <span class="feature-row-tag">Destacado</span>
+            </div>
+            <div class="feature-row locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <div class="feature-row-label">Perfil sin anuncios de terceros</div>
+              <span class="feature-row-tag">Destacado</span>
+            </div>
+            <div class="feature-row locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <div class="feature-row-label">Panel de estadísticas: vistas, clics a WhatsApp y conversión</div>
+              <span class="feature-row-tag">Destacado</span>
+            </div>
+            <div class="feature-row locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <div class="feature-row-label">Galería de hasta 4 fotos en carrusel</div>
+              <span class="feature-row-tag">Destacado</span>
+            </div>
+          </div>
+        </div>
+        <div class="destacado-showcase-footer">
+          <div class="destacado-showcase-price">$299 MXN <span>/ mes</span></div>
+          <a class="destacado-cta-btn" href="${STRIPE_DESTACADO_LINK}" target="_blank" rel="noopener">Destacar mi perfil</a>
+        </div>
         <p class="destacado-cta-note">Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.</p>
       </div>
     `;
@@ -1177,6 +1311,23 @@
     });
   }
 
+  function wireDestacadoShowcase(card, l){
+    const closeBtn = card.querySelector('[data-action="dismiss-destacado"]');
+    if(closeBtn){
+      closeBtn.addEventListener('click', () => {
+        setDestacadoDismissed(l.id, true);
+        refreshOneCard(l);
+      });
+    }
+    const reopenBtn = card.querySelector('[data-action="reopen-destacado"]');
+    if(reopenBtn){
+      reopenBtn.addEventListener('click', () => {
+        setDestacadoDismissed(l.id, false);
+        refreshOneCard(l);
+      });
+    }
+  }
+
   function readFields(card){
     const nombreInput = card.querySelector('[data-field="nombre"]');
     return {
@@ -1470,6 +1621,7 @@
     wireEstadoCiudad(card);
     wirePrecios(card);
     wireDisponibleToggle(card, l);
+    wireDestacadoShowcase(card, l);
 
     card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
       if(!validateRequired(card)){
