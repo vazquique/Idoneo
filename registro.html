@@ -323,6 +323,11 @@
         <label for="whatsapp">WhatsApp de contacto<span class="req">*</span></label>
         <input id="whatsapp" name="whatsapp" type="tel" placeholder="33 1234 5678" required>
       </div>
+      <div class="field">
+        <label for="consultaDesde">Precio de tu primera consulta, en pesos (opcional)</label>
+        <input id="consultaDesde" name="consultaDesde" type="number" min="0" step="50" placeholder="Ej. 500">
+        <p class="field-note" style="margin-bottom:0;">Ponle 0 si tu primera consulta es gratis, o déjalo vacío si prefieres no publicarlo — perfiles con precio claro generan más confianza y más contactos. Lo puedes cambiar cuando quieras desde Mi cuenta.</p>
+      </div>
       <label class="consent-row">
         <input type="checkbox" id="consentCheck" name="consentimiento" required>
         <span>He leído y acepto el <a href="aviso-privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="terminos.html" target="_blank" rel="noopener">Términos y Condiciones</a>, incluyendo que mi información de contacto y perfil se publicará públicamente una vez aprobada.</span>
@@ -467,7 +472,8 @@
         rfcPersonaMoral: document.getElementById('rfcPersonaMoral').value.trim(),
         especialidades: especialidades,
         ciudad: `${ciudadSelect.value}, ${estadoSelect.value}`,
-        telefono: document.getElementById('whatsapp').value.trim()
+        telefono: document.getElementById('whatsapp').value.trim(),
+        consultaDesde: document.getElementById('consultaDesde').value
       });
       // Aviso por correo al dueño del sitio — best effort, no bloquea el registro si falla.
       fetch(form.action, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} }).catch(() => {});

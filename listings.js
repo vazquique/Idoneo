@@ -166,7 +166,10 @@
       especialidades: Array.isArray(data.especialidades) ? data.especialidades.slice(0, 3) : [],
       ciudad: (data.ciudad || '').trim(),
       telefono: (data.telefono || '').replace(/\D/g, ''),
-      precio: '$$',
+      precio: '$$', // heredado — ya no se usa en pantalla si consultaDesde tiene valor
+      consultaDesde: (data.consultaDesde === '' || data.consultaDesde === undefined || data.consultaDesde === null)
+        ? null : Math.max(0, Number(data.consultaDesde) || 0),
+      serviciosPrecio: [],
       rating: 0,
       reviews: 0,
       views: 0,
@@ -197,7 +200,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
+  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};
@@ -210,6 +213,19 @@
     // del servidor — cortar aquí a 3 le rompería el beneficio a las
     // cuentas Destacado.
     if(typeof clean.telefono === 'string') clean.telefono = clean.telefono.replace(/\D/g, '');
+    if(Object.prototype.hasOwnProperty.call(clean, 'consultaDesde')){
+      clean.consultaDesde = (clean.consultaDesde === '' || clean.consultaDesde === null || clean.consultaDesde === undefined)
+        ? null : Math.max(0, Number(clean.consultaDesde) || 0);
+    }
+    if(Array.isArray(clean.serviciosPrecio)){
+      clean.serviciosPrecio = clean.serviciosPrecio
+        .slice(0, 8)
+        .map(s => ({
+          servicio: (s && s.servicio || '').toString().trim().slice(0, 60),
+          desde: Math.max(0, Number(s && s.desde) || 0)
+        }))
+        .filter(s => s.servicio);
+    }
     return clean;
   }
 

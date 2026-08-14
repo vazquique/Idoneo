@@ -112,6 +112,18 @@
   .chip{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; padding:8px 15px; border:1px solid var(--line-strong); border-radius:20px; color:rgba(241,234,216,0.85); transition:border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;}
   .chip:hover{border-color:var(--brass-light); color:var(--parchment); transform:translateY(-1px);}
 
+  .skip-link{position:absolute; left:12px; top:-60px; background:var(--brass-light); color:var(--ink); padding:10px 16px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-decoration:none; z-index:100; transition:top 0.2s ease;}
+  .skip-link:focus{top:12px;}
+
+  /* ---------- Asistente rápido ---------- */
+  .asistente{border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .asistente-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .asistente-card{background:var(--ink-2); border:1px solid var(--line-strong); border-radius:6px; padding:20px; text-align:left; cursor:pointer; color:var(--parchment); font-family:inherit; display:flex; flex-direction:column; gap:9px; transition:transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;}
+  .asistente-card:hover{transform:translateY(-3px); border-color:var(--brass-light); box-shadow:0 14px 28px rgba(0,0,0,0.28);}
+  .asistente-card svg{width:22px; height:22px; color:var(--brass-light); flex-shrink:0;}
+  .ac-title{font-family:'Newsreader', serif; font-weight:600; font-size:1rem; line-height:1.3;}
+  .ac-sub{font-size:0.8rem; color:rgba(241,234,216,0.6);}
+
   /* ---------- Barra de confianza (hero) ---------- */
   .trust-bar{display:flex; flex-wrap:wrap; gap:38px; margin-top:46px; padding-top:26px; border-top:1px solid var(--line); animation:fade-up-in 0.6s ease 0.32s both;}
   .trust-bar.is-empty{display:none;}
@@ -174,8 +186,10 @@
     .seal-wrap{display:none;}
     .beneficios-grid{grid-template-columns:1fr;}
     .articulo{grid-template-columns:1fr; gap:6px;}
+    .asistente-grid{grid-template-columns:repeat(2,1fr);}
   }
   @media (max-width: 680px){
+    .asistente-grid{grid-template-columns:1fr;}
     .nav-toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; order:2;}
     .nav-toggle:hover{border-color:var(--brass-light);}
     .auth-slot{order:1;}
@@ -196,6 +210,8 @@
 </style>
 </head>
 <body>
+
+<a href="#como-funciona" class="skip-link">Saltar al contenido</a>
 
 <header>
   <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
@@ -243,6 +259,58 @@
       </text>
       <path d="M100 55v78M78 62l-13 26a17 17 0 0 0 34 0l-13-26m48 0l-13 26a17 17 0 0 0 34 0l-13-26M65 62h26m18 0h26M75 133h34" stroke="#d9ab52" stroke-width="2" fill="none" stroke-linecap="round"/>
     </svg>
+  </div>
+</section>
+
+<section class="asistente">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Empieza aquí</span>
+      <h2>¿Qué te trae por aquí hoy?</h2>
+      <p>Elige la opción que más se parezca a tu situación — te llevamos directo a los abogados indicados, sin que tengas que saber el nombre legal de tu caso.</p>
+    </div>
+    <div class="asistente-grid" id="asistenteGrid">
+      <button class="asistente-card" data-especialidad="Familiar" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6.5-8 11-8 11z"/></svg>
+        <span class="ac-title">Divorcio, pensión o custodia</span>
+        <span class="ac-sub">Derecho familiar</span>
+      </button>
+      <button class="asistente-card" data-especialidad="Penal" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>
+        <span class="ac-title">Me detuvieron o tengo un caso penal</span>
+        <span class="ac-sub">Derecho penal</span>
+      </button>
+      <button class="asistente-card" data-especialidad="Laboral" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span class="ac-title">Me despidieron o no me pagan</span>
+        <span class="ac-sub">Derecho laboral</span>
+      </button>
+      <button class="asistente-card" data-especialidad="Corporativo" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21V7l8-4 8 4v14M9 21v-6h6v6M4 21h16"/></svg>
+        <span class="ac-title">Quiero formar o proteger mi empresa</span>
+        <span class="ac-sub">Derecho corporativo</span>
+      </button>
+      <button class="asistente-card" data-especialidad="Mercantil" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 13l2 2 4-4"/></svg>
+        <span class="ac-title">Un cliente o proveedor no cumplió</span>
+        <span class="ac-sub">Derecho mercantil</span>
+      </button>
+      <button class="asistente-card" data-especialidad="Migratorio" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>
+        <span class="ac-title">Trámite o estatus migratorio</span>
+        <span class="ac-sub">Derecho migratorio</span>
+      </button>
+      <button class="asistente-card" data-especialidad="Bienes raíces" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+        <span class="ac-title">Problemas con una propiedad o renta</span>
+        <span class="ac-sub">Bienes raíces</span>
+      </button>
+      <button class="asistente-card" data-especialidad="" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="ac-title">No estoy seguro, quiero ver todo</span>
+        <span class="ac-sub">Directorio completo</span>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -369,20 +437,33 @@
     document.getElementById('heroSeal').classList.add('stamped');
   });
 
+  // ---------- Asistente rápido ----------
+  document.getElementById('asistenteGrid').addEventListener('click', e => {
+    const card = e.target.closest('.asistente-card');
+    if(!card) return;
+    const esp = card.dataset.especialidad;
+    window.location.href = esp ? `buscar.html?especialidad=${encodeURIComponent(esp)}` : 'buscar.html';
+  });
+
   // ---------- FAQ ----------
-  document.querySelectorAll('.faq-item').forEach(item => {
+  document.querySelectorAll('.faq-item').forEach((item, i) => {
     const q = item.querySelector('.faq-q');
     const a = item.querySelector('.faq-a');
+    a.id = 'faqAnswer' + i;
+    q.setAttribute('aria-expanded', 'false');
+    q.setAttribute('aria-controls', a.id);
     q.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
       document.querySelectorAll('.faq-item.open').forEach(other => {
         if(other !== item){
           other.classList.remove('open');
           other.querySelector('.faq-a').style.maxHeight = '0px';
+          other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
         }
       });
       item.classList.toggle('open', !isOpen);
       a.style.maxHeight = !isOpen ? (a.scrollHeight + 'px') : '0px';
+      q.setAttribute('aria-expanded', String(!isOpen));
     });
   });
 
@@ -394,12 +475,17 @@
     const full = Math.round(rating);
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
   }
+  function priceDisplay(ab){
+    if(ab.consultaDesde === 0) return 'Consulta gratis';
+    if(typeof ab.consultaDesde === 'number' && ab.consultaDesde > 0) return `Consulta desde $${ab.consultaDesde.toLocaleString('es-MX')}`;
+    return ab.precio || 'Honorarios a consultar';
+  }
   function destacadoCardHTML(ab, stats){
     return `
       <div class="destacado-card">
         <div class="destacado-ribbon">✨ Destacado</div>
         <div class="dc-top">
-          <div class="dc-avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="">` : initials(ab.nombre)}</div>
+          <div class="dc-avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="" loading="lazy">` : initials(ab.nombre)}</div>
           <div>
             <div class="dc-name">${ab.nombre}</div>
             <div class="dc-city">${ab.ciudad}</div>
@@ -409,7 +495,7 @@
         <div class="dc-chips">${(ab.especialidades || []).slice(0,3).map(e => `<span class="dc-chip">${e}</span>`).join('')}</div>
         <div class="dc-meta">
           <span><span class="dc-stars">${starString(stats.average)}</span><span class="dc-rating-count">(${stats.total})</span></span>
-          <span class="dc-rating-count">${ab.precio || ''}</span>
+          <span class="dc-rating-count">${priceDisplay(ab)}</span>
         </div>
         <a class="dc-cta" href="perfil.html?id=${ab.id}">Ver perfil</a>
       </div>

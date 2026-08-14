@@ -131,7 +131,7 @@
   .lawyer-city{font-size:0.82rem; color:#6b6250; margin-top:2px;}
   .verified-tag{display:inline-flex; align-items:center; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#5c7a4f; margin-top:4px;}
   .verified-tag svg{width:12px; height:12px;}
-  .lawyer-meta{display:flex; align-items:center; justify-content:space-between; font-size:0.85rem;}
+  .lawyer-meta{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:0.85rem;}
   .stars{color:var(--brass); font-size:0.9rem;}
   .rating-count{color:#8a8069; font-size:0.78rem; margin-left:4px;}
   .price-tag{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:var(--ink-2);}
@@ -142,14 +142,58 @@
   .despacho-chip{border-color:var(--despacho); color:var(--despacho); background:rgba(61,110,120,0.1);}
   .lawyer-card.is-despacho{border-left:3px solid var(--despacho);}
   .lawyer-card.is-despacho .avatar{box-shadow:0 0 0 2px var(--despacho);}
+  .card-actions{display:flex; gap:8px; margin-top:4px;}
   .contact-btn{
-    margin-top:4px; text-align:center; background:var(--ink); color:var(--parchment); text-decoration:none;
+    flex:1; text-align:center; background:var(--ink); color:var(--parchment); text-decoration:none;
     padding:10px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em;
     transition:background 0.2s ease, transform 0.15s ease;
   }
   .contact-btn:hover{background:var(--ink-2); transform:translateY(-1px);}
+  .compare-toggle{
+    background:none; color:var(--ink-2); border:1px solid #c9bd9c; border-radius:2px; padding:10px 12px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; white-space:nowrap;
+    cursor:pointer; transition:all 0.2s ease;
+  }
+  .compare-toggle:hover{border-color:var(--ink-2);}
+  .compare-toggle.active{background:var(--ink-2); color:var(--parchment); border-color:var(--ink-2);}
   .no-results{display:none; text-align:center; padding:50px 20px; color:#6b6250;}
   .no-results.show{display:block;}
+
+  /* ---------- Comparador ---------- */
+  .compare-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:70; background:var(--ink); border-top:1px solid var(--line-strong);
+    box-shadow:0 -12px 30px rgba(0,0,0,0.3); transform:translateY(120%); transition:transform 0.3s ease;
+  }
+  .compare-bar.show{transform:translateY(0);}
+  .compare-bar-inner{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; padding:14px 28px;}
+  .compare-chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .compare-chip{display:flex; align-items:center; gap:8px; background:var(--ink-2); border:1px solid var(--line-strong); border-radius:20px; padding:6px 8px 6px 12px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem;}
+  .compare-chip button{background:none; border:none; color:rgba(241,234,216,0.6); cursor:pointer; font-size:0.9rem; line-height:1; padding:2px;}
+  .compare-chip button:hover{color:var(--parchment);}
+  .compare-actions{display:flex; align-items:center; gap:12px;}
+  .compare-clear{background:none; border:none; color:rgba(241,234,216,0.6); font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  .compare-clear:hover{color:var(--parchment);}
+  .compare-view{background:var(--brass-light); color:var(--ink); border:none; border-radius:2px; padding:12px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer; transition:background 0.2s ease;}
+  .compare-view:hover{background:#e8bd74;}
+  .compare-view:disabled{opacity:0.5; cursor:not-allowed;}
+
+  .compare-modal{display:none; position:fixed; inset:0; z-index:80; background:rgba(15,22,40,0.72); backdrop-filter:blur(3px); padding:32px 20px; overflow-y:auto;}
+  .compare-modal.show{display:flex; align-items:flex-start; justify-content:center;}
+  .compare-modal-inner{background:var(--parchment); color:var(--ink); border-radius:8px; max-width:920px; width:100%; padding:32px; position:relative; margin:auto;}
+  .compare-close{position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:50%; border:1px solid #c9bd9c; background:none; color:var(--ink); font-size:1.2rem; cursor:pointer; line-height:1; transition:background 0.2s ease;}
+  .compare-close:hover{background:rgba(24,38,68,0.08);}
+  .compare-modal-inner h3{font-family:'Newsreader', serif; font-size:1.5rem; font-weight:500; margin-bottom:20px;}
+  .compare-table-wrap{overflow-x:auto;}
+  .compare-table{width:100%; border-collapse:collapse; min-width:480px;}
+  .compare-table th, .compare-table td{padding:12px 14px; border-bottom:1px solid #ddd2b0; text-align:left; vertical-align:top; font-size:0.9rem;}
+  .compare-table th.row-label{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:#6b6250; font-weight:600; white-space:nowrap;}
+  .compare-table thead th{border-bottom:2px solid var(--ink);}
+  .compare-col-name{font-family:'Newsreader', serif; font-weight:600; font-size:1.02rem;}
+  .compare-table .cell-chips{display:flex; gap:5px; flex-wrap:wrap;}
+  .compare-table .cell-btn{display:inline-block; margin-top:2px; background:var(--ink); color:var(--parchment); text-decoration:none; padding:8px 14px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;}
+
+  .skip-link{position:absolute; left:12px; top:-60px; background:var(--brass-light); color:var(--ink); padding:10px 16px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-decoration:none; z-index:100; transition:top 0.2s ease;}
+  .skip-link:focus{top:12px;}
 
   /* ---------- Skeleton de carga ---------- */
   @keyframes shimmer{0%{background-position:-400px 0;} 100%{background-position:400px 0;}}
@@ -249,6 +293,8 @@
 </head>
 <body>
 
+<a href="#resultados" class="skip-link">Saltar a los resultados</a>
+
 <header>
   <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
     <a href="index.html" class="brand">
@@ -337,13 +383,31 @@
     <div class="resultados-head">
       <div>
         <h2 style="font-size:1.3rem;">Despachos y abogados</h2>
-        <div class="resultados-count" id="resultsCount"></div>
+        <div class="resultados-count" id="resultsCount" aria-live="polite"></div>
       </div>
     </div>
     <div class="card-grid" id="cardGrid"></div>
     <div class="no-results" id="noResults">No hay resultados para esa combinación. Prueba con otra ciudad o especialidad.</div>
   </div>
 </section>
+
+<div class="compare-bar" id="compareBar">
+  <div class="wrap compare-bar-inner">
+    <div class="compare-chips" id="compareChips"></div>
+    <div class="compare-actions">
+      <button class="compare-clear" id="compareClear" type="button">Limpiar</button>
+      <button class="compare-view" id="compareView" type="button">Ver comparación</button>
+    </div>
+  </div>
+</div>
+
+<div class="compare-modal" id="compareModal">
+  <div class="compare-modal-inner" role="dialog" aria-modal="true" aria-label="Comparación de perfiles">
+    <button class="compare-close" id="compareClose" type="button" aria-label="Cerrar comparación">×</button>
+    <h3>Comparando perfiles</h3>
+    <div class="compare-table-wrap"><table class="compare-table" id="compareTable"></table></div>
+  </div>
+</div>
 
 <section class="puente">
   <div class="wrap">
@@ -369,6 +433,7 @@
 <script src="auth.js"></script>
 <script>
   let abogados = [];
+  let compareIds = new Set();
 
   function initials(name){
     return name.replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
@@ -376,6 +441,11 @@
   function starString(rating){
     const full = Math.round(rating);
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
+  }
+  function priceDisplay(ab){
+    if(ab.consultaDesde === 0) return 'Consulta gratis';
+    if(typeof ab.consultaDesde === 'number' && ab.consultaDesde > 0) return `Consulta desde $${ab.consultaDesde.toLocaleString('es-MX')}`;
+    return ab.precio || 'Honorarios a consultar';
   }
 
   let reviewStats = {};
@@ -400,7 +470,7 @@
       card.innerHTML = `
         ${ab.destacado ? '<div class="destacado-badge">✨ Destacado</div>' : ''}
         <div class="lawyer-top">
-          <div class="avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="">` : initials(ab.nombre)}</div>
+          <div class="avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="" loading="lazy">` : initials(ab.nombre)}</div>
           <div>
             <div class="lawyer-name">${ab.nombre}</div>
             <div class="lawyer-city">${ab.ciudad}</div>
@@ -413,9 +483,12 @@
         </div>
         <div class="lawyer-meta">
           <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total})</span></span>
-          <span class="price-tag">${ab.precio}</span>
+          <span class="price-tag">${priceDisplay(ab)}</span>
         </div>
-        <a class="contact-btn" href="perfil.html?id=${ab.id}">Ver perfil</a>
+        <div class="card-actions">
+          <a class="contact-btn" href="perfil.html?id=${ab.id}">Ver perfil</a>
+          <button class="compare-toggle${compareIds.has(ab.id) ? ' active' : ''}" data-id="${ab.id}" type="button">${compareIds.has(ab.id) ? '✓ Comparando' : '+ Comparar'}</button>
+        </div>
       `;
       grid.appendChild(card);
     });
@@ -442,6 +515,92 @@
     const normales = filtered.filter(ab => !ab.destacado);
     renderCards(destacados.concat(normales));
   }
+
+  // ---------- Comparador de perfiles ----------
+  const MAX_COMPARE = 3;
+
+  function renderCompareBar(){
+    const bar = document.getElementById('compareBar');
+    const chips = document.getElementById('compareChips');
+    const view = document.getElementById('compareView');
+    if(compareIds.size === 0){
+      bar.classList.remove('show');
+      return;
+    }
+    bar.classList.add('show');
+    chips.innerHTML = [...compareIds].map(id => {
+      const ab = abogados.find(a => a.id === id);
+      const nombre = ab ? ab.nombre : id;
+      return `<span class="compare-chip">${nombre}<button type="button" data-remove="${id}" aria-label="Quitar ${nombre} de la comparación">×</button></span>`;
+    }).join('');
+    view.disabled = compareIds.size < 2;
+  }
+
+  function buildCompareTable(){
+    const table = document.getElementById('compareTable');
+    const selected = [...compareIds].map(id => abogados.find(a => a.id === id)).filter(Boolean);
+    const rows = [
+      {label:'Ciudad', get: ab => ab.ciudad},
+      {label:'Tipo', get: ab => ab.tipo === 'despacho' ? 'Despacho' : 'Abogado individual'},
+      {label:'Especialidades', get: ab => `<div class="cell-chips">${(ab.especialidades||[]).map(e=>`<span class="specialty-chip">${e}</span>`).join('')}</div>`},
+      {label:'Precio', get: ab => ab.precio || '—'},
+      {label:'Calificación', get: ab => { const s = reviewStats[ab.id] || {average:0,total:0}; return `${starString(s.average)} <span class="rating-count">(${s.total})</span>`; }},
+      {label:'Cédula verificada', get: ab => ab.verificado ? 'Sí' : 'No confirmada aún'},
+      {label:'Idóneo Destacado', get: ab => ab.destacado ? '✨ Sí' : 'No'},
+      {label:'', get: ab => `<a class="cell-btn" href="perfil.html?id=${ab.id}">Ver perfil completo</a>`}
+    ];
+    let html = '<thead><tr><th class="row-label"></th>' + selected.map(ab => `<th class="compare-col-name">${ab.nombre}</th>`).join('') + '</tr></thead><tbody>';
+    rows.forEach(row => {
+      html += `<tr><th class="row-label">${row.label}</th>` + selected.map(ab => `<td>${row.get(ab)}</td>`).join('') + '</tr>';
+    });
+    html += '</tbody>';
+    table.innerHTML = html;
+  }
+
+  function openCompareModal(){
+    if(compareIds.size < 2) return;
+    buildCompareTable();
+    document.getElementById('compareModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCompareModal(){
+    document.getElementById('compareModal').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('cardGrid').addEventListener('click', e => {
+    const btn = e.target.closest('.compare-toggle');
+    if(!btn) return;
+    const id = btn.dataset.id;
+    if(compareIds.has(id)) compareIds.delete(id);
+    else {
+      if(compareIds.size >= MAX_COMPARE) return;
+      compareIds.add(id);
+    }
+    btn.classList.toggle('active', compareIds.has(id));
+    btn.textContent = compareIds.has(id) ? '✓ Comparando' : '+ Comparar';
+    renderCompareBar();
+  });
+  document.getElementById('compareChips').addEventListener('click', e => {
+    const btn = e.target.closest('[data-remove]');
+    if(!btn) return;
+    compareIds.delete(btn.dataset.remove);
+    renderCompareBar();
+    applyFilters();
+  });
+  document.getElementById('compareClear').addEventListener('click', () => {
+    compareIds.clear();
+    renderCompareBar();
+    applyFilters();
+  });
+  document.getElementById('compareView').addEventListener('click', openCompareModal);
+  document.getElementById('compareClose').addEventListener('click', closeCompareModal);
+  document.getElementById('compareModal').addEventListener('click', e => {
+    if(e.target.id === 'compareModal') closeCompareModal();
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') closeCompareModal();
+  });
 
   (function populateCiudadFilter(){
     const select = document.getElementById('fCiudad');
@@ -486,19 +645,31 @@
     `).join('');
   }
 
+  // Permite llegar aquí desde el home con un filtro ya aplicado, p.ej.
+  // buscar.html?especialidad=Familiar (usado por el asistente de la portada).
+  function applyQueryParams(){
+    const params = new URLSearchParams(location.search);
+    const esp = params.get('especialidad');
+    if(esp){
+      const sel = document.getElementById('fEspecialidad');
+      if([...sel.options].some(o => o.value === esp)) sel.value = esp;
+    }
+  }
+
   async function init(){
     document.getElementById('resultsCount').textContent = 'Cargando…';
     renderSkeleton(6);
+    applyQueryParams();
     try{
       abogados = await window.IdoneoListings.getAllListings();
     } catch(err){
       console.error('No se pudieron cargar los perfiles registrados, mostrando solo los de ejemplo.', err);
       abogados = (window.IdoneoListings && window.IdoneoListings.DEMO_ABOGADOS) || [];
     }
-    renderCards(abogados);
+    applyFilters();
     try{
       reviewStats = await window.IdoneoListings.getStatsForListings(abogados);
-      renderCards(abogados);
+      applyFilters();
     } catch(err){
       console.error('No se pudieron cargar los promedios de reseñas.', err);
     }
