@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <title>Idóneo Abogados — Encuentra al abogado idóneo para tu caso</title>
 <meta name="description" content="Directorio de abogados y despachos verificados en México. Compara especialidad, precio y reseñas reales, y contacta directo por WhatsApp — sin intermediarios.">
 <link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/">
@@ -111,6 +112,47 @@
   .chip{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; padding:8px 15px; border:1px solid var(--line-strong); border-radius:20px; color:rgba(241,234,216,0.85); transition:border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;}
   .chip:hover{border-color:var(--brass-light); color:var(--parchment); transform:translateY(-1px);}
 
+  /* ---------- Barra de confianza (hero) ---------- */
+  .trust-bar{display:flex; flex-wrap:wrap; gap:38px; margin-top:46px; padding-top:26px; border-top:1px solid var(--line); animation:fade-up-in 0.6s ease 0.32s both;}
+  .trust-bar.is-empty{display:none;}
+  .trust-item{display:flex; flex-direction:column; gap:3px;}
+  .trust-value{font-family:'Newsreader', serif; font-size:1.7rem; font-weight:600; color:var(--brass-light); line-height:1;}
+  .trust-label{font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:rgba(241,234,216,0.6);}
+
+  /* ---------- Destacados (vitrina) ---------- */
+  .destacados-section{padding-top:0;}
+  .destacados-section.is-empty{display:none;}
+  .destacados-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:20px;}
+  .destacado-card{background:var(--ink-2); border:1px solid var(--line-strong); border-radius:6px; padding:22px; display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden; animation:card-in 0.5s ease both; transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;}
+  @keyframes card-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  .destacado-card:hover{transform:translateY(-4px); box-shadow:0 18px 36px rgba(0,0,0,0.35); border-color:var(--brass-light);}
+  .destacado-ribbon{position:absolute; top:0; right:0; background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:5px 12px; border-radius:0 0 0 8px;}
+  .dc-top{display:flex; gap:12px; align-items:flex-start;}
+  .dc-avatar{width:46px; height:46px; border-radius:50%; background:var(--ink); color:var(--brass-light); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:1.05rem; flex-shrink:0; overflow:hidden;}
+  .dc-avatar img{width:100%; height:100%; object-fit:cover;}
+  .dc-name{font-family:'Newsreader', serif; font-weight:600; font-size:1.05rem; line-height:1.25;}
+  .dc-city{font-size:0.8rem; color:rgba(241,234,216,0.6); margin-top:2px;}
+  .dc-verified{display:inline-flex; align-items:center; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:#8fc47a; margin-top:4px;}
+  .dc-verified svg{width:11px; height:11px;}
+  .dc-chips{display:flex; gap:6px; flex-wrap:wrap;}
+  .dc-chip{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; padding:4px 10px; border:1px solid var(--line-strong); border-radius:20px; color:rgba(241,234,216,0.8);}
+  .dc-meta{display:flex; align-items:center; justify-content:space-between; font-size:0.85rem; margin-top:auto;}
+  .dc-stars{color:var(--brass-light); font-size:0.9rem;}
+  .dc-rating-count{color:rgba(241,234,216,0.5); font-size:0.76rem; margin-left:4px;}
+  .dc-cta{margin-top:4px; text-align:center; background:var(--brass-light); color:var(--ink); text-decoration:none; padding:10px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em; transition:background 0.2s ease, transform 0.15s ease;}
+  .dc-cta:hover{background:#e8bd74; transform:translateY(-1px);}
+
+  /* ---------- FAQ ---------- */
+  .faq{border-top:1px solid var(--line);}
+  .faq-list{max-width:760px;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; text-align:left; padding:20px 0; cursor:pointer; color:var(--parchment); font-family:'Newsreader', serif; font-size:1.05rem; font-weight:500;}
+  .faq-q:hover{color:var(--brass-light);}
+  .faq-q svg{flex-shrink:0; width:16px; height:16px; color:var(--brass-light); transition:transform 0.25s ease;}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height 0.3s ease;}
+  .faq-a p{padding:0 0 20px; color:rgba(241,234,216,0.72); font-size:0.94rem; max-width:64ch;}
+
   .puente{padding:88px 0; border-bottom:1px solid var(--line); text-align:center;}
   .puente .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); display:block; margin-bottom:14px;}
   .puente h2{font-family:'Newsreader', serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:500; max-width:26ch; margin:0 auto;}
@@ -189,6 +231,7 @@
       </a>
       <a href="registro.html" class="cta-secondary">Soy abogado, regístrame</a>
     </div>
+    <div class="trust-bar is-empty" id="trustBar"></div>
   </div>
   <div class="seal-wrap">
     <svg class="seal" id="heroSeal" viewBox="0 0 200 200">
@@ -236,6 +279,17 @@
   </div>
 </section>
 
+<section class="destacados-section is-empty" id="destacadosSection">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Perfiles destacados</span>
+      <h2>Despachos y abogados con mayor visibilidad ahora mismo.</h2>
+      <p>Cuentas Idóneo Destacado — verificación de cédula gratuita igual que cualquier otro perfil, la diferencia es solo prioridad en el buscador.</p>
+    </div>
+    <div class="destacados-grid" id="destacadosGrid"></div>
+  </div>
+</section>
+
 <section class="especialidades">
   <div class="wrap">
     <div class="section-head">
@@ -247,6 +301,37 @@
       <span class="chip">Familiar</span><span class="chip">Penal</span><span class="chip">Laboral</span><span class="chip">Mercantil</span>
       <span class="chip">Migratorio</span><span class="chip">Corporativo</span><span class="chip">Civil</span><span class="chip">Fiscal</span>
       <span class="chip">Bienes raíces</span><span class="chip">Amparo</span>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Preguntas frecuentes</span>
+      <h2>Antes de que preguntes.</h2>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Cuánto cuesta usar Idóneo para buscar un abogado?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Nada. Buscar, comparar perfiles y contactar por WhatsApp es gratis para siempre. Los honorarios los acuerdas directo con el abogado o despacho que elijas.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Cómo verifican a los abogados y despachos?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Antes de aprobar cualquier perfil, confirmamos la cédula profesional de quien lo registra. Esa verificación es gratuita y no depende de ningún pago — un perfil de pago no la evita ni la acelera.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Idóneo reparte mi caso entre varios abogados?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>No. Tú comparas los perfiles que quieras y decides a quién escribirle por WhatsApp. Nadie vende ni reenvía tu información a varios despachos al mismo tiempo.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Qué significa el sello "Destacado" en algunos perfiles?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Es un plan de pago que le da a un despacho más visibilidad en el buscador y herramientas adicionales de su perfil. No compra ni reemplaza la verificación de cédula, que sigue siendo gratuita y por mérito para todos.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Puedo dejar una reseña de mi abogado?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Sí. Cualquier persona con cuenta puede dejar una reseña con su nombre real en el perfil del abogado que contactó — nada de reseñas anónimas o compradas.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -283,6 +368,100 @@
   window.addEventListener('load', () => {
     document.getElementById('heroSeal').classList.add('stamped');
   });
+
+  // ---------- FAQ ----------
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(other => {
+        if(other !== item){
+          other.classList.remove('open');
+          other.querySelector('.faq-a').style.maxHeight = '0px';
+        }
+      });
+      item.classList.toggle('open', !isOpen);
+      a.style.maxHeight = !isOpen ? (a.scrollHeight + 'px') : '0px';
+    });
+  });
+
+  // ---------- Barra de confianza + vitrina de destacados ----------
+  function initials(name){
+    return (name || '').replace(/^Lic\.\s*/,'').split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  }
+  function starString(rating){
+    const full = Math.round(rating);
+    return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
+  }
+  function destacadoCardHTML(ab, stats){
+    return `
+      <div class="destacado-card">
+        <div class="destacado-ribbon">✨ Destacado</div>
+        <div class="dc-top">
+          <div class="dc-avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="">` : initials(ab.nombre)}</div>
+          <div>
+            <div class="dc-name">${ab.nombre}</div>
+            <div class="dc-city">${ab.ciudad}</div>
+            ${ab.verificado ? `<div class="dc-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
+          </div>
+        </div>
+        <div class="dc-chips">${(ab.especialidades || []).slice(0,3).map(e => `<span class="dc-chip">${e}</span>`).join('')}</div>
+        <div class="dc-meta">
+          <span><span class="dc-stars">${starString(stats.average)}</span><span class="dc-rating-count">(${stats.total})</span></span>
+          <span class="dc-rating-count">${ab.precio || ''}</span>
+        </div>
+        <a class="dc-cta" href="perfil.html?id=${ab.id}">Ver perfil</a>
+      </div>
+    `;
+  }
+
+  async function loadShowcase(){
+    if(!window.IdoneoListings) return;
+    let abogados = [];
+    try{
+      abogados = await window.IdoneoListings.getAllListings();
+    } catch(err){
+      console.error('No se pudo cargar el directorio para la portada.', err);
+      return;
+    }
+
+    // Barra de confianza — solo cifras reales, nunca inventadas.
+    const trustBar = document.getElementById('trustBar');
+    const verificados = abogados.filter(ab => ab.verificado).length;
+    const ciudades = new Set(abogados.map(ab => ab.ciudad).filter(Boolean)).size;
+    let items = [];
+    if(verificados > 0) items.push({value: verificados + '+', label: 'Abogados verificados'});
+    if(ciudades > 0) items.push({value: ciudades, label: ciudades === 1 ? 'Ciudad cubierta' : 'Ciudades cubiertas'});
+    try{
+      const stats = await window.IdoneoListings.getStatsForListings(abogados);
+      const totalReviews = Object.values(stats).reduce((sum, s) => sum + s.total, 0);
+      const withReviews = Object.values(stats).filter(s => s.total > 0);
+      const avgRating = withReviews.length
+        ? withReviews.reduce((sum, s) => sum + s.average, 0) / withReviews.length
+        : 0;
+      if(totalReviews > 0) items.push({value: totalReviews, label: 'Reseñas reales'});
+      if(avgRating > 0) items.push({value: avgRating.toFixed(1) + ' ★', label: 'Calificación promedio'});
+
+      // Vitrina de destacados
+      const destacadosSection = document.getElementById('destacadosSection');
+      const destacadosGrid = document.getElementById('destacadosGrid');
+      const destacados = abogados.filter(ab => ab.destacado).slice(0, 6);
+      if(destacados.length > 0){
+        destacadosGrid.innerHTML = destacados.map((ab, i) => destacadoCardHTML(ab, stats[ab.id] || {average:0, total:0})).join('');
+        [...destacadosGrid.children].forEach((el, i) => { el.style.animationDelay = Math.min(i * 0.08, 0.4) + 's'; });
+        destacadosSection.classList.remove('is-empty');
+      }
+    } catch(err){
+      console.error('No se pudieron cargar las reseñas para la portada.', err);
+    }
+
+    if(items.length > 0){
+      trustBar.innerHTML = items.map(it => `<div class="trust-item"><span class="trust-value">${it.value}</span><span class="trust-label">${it.label}</span></div>`).join('');
+      trustBar.classList.remove('is-empty');
+    }
+  }
+  loadShowcase();
 </script>
 
 </body>

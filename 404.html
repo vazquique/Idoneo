@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Página no encontrada — Idóneo Abogados</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
+    --parchment:#f1ead8; --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5;
+    min-height:100vh; display:flex; flex-direction:column;}
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px; width:100%;}
+  header{padding:20px 0;}
+  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; width:fit-content;}
+  .brand-mark{width:26px; height:26px; flex-shrink:0; color:var(--brass-light);}
+  .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
+  .brand-name{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; letter-spacing:0.01em;}
+  .brand-niche{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.13em; color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); border-radius:20px; padding:2px 8px; align-self:flex-start; background:rgba(217,171,82,0.08);}
+
+  main{flex:1; display:flex; align-items:center; justify-content:center; text-align:center; padding:40px 0;
+    background: radial-gradient(ellipse 700px 380px at 85% 0%, rgba(217,171,82,0.12), transparent 60%);}
+  .code{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--brass-light); margin-bottom:20px; display:inline-flex; align-items:center; gap:10px;}
+  .code::before, .code::after{content:''; width:24px; height:1px; background:var(--brass-light);}
+  h1{font-family:'Newsreader', serif; font-size:clamp(2rem,4.5vw,2.8rem); font-weight:500; max-width:20ch; margin:0 auto;}
+  p{margin-top:16px; max-width:46ch; margin-left:auto; margin-right:auto; color:rgba(241,234,216,0.72);}
+  .actions{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:34px;}
+  .cta-primary{display:inline-flex; align-items:center; gap:8px; background:var(--brass-light); color:var(--ink); text-decoration:none;
+    padding:14px 28px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em;
+    transition:background 0.2s ease, transform 0.15s ease;}
+  .cta-primary:hover{background:#e8bd74; transform:translateY(-2px);}
+  .cta-secondary{display:inline-flex; align-items:center; gap:8px; background:none; color:var(--parchment); text-decoration:none;
+    padding:13px 26px; border-radius:2px; border:1px solid var(--line-strong); font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em;
+    transition:border-color 0.2s ease, transform 0.15s ease;}
+  .cta-secondary:hover{border-color:var(--brass-light); transform:translateY(-2px);}
+
+  footer{padding:28px 0; border-top:1px solid var(--line); text-align:center;}
+  footer span{font-size:0.72rem; color:rgba(241,234,216,0.5); font-family:'IBM Plex Mono', monospace;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7l-3 6a4 4 0 0 0 8 0l-3-6m14 0l-3 6a4 4 0 0 0 8 0l-3-6M4 7h6m4 0h6M8 21h8"/></svg>
+      <span class="brand-text">
+        <span class="brand-name">Idóneo</span>
+        <span class="brand-niche">Abogados</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="code">Error 404</span>
+    <h1>Esta página se nos extravió en el expediente.</h1>
+    <p>El enlace que seguiste no existe o cambió de lugar. Puedes buscar un abogado o volver al inicio.</p>
+    <div class="actions">
+      <a href="buscar.html" class="cta-primary">
+        Buscar abogado
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </a>
+      <a href="index.html" class="cta-secondary">Volver al inicio</a>
+    </div>
+  </div>
+</main>
+
+<footer><span>© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span></footer>
+
+</body>
+</html>

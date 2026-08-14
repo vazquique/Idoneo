@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <title>Buscar abogado — Idóneo Abogados</title>
 <meta name="description" content="Filtra abogados y despachos por ciudad, especialidad y precio. Compara reseñas reales y contacta directo por WhatsApp en el directorio legal de Idóneo.">
 <link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/buscar.html">
@@ -149,6 +150,15 @@
   .contact-btn:hover{background:var(--ink-2); transform:translateY(-1px);}
   .no-results{display:none; text-align:center; padding:50px 20px; color:#6b6250;}
   .no-results.show{display:block;}
+
+  /* ---------- Skeleton de carga ---------- */
+  @keyframes shimmer{0%{background-position:-400px 0;} 100%{background-position:400px 0;}}
+  .skeleton-card{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:20px; display:flex; flex-direction:column; gap:14px;}
+  .skeleton-line, .skeleton-avatar{background:linear-gradient(90deg, #e9e1c9 25%, #f3ecd8 37%, #e9e1c9 63%); background-size:400px 100%; animation:shimmer 1.4s ease infinite;}
+  .skeleton-line{height:11px; border-radius:3px;}
+  .skeleton-avatar{width:44px; height:44px; border-radius:50%; flex-shrink:0;}
+  .skeleton-top{display:flex; gap:12px; align-items:center;}
+  .skeleton-lines{flex:1; display:flex; flex-direction:column; gap:7px;}
 
   /* ---------- Puente hacia abogados ---------- */
   .puente{padding:80px 0; border-bottom:1px solid var(--line); text-align:center;}
@@ -459,8 +469,26 @@
     document.getElementById('fNombre').focus();
   });
 
+  function renderSkeleton(count){
+    const grid = document.getElementById('cardGrid');
+    grid.innerHTML = Array.from({length: count}).map(() => `
+      <div class="skeleton-card">
+        <div class="skeleton-top">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton-line" style="width:70%"></div>
+            <div class="skeleton-line" style="width:45%"></div>
+          </div>
+        </div>
+        <div class="skeleton-line" style="width:90%"></div>
+        <div class="skeleton-line" style="width:60%"></div>
+      </div>
+    `).join('');
+  }
+
   async function init(){
     document.getElementById('resultsCount').textContent = 'Cargando…';
+    renderSkeleton(6);
     try{
       abogados = await window.IdoneoListings.getAllListings();
     } catch(err){
