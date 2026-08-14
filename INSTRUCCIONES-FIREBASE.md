@@ -602,9 +602,14 @@ general que ya tiene cualquier dueño para editar su propio perfil:
 
 ### 2. Pegar el link en el sitio
 
-Busca `TU-LINK-DE-PAGO` en `Idoneo/mi-cuenta.html` (la constante
-`STRIPE_DESTACADO_LINK`, cerca de `destacadoSectionHTML`) y cámbialo por
-tu link real de Stripe.
+Busca `TU-LINK-DE-PAGO` en **dos** archivos y cámbialo por tu link real
+de Stripe en ambos (son dos constantes `STRIPE_DESTACADO_LINK`
+independientes, una por archivo):
+- `Idoneo/mi-cuenta.html` (cerca de `destacadoSectionHTML`) — el botón
+  dentro de la vitrina que ve un abogado ya logueado.
+- `Idoneo/destacado.html` (al final, antes de `</body>`) — el botón de
+  la página de ventas pública, a la que ahora apuntan todos los enlaces
+  "Idóneo Destacado" del menú y el pie de página.
 
 ### 3. Activar "Destacado" cuando alguien paga
 
@@ -628,6 +633,54 @@ Firestore directamente — eso requiere un pequeño backend (Firebase
 Functions es la opción más natural, ya que ya usas Firebase). Es un
 cambio de arquitectura razonable cuando tengas varios despachos pagando
 y el proceso manual empiece a pesar, no algo urgente para el lanzamiento.
+
+## Ideas para seguir monetizando y mejorando (sin implementar todavía)
+
+Ya está construido: la página de ventas `destacado.html`, y el espacio
+publicitario en `plazos.html` (un despacho Destacado recomendado, según
+la especialidad del plazo que acaba de calcular el visitante — es el
+momento de mayor intención de todo el sitio). Estas son ideas
+adicionales, pensadas pero no construidas, para cuando quieras seguir
+creciendo el negocio:
+
+**Formas de cobrar, éticas y dentro del mismo modelo:**
+- **Plan anual con descuento** ($2,990/año en vez de $3,588 — dos meses
+  gratis). Mejora la retención porque quien paga anual casi nunca
+  cancela a mitad de año. Requiere crear un segundo producto/link en
+  Stripe; el resto del flujo (activación manual) es idéntico al actual.
+- **Impulso puntual de 48–72 horas** — en vez de comprometerse a
+  $299/mes, un abogado paga un monto menor (ej. $99 MXN) por aparecer
+  Destacado unos días — útil para quien tiene un pico de necesidad
+  (campaña local, temporada alta). Técnicamente sencillo: un campo
+  `destacadoHasta` en Firestore que se revisa igual que `promoHasta`.
+- **Vender el espacio de "Publicidad" que ya existe** — `perfil.html` ya
+  reserva un `.ad-slot` con la etiqueta "Publicidad" en perfiles que NO
+  son Destacado (para no competir con quien sí pagó). Ahora mismo solo
+  dice "Espacio publicitario disponible" — se le puede vender a negocios
+  complementarios (peritos, traductores certificados, contadores) sin
+  competir directamente con los abogados del directorio.
+- **Verificación de "Persona moral" como cargo único** — ya existe el
+  campo `verificadoEmpresa` en el código; falta un flujo de cobro. A
+  diferencia de Destacado (recurrente), esto podría ser un pago único
+  por confirmar acta constitutiva/RFC del despacho.
+
+**Ambiciosas, no necesariamente de cobro (para cuando quieras seguir
+"pensando en grande"):**
+- **Sitio bilingüe para expatriados** — ya existe el filtro "atiende en
+  inglés"; un sitio completo en inglés (o un toggle ES/EN) abriría el
+  directorio a extranjeros viviendo en México que buscan abogado en su
+  idioma — un segmento real y hoy desatendido. Es un proyecto grande
+  (traducir cada página), no una tarde de trabajo.
+- **Cuestionario de match más inteligente** — en vez de solo tarjetas de
+  especialidad, un mini-cuestionario de 3–4 preguntas (presupuesto,
+  urgencia, complejidad del caso) que arroje un top-3 personalizado en
+  vez de una lista completa — mejora la conversión de cliente indeciso.
+- **Verificación de reseñas por teléfono real** — para blindar aún más
+  la confianza del sitio frente a reseñas falsas, más allá del nombre
+  real que ya se exige.
+- **Modo "urgente 24/7"** — una etiqueta/filtro para abogados que
+  aceptan casos fuera de horario (penal, detenciones) — sensible pero de
+  alto valor para quien más lo necesita.
 
 ## Notas
 

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#182644">
+<title>Idóneo Destacado — Aparece primero cuando te están buscando</title>
+<meta name="description" content="Idóneo Destacado: aparece primero en el buscador de tu ciudad y especialidad, insignia dorada, estadísticas de tu perfil y más. $299 MXN/mes, cancela cuando quieras.">
+<link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/destacado.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
+    --parchment:#f1ead8; --parchment-dim:#e4dbc4;
+    --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+    --despacho:#3d6e78; --despacho-light:#5f96a0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5; overflow-x:hidden;}
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  .header-inner{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px 28px; column-gap:14px;}
+  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; justify-self:center;}
+  .brand-mark{width:32px; height:32px; flex-shrink:0; color:var(--brass-light); transition:transform 0.3s ease;}
+  .brand:hover .brand-mark{transform:rotate(-6deg);}
+  .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
+  .brand-name{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.13em; color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); border-radius:20px; padding:2px 8px; align-self:flex-start; background:rgba(217,171,82,0.08);}
+  .auth-slot{justify-self:end;}
+  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.2s ease, background 0.2s ease, color 0.2s ease;}
+  .nav-toggle:hover{border-color:var(--brass-light);}
+  .nav-toggle.is-open{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
+
+  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 24px 48px rgba(0,0,0,0.35); opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; max-height:calc(100vh - 70px); overflow-y:auto;}
+  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0s;}
+  .mega-menu-inner{display:grid; grid-template-columns:repeat(4, 1fr); gap:36px; padding:36px 28px;}
+  .mega-col-title{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px;}
+  .mega-col a{display:block; padding:7px 0; color:rgba(241,234,216,0.82); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
+  .mega-col a:hover{color:var(--parchment); transform:translateX(3px);}
+  .mega-col a.mega-primary{color:var(--brass-light); font-weight:600;}
+  @media (max-width:860px){
+    .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;}
+  }
+  @media (max-width:680px){
+    .mega-menu-inner{grid-template-columns:1fr; gap:2px; padding:18px 24px;}
+    .mega-col{padding-bottom:12px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+    .mega-col:last-child{border-bottom:none;}
+  }
+
+  .section-head{max-width:640px; margin-bottom:40px;}
+  .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .kicker::before{content:''; width:22px; height:1px; background:var(--brass-light);}
+  .section-head h2{font-family:'Newsreader', serif; font-size:clamp(1.6rem,3vw,2.1rem); font-weight:600; letter-spacing:-0.01em;}
+  .section-head p{margin-top:14px; color:rgba(241,234,216,0.72); font-size:0.96rem;}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative; padding:76px 0 60px; border-bottom:1px solid var(--line); background:radial-gradient(ellipse 800px 420px at 85% -10%, rgba(217,171,82,0.16), transparent 60%);}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center;}
+  .hero-eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); background:rgba(217,171,82,0.1); border:1px solid rgba(217,171,82,0.35); padding:6px 14px; border-radius:20px; margin-bottom:22px;}
+  .hero-eyebrow svg{width:13px; height:13px;}
+  h1{font-family:'Newsreader', serif; font-size:clamp(2.1rem,4.2vw,3.1rem); font-weight:500; line-height:1.12; letter-spacing:-0.01em; max-width:16ch;}
+  h1 em{color:var(--brass-light); font-style:italic;}
+  .hero-sub{margin-top:20px; max-width:50ch; font-size:1.02rem; color:rgba(241,234,216,0.78);}
+  .hero-ctas{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:30px;}
+  .hero-cta{display:inline-flex; align-items:center; gap:8px; background:var(--brass-light); color:var(--ink); text-decoration:none; padding:14px 26px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:600; transition:background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;}
+  .hero-cta:hover{background:#e8bd74; transform:translateY(-2px); box-shadow:0 12px 26px rgba(217,171,82,0.3);}
+  .hero-price-note{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:rgba(241,234,216,0.55);}
+  .hero-price-note strong{color:var(--parchment);}
+
+  /* ---------- Comparativa visual ---------- */
+  .compare-wrap{position:relative;}
+  .compare-cards{display:grid; grid-template-columns:1fr 1fr; gap:0; position:relative;}
+  .mock-card{background:var(--parchment); color:var(--ink); padding:20px; position:relative; overflow:hidden;}
+  .mock-card.free{border-radius:8px 0 0 8px; opacity:0.72; transform:scale(0.96); filter:grayscale(0.3);}
+  .mock-card.gold{border-radius:0 8px 8px 0; box-shadow:0 20px 44px rgba(0,0,0,0.4); z-index:2;}
+  .mock-label{position:absolute; top:10px; left:10px; font-family:'IBM Plex Mono', monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a8069; background:rgba(255,255,255,0.7); padding:3px 8px; border-radius:3px;}
+  .mock-badge{position:absolute; top:10px; right:10px; display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,var(--brass-light),var(--brass)); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:0.58rem; font-weight:700; text-transform:uppercase; padding:4px 9px; border-radius:20px;}
+  .mock-badge svg{width:8px; height:8px;}
+  .mock-top{display:flex; gap:10px; align-items:center; margin-bottom:10px; padding-top:26px;}
+  .mock-avatar{width:38px; height:38px; border-radius:50%; background:var(--ink); color:var(--brass-light); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:0.9rem; flex-shrink:0;}
+  .mock-name{font-family:'Newsreader', serif; font-weight:600; font-size:0.9rem; line-height:1.25;}
+  .mock-city{font-size:0.74rem; color:#6b6250;}
+  .mock-disponible{display:inline-flex; align-items:center; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:0.58rem; text-transform:uppercase; color:#4d8c4d; margin-top:3px;}
+  .mock-disponible-dot{width:5px; height:5px; border-radius:50%; background:#5cb85c;}
+  .mock-chips{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
+  .mock-chip{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; padding:3px 7px; border:1px solid #c9bd9c; border-radius:20px; color:var(--ink-2);}
+  .mock-stars{color:var(--brass); font-size:0.72rem;}
+  .mock-rank{position:relative; z-index:1; display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .mock-rank-num{font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:rgba(241,234,216,0.5);}
+  .compare-vs{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:3; width:38px; height:38px; border-radius:50%; background:var(--ink); border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; font-weight:700; color:var(--brass-light);}
+  .compare-caption{display:flex; justify-content:space-between; margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:rgba(241,234,216,0.5); text-transform:uppercase; letter-spacing:0.04em;}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr; gap:40px;}
+    h1{max-width:none;}
+  }
+
+  /* ---------- Por qué importa ---------- */
+  .porque{padding:64px 0; border-bottom:1px solid var(--line);}
+  .porque-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden;}
+  .porque-item{background:var(--ink); padding:26px 24px;}
+  .porque-item .stat{font-family:'Newsreader', serif; font-size:2rem; font-weight:600; color:var(--brass-light); line-height:1;}
+  .porque-item p{margin-top:10px; font-size:0.88rem; color:rgba(241,234,216,0.72);}
+  @media (max-width:760px){ .porque-grid{grid-template-columns:1fr;} }
+
+  /* ---------- Features detalladas ---------- */
+  .features{padding:64px 0; border-bottom:1px solid var(--line);}
+  .feature-detail{display:grid; grid-template-columns:52px 1fr; gap:20px; padding:26px 0; border-top:1px solid var(--line);}
+  .feature-detail:last-child{padding-bottom:0;}
+  .feature-detail-icon{width:52px; height:52px; border-radius:50%; background:rgba(217,171,82,0.1); border:1px solid rgba(217,171,82,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .feature-detail-icon svg{width:24px; height:24px; color:var(--brass-light);}
+  .feature-detail h3{font-family:'Newsreader', serif; font-size:1.15rem; font-weight:600; margin-bottom:8px;}
+  .feature-detail p{color:rgba(241,234,216,0.72); font-size:0.92rem; max-width:66ch;}
+
+  /* ---------- Pricing ---------- */
+  .pricing{padding:64px 0; border-bottom:1px solid var(--line); background:radial-gradient(ellipse 700px 340px at 50% 100%, rgba(217,171,82,0.08), transparent 60%);}
+  .pricing-card{max-width:460px; margin:0 auto; background:var(--parchment); color:var(--ink); border-radius:8px; padding:40px; text-align:center; box-shadow:0 24px 56px rgba(0,0,0,0.35);}
+  .pricing-plan{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--brass);}
+  .pricing-amount{font-family:'Newsreader', serif; font-size:3rem; font-weight:600; margin:10px 0 4px;}
+  .pricing-amount span{font-family:'IBM Plex Mono', monospace; font-size:0.9rem; font-weight:400; color:#6b6250;}
+  .pricing-note{font-size:0.84rem; color:#6b6250; margin-bottom:26px;}
+  .pricing-list{list-style:none; text-align:left; display:flex; flex-direction:column; gap:10px; margin-bottom:28px;}
+  .pricing-list li{font-size:0.9rem; padding-left:24px; position:relative; color:#3a3222;}
+  .pricing-list li::before{content:'✓'; position:absolute; left:0; color:#4d8c4d; font-weight:700;}
+  .pricing-cta{display:block; background:var(--ink); color:var(--parchment); text-decoration:none; padding:14px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; transition:background 0.15s ease, transform 0.15s ease;}
+  .pricing-cta:hover{background:var(--ink-2); transform:translateY(-1px);}
+  .pricing-annual{margin-top:16px; font-size:0.82rem; color:#6b6250;}
+  .pricing-annual a{color:var(--brass); text-decoration:underline;}
+  .pricing-beta-note{max-width:460px; margin:18px auto 0; text-align:center; font-size:0.8rem; color:rgba(241,234,216,0.55);}
+
+  /* ---------- FAQ ---------- */
+  .faq-section{padding:64px 0;}
+  .faq-list{max-width:760px;}
+  .faq-item{border-top:1px solid var(--line);}
+  .faq-item:last-child{border-bottom:1px solid var(--line);}
+  .faq-q{width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; color:var(--parchment); text-align:left; padding:18px 4px; font-family:'Newsreader', serif; font-size:1.02rem; cursor:pointer;}
+  .faq-q svg{flex-shrink:0; color:var(--brass-light); transition:transform 0.2s ease;}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height 0.25s ease;}
+  .faq-item.open .faq-a{max-height:240px;}
+  .faq-a p{padding:0 4px 18px; color:rgba(241,234,216,0.72); font-size:0.92rem; max-width:66ch;}
+
+  /* ---------- CTA final ---------- */
+  .final-cta{padding:72px 0; text-align:center; border-top:1px solid var(--line);}
+  .final-cta h2{font-family:'Newsreader', serif; font-size:clamp(1.6rem,3vw,2.1rem); font-weight:600; max-width:26ch; margin:0 auto;}
+  .final-cta p{margin-top:14px; color:rgba(241,234,216,0.72); max-width:52ch; margin-left:auto; margin-right:auto;}
+
+  footer{padding:56px 0 28px; border-top:1px solid var(--line);}
+  .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
+  .footer-brand .brand{justify-self:start; margin-bottom:12px;}
+  .footer-tagline{font-size:0.86rem; color:rgba(241,234,216,0.58); max-width:34ch; line-height:1.55;}
+  .footer-col{display:flex; flex-direction:column; gap:9px;}
+  .footer-col-title{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
+  .footer-col a{font-size:0.86rem; color:rgba(241,234,216,0.68); text-decoration:none; transition:color 0.15s ease;}
+  .footer-col a:hover{color:var(--parchment);}
+  .footer-bottom{padding-top:22px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  footer .mono{font-size:0.72rem; color:rgba(241,234,216,0.5); font-family:'IBM Plex Mono', monospace;}
+  footer a.mono{text-decoration:none;}
+  footer a.mono:hover{color:rgba(241,234,216,0.8);}
+  @media (max-width:860px){
+    .footer-grid{grid-template-columns:1fr 1fr; gap:28px;}
+    .footer-brand{grid-column:1 / -1;}
+  }
+  @media (max-width:520px){
+    .footer-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:680px){
+    .pricing-card{padding:28px;}
+    .feature-detail{grid-template-columns:44px 1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="megaMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14.5" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
+        <path d="M16 8.5v15M10.3 11.5l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1m11.4 0l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1M8 11.5h4.7m6.6 0H24M11.7 23.5h8.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">Idóneo</span>
+        <span class="brand-niche">Abogados</span>
+      </span>
+    </a>
+    <div class="auth-slot" id="navAuth"></div>
+  </div>
+  <nav class="mega-menu" id="megaMenu" aria-label="Menú principal">
+    <div class="wrap mega-menu-inner">
+      <div class="mega-col">
+        <span class="mega-col-title">Buscar</span>
+        <a class="mega-primary" href="buscar.html">Todos los abogados</a>
+        <a href="buscar.html?especialidad=Familiar">Familiar</a>
+        <a href="buscar.html?especialidad=Penal">Penal</a>
+        <a href="buscar.html?especialidad=Laboral">Laboral</a>
+        <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+        <a href="buscar.html?especialidad=Corporativo">Corporativo</a>
+        <a href="buscar.html?especialidad=Migratorio">Migratorio</a>
+        <a href="buscar.html?especialidad=Bienes%20ra%C3%ADces">Bienes raíces</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Para abogados</span>
+        <a href="registro.html">Regístrate gratis</a>
+        <a href="mi-cuenta.html">Mi cuenta</a>
+        <a class="mega-primary" href="destacado.html">Idóneo Destacado</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Recursos</span>
+        <a href="plazos.html">Radar de plazos</a>
+        <a href="guias.html">Guías legales</a>
+        <a href="index.html#como-funciona">Cómo funciona</a>
+        <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Legal</span>
+        <a href="aviso-privacidad.html">Aviso de privacidad</a>
+        <a href="terminos.html">Términos y condiciones</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="hero-eyebrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>Idóneo Destacado</span>
+      <h1>Sé el primero que ven. Sé al que le escriben.</h1>
+      <p class="hero-sub">Cuando alguien busca abogado en tu ciudad y especialidad, casi nadie pasa de los primeros resultados. Destacado te pone ahí — con insignia dorada, más contexto en tu tarjeta, y estadísticas para saber si está funcionando.</p>
+      <div class="hero-ctas">
+        <a class="hero-cta" href="#pricing">Destacar mi perfil — $299 MXN/mes</a>
+        <span class="hero-price-note">Cancela cuando quieras · <strong>Sin permanencia</strong></span>
+      </div>
+    </div>
+    <div class="compare-wrap">
+      <div class="compare-cards">
+        <div class="mock-card free">
+          <span class="mock-label">Perfil gratuito</span>
+          <div class="mock-rank"><span class="mock-rank-num">#7 en resultados</span></div>
+          <div class="mock-top">
+            <div class="mock-avatar">RT</div>
+            <div>
+              <div class="mock-name">Lic. Roberto T.</div>
+              <div class="mock-city">Guadalajara, Jal.</div>
+            </div>
+          </div>
+          <div class="mock-chips"><span class="mock-chip">Civil</span></div>
+          <div class="mock-stars">★★★★☆</div>
+        </div>
+        <div class="mock-card gold">
+          <span class="mock-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>Destacado</span>
+          <div class="mock-rank"><span class="mock-rank-num">#1 en resultados</span></div>
+          <div class="mock-top">
+            <div class="mock-avatar">AT</div>
+            <div>
+              <div class="mock-name">Lic. Ana Torres</div>
+              <div class="mock-city">Guadalajara, Jal.</div>
+              <div class="mock-disponible"><span class="mock-disponible-dot"></span>Disponible ahora</div>
+            </div>
+          </div>
+          <div class="mock-chips"><span class="mock-chip">Familiar</span><span class="mock-chip">Civil</span><span class="mock-chip">Amparo</span></div>
+          <div class="mock-stars">★★★★★</div>
+        </div>
+        <div class="compare-vs">VS</div>
+      </div>
+      <div class="compare-caption"><span>Antes</span><span>Con Destacado</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="porque">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:36px;">
+      <span class="kicker">Por qué importa el orden</span>
+      <h2>Nadie llega hasta el resultado número doce.</h2>
+    </div>
+    <div class="porque-grid">
+      <div class="porque-item">
+        <div class="stat">1º–3º</div>
+        <p>Es donde se concentra la mayoría de los clics reales en cualquier buscador — entre más abajo apareces, menos gente te ve, sin importar qué tan bueno seas.</p>
+      </div>
+      <div class="porque-item">
+        <div class="stat">2 seg.</div>
+        <p>Es aproximadamente lo que alguien tarda en decidir si sigue viendo tu tarjeta o pasa a la siguiente. La insignia y las señales visuales importan más de lo que parece.</p>
+      </div>
+      <div class="porque-item">
+        <div class="stat">100%</div>
+        <p>De tu cédula sigue siendo gratis y por mérito, igual que cualquier otro perfil. Destacado no compra la verificación — compra que te vean primero.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Qué incluye</span>
+      <h2>Cada función pensada para una cosa: que te contacten a ti.</h2>
+    </div>
+
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+      <div>
+        <h3>Prioridad en los resultados de tu ciudad y especialidad</h3>
+        <p>Cuando alguien busca "abogado familiar en Guadalajara", los perfiles Destacados aparecen antes que el resto. Es la diferencia entre estar en la mesa o no estar en la conversación.</p>
+      </div>
+    </div>
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg></div>
+      <div>
+        <h3>Insignia dorada "Destacado"</h3>
+        <p>Una señal visual instantánea de que tu perfil tiene inversión detrás — igual que un local con buena fachada transmite más confianza que uno sin letrero.</p>
+      </div>
+    </div>
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <div>
+        <h3>Etiqueta "Disponible ahora"</h3>
+        <p>La señal de urgencia más directa que le puedes dar a alguien que está comparando cinco perfiles a la vez: "yo sí tengo espacio para tu caso hoy."</p>
+      </div>
+    </div>
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+      <div>
+        <h3>Hasta 5 especialidades en vez de 3</h3>
+        <p>Si trabajas más de una rama del derecho, no tienes que elegir cuáles esconder — apareces en más búsquedas relevantes para tu práctica real.</p>
+      </div>
+    </div>
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M8 17V9m5 8V5m5 12v-6"/></svg></div>
+      <div>
+        <h3>Panel de estadísticas</h3>
+        <p>Vistas totales, clics a WhatsApp y tasa de conversión — para que sepas si tu perfil está funcionando y qué ajustar, no solo esperar a que "algo pase".</p>
+      </div>
+    </div>
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <div>
+        <h3>Galería de hasta 4 fotos y perfil sin anuncios</h3>
+        <p>Tu oficina, tu equipo, tu espacio de trabajo — en carrusel en tu perfil público, sin publicidad de terceros compitiendo por la atención de quien ya te está considerando.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="section-head" style="text-align:center; margin:0 auto 36px;">
+      <span class="kicker" style="justify-content:center;">Precio</span>
+      <h2>Simple, sin sorpresas.</h2>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-plan">Idóneo Destacado</div>
+      <div class="pricing-amount">$299 <span>MXN / mes</span></div>
+      <p class="pricing-note">Cancela cuando quieras, sin contrato de permanencia.</p>
+      <ul class="pricing-list">
+        <li>Prioridad en los resultados de tu ciudad</li>
+        <li>Insignia dorada + etiqueta "Disponible ahora"</li>
+        <li>Hasta 5 especialidades</li>
+        <li>Panel de estadísticas completo</li>
+        <li>Galería de hasta 4 fotos</li>
+        <li>Perfil sin anuncios de terceros</li>
+      </ul>
+      <a class="pricing-cta" id="pricingCtaBtn" href="#" target="_blank" rel="noopener">Destacar mi perfil</a>
+      <p class="pricing-annual">¿Prefieres pagar anual con descuento? <a href="#footer-contacto">Escríbenos</a> y lo activamos manual mientras automatizamos ese plan.</p>
+    </div>
+    <p class="pricing-beta-note">Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.</p>
+  </div>
+</section>
+
+<section class="faq-section" id="preguntas-frecuentes">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Antes de decidir</span>
+      <h2>Preguntas frecuentes sobre Destacado.</h2>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Necesito tener mi perfil aprobado primero?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Sí. Primero te registras gratis y confirmamos tu cédula profesional. Una vez que tu perfil está publicado, puedes activar Destacado cuando quieras desde "Mi cuenta" — no es un requisito para aparecer en el buscador, es un upgrade opcional.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿La verificación de cédula cuesta más si soy Destacado?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>No. La verificación de cédula es gratuita y por mérito para cualquier perfil, tenga o no Destacado. Destacado nunca compra ni reemplaza esa verificación — solo compra visibilidad.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Puedo cancelar cuando quiera?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Sí, no hay contrato de permanencia. Escríbenos y lo cancelamos — tu perfil se queda publicado normalmente, solo pierdes la prioridad y las funciones extra.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Qué pasa si soy despacho, no abogado individual?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Destacado funciona igual para despachos que para abogados individuales — la insignia, la prioridad y las estadísticas se aplican a tu perfil publicado, sin importar el tipo de cuenta.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Cómo se activa después de pagar?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Ahora mismo el pago se procesa en Stripe pero la activación es manual mientras terminamos de automatizarlo — después de pagar, escríbenos por el contacto del pie de página con el correo de tu cuenta, y activamos Destacado en tu perfil.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>¿Listo para aparecer primero?</h2>
+    <p>Cada día que pasa, alguien en tu ciudad está buscando exactamente lo que tú resuelves — la pregunta es si te encuentra a ti o al que aparece antes.</p>
+    <div class="hero-ctas" style="justify-content:center; margin-top:26px;">
+      <a class="hero-cta" href="#pricing">Destacar mi perfil</a>
+    </div>
+  </div>
+</section>
+
+<footer id="footer-contacto">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14.5" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
+          <path d="M16 8.5v15M10.3 11.5l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1m11.4 0l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1M8 11.5h4.7m6.6 0H24M11.7 23.5h8.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">Idóneo</span>
+          <span class="brand-niche">Abogados</span>
+        </span>
+      </a>
+      <p class="footer-tagline">Directorio legal en México. Cédula verificada, reseñas reales, contacto directo por WhatsApp — sin intermediarios.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Buscar</span>
+      <a href="buscar.html">Todos los abogados</a>
+      <a href="buscar.html?especialidad=Familiar">Familiar</a>
+      <a href="buscar.html?especialidad=Penal">Penal</a>
+      <a href="buscar.html?especialidad=Laboral">Laboral</a>
+      <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Para abogados</span>
+      <a href="registro.html">Regístrate gratis</a>
+      <a href="mi-cuenta.html">Mi cuenta</a>
+      <a href="destacado.html">Idóneo Destacado</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Recursos</span>
+      <a href="plazos.html">Radar de plazos</a>
+      <a href="guias.html">Guías legales</a>
+      <a href="index.html#como-funciona">Cómo funciona</a>
+      <a href="aviso-privacidad.html">Aviso de privacidad</a>
+      <a href="terminos.html">Términos y condiciones</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html">TÉRMINOS</a></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="listings.js"></script>
+<script src="auth.js"></script>
+<script>
+  // Mismo link de Stripe que usa mi-cuenta.html -- ver
+  // INSTRUCCIONES-FIREBASE.md, sección "Activar cobros con Stripe".
+  const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/TU-LINK-DE-PAGO';
+  document.getElementById('pricingCtaBtn').href = STRIPE_DESTACADO_LINK;
+
+  document.getElementById('faqList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.faq-q');
+    if(!btn) return;
+    btn.parentElement.classList.toggle('open');
+  });
+</script>
+
+</body>
+</html>

@@ -109,6 +109,18 @@
   .result-copy-msg{font-size:0.8rem; color:#8fc47a; display:none; margin-top:10px;}
   .result-copy-msg.show{display:block;}
 
+  .sponsored-card{background:rgba(241,234,216,0.05); border:1px solid var(--line); border-radius:6px; padding:18px 20px; margin-bottom:28px;}
+  .sponsored-label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(241,234,216,0.4); margin-bottom:14px;}
+  .sponsored-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .sponsored-avatar{width:44px; height:44px; border-radius:50%; background:var(--ink-2); color:var(--brass-light); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:1rem; flex-shrink:0; overflow:hidden;}
+  .sponsored-avatar img{width:100%; height:100%; object-fit:cover;}
+  .sponsored-info{flex:1; min-width:180px;}
+  .sponsored-name{font-family:'Newsreader', serif; font-weight:600; font-size:0.96rem; display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .sponsored-name svg{width:12px; height:12px; color:var(--brass-light); flex-shrink:0;}
+  .sponsored-meta{font-size:0.8rem; color:rgba(241,234,216,0.6); margin-top:2px;}
+  .sponsored-cta{flex-shrink:0; display:inline-flex; align-items:center; gap:7px; background:none; color:var(--parchment); text-decoration:none; padding:10px 16px; border-radius:3px; border:1px solid var(--line-strong); font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.04em; transition:border-color 0.15s ease, transform 0.15s ease;}
+  .sponsored-cta:hover{border-color:var(--brass-light); transform:translateY(-1px);}
+
   .guardados-section{margin-top:44px;}
   .guardados-head{font-family:'Newsreader', serif; font-size:1.15rem; font-weight:600; margin-bottom:14px;}
   .guardado-plazo{display:flex; align-items:center; gap:14px; background:rgba(241,234,216,0.05); border:1px solid var(--line); border-radius:6px; padding:14px 18px; margin-bottom:10px; flex-wrap:wrap;}
@@ -181,7 +193,7 @@
         <span class="mega-col-title">Para abogados</span>
         <a class="mega-primary" href="registro.html">Regístrate gratis</a>
         <a href="mi-cuenta.html">Mi cuenta</a>
-        <a href="mi-cuenta.html#destacado-cta">Idóneo Destacado</a>
+        <a href="destacado.html">Idóneo Destacado</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
@@ -229,6 +241,7 @@
   </div>
 
   <div id="resultSlot"></div>
+  <div id="sponsoredSlot"></div>
 
   <div class="guardados-section">
     <div class="guardados-head">Tus plazos guardados</div>
@@ -263,7 +276,7 @@
       <span class="footer-col-title">Para abogados</span>
       <a href="registro.html">Regístrate gratis</a>
       <a href="mi-cuenta.html">Mi cuenta</a>
-      <a href="mi-cuenta.html#destacado-cta">Idóneo Destacado</a>
+      <a href="destacado.html">Idóneo Destacado</a>
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
@@ -400,6 +413,44 @@
     });
   }
 
+  function initials(name){
+    return (name || '').split(' ').filter(w => w.length > 1).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+  }
+
+  // Único espacio pagado del sitio fuera del propio buscador: cuando
+  // alguien acaba de calcular un plazo real, es el momento de mayor
+  // intención de todo el sitio -- mostramos UN despacho Destacado que
+  // cubra esa especialidad, siempre marcado como "Publicidad" y elegido
+  // al azar entre los que califican, para no favorecer siempre al mismo.
+  async function renderSponsored(tramite){
+    const slot = document.getElementById('sponsoredSlot');
+    if(!slot) return;
+    slot.innerHTML = '';
+    try{
+      const all = await window.IdoneoListings.getAllListings();
+      const matches = (all || []).filter(a =>
+        a.status === 'approved' && a.destacado && (a.especialidades || []).includes(tramite.area)
+      );
+      if(matches.length === 0) return;
+      const ab = matches[Math.floor(Math.random() * matches.length)];
+      slot.innerHTML = `
+        <div class="sponsored-card">
+          <span class="sponsored-label">Publicidad · Despacho recomendado en ${escapeHtml(tramite.area)}</span>
+          <div class="sponsored-row">
+            <div class="sponsored-avatar">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="">` : escapeHtml(initials(ab.nombre))}</div>
+            <div class="sponsored-info">
+              <div class="sponsored-name">${escapeHtml(ab.nombre)}${ab.verificado ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>` : ''}</div>
+              <div class="sponsored-meta">${escapeHtml(ab.ciudad || '')}</div>
+            </div>
+            <a class="sponsored-cta" href="perfil.html?id=${encodeURIComponent(ab.id)}">Ver perfil →</a>
+          </div>
+        </div>
+      `;
+    } catch(err){
+      console.error('No se pudo cargar el despacho recomendado.', err);
+    }
+  }
+
   function guardadoItemHTML(entry){
     const {tramite, deadline, diasHabilesRestantes} = entry.computed;
     const level = IdoneoPlazos.urgencyLevel(diasHabilesRestantes, deadline);
@@ -442,7 +493,10 @@
       return;
     }
     const result = IdoneoPlazos.computeDeadline(selectedTramiteId, fechaInput.value);
-    if(result) renderResult(result);
+    if(result){
+      renderResult(result);
+      renderSponsored(result.tramite);
+    }
   });
 
   renderGuardados();

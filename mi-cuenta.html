@@ -401,7 +401,7 @@
         <span class="mega-col-title">Para abogados</span>
         <a class="mega-primary" href="registro.html">Regístrate gratis</a>
         <a href="mi-cuenta.html">Mi cuenta</a>
-        <a href="mi-cuenta.html#destacado-cta">Idóneo Destacado</a>
+        <a href="destacado.html">Idóneo Destacado</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
@@ -452,7 +452,7 @@
       <span class="footer-col-title">Para abogados</span>
       <a href="registro.html">Regístrate gratis</a>
       <a href="mi-cuenta.html">Mi cuenta</a>
-      <a href="mi-cuenta.html#destacado-cta">Idóneo Destacado</a>
+      <a href="destacado.html">Idóneo Destacado</a>
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
@@ -495,20 +495,18 @@
   }
   const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
 
-  // Vitrina de Destacado: se puede cerrar con la X, pero solo por esta
-  // sesión -- usamos sessionStorage (no localStorage) a propósito, para
-  // que no moleste en este momento sin desaparecer para siempre. La
-  // próxima vez que entre a "Mi cuenta" (nueva sesión del navegador)
-  // vuelve a aparecer.
+  // Vitrina de Destacado: la X la quita nada más en esta vista de la
+  // página -- a propósito NO se guarda en localStorage ni sessionStorage,
+  // así que en cuanto recargue o vuelva a entrar a "Mi cuenta" aparece de
+  // nuevo completa. Es un "ahora no me estorbes", no una preferencia
+  // permanente.
+  const destacadoDismissedInMemory = new Set();
   function isDestacadoDismissed(id){
-    try{ return sessionStorage.getItem('idoneo_destacado_dismissed_' + id) === '1'; }
-    catch(err){ return false; }
+    return destacadoDismissedInMemory.has(id);
   }
   function setDestacadoDismissed(id, val){
-    try{
-      if(val) sessionStorage.setItem('idoneo_destacado_dismissed_' + id, '1');
-      else sessionStorage.removeItem('idoneo_destacado_dismissed_' + id);
-    } catch(err){ /* sessionStorage no disponible, no truena */ }
+    if(val) destacadoDismissedInMemory.add(id);
+    else destacadoDismissedInMemory.delete(id);
   }
   function starString(rating){
     const full = Math.round(rating);
