@@ -555,9 +555,9 @@ general que ya tiene cualquier dueño para editar su propio perfil:
   en `buscar.html`.
 - **Promoción temporal** (`promoTexto` + `promoHasta`): el abogado escribe
   un texto corto ("20% de descuento en tu primera consulta") y, si quiere,
-  una fecha límite — se muestra como una insignia roja/naranja llamativa
-  en su tarjeta y perfil mientras no haya vencido. Dejar `promoTexto`
-  vacío la quita.
+  una fecha límite — se muestra como una insignia "Oferta" en tono
+  dorado/tinta (consistente con el resto del sitio) en su tarjeta y perfil
+  mientras no haya vencido. Dejar `promoTexto` vacío la quita.
 - **Medidor de perfil completo**: en "Mi cuenta" cada abogado ve un
   porcentaje y qué le falta llenar (foto, bio, horario, dirección, sitio
   web/red social, precio de consulta, precios por trámite) — no se guarda
@@ -576,6 +576,17 @@ general que ya tiene cualquier dueño para editar su propio perfil:
   eso funcionan incluso sin iniciar sesión. Si el visitante sí tiene
   cuenta, ve su lista completa en "Mi cuenta", junto con "Mis reseñas"
   (todas las que ha escrito, sin importar a qué abogado).
+- **Radar de Plazos Legales** (`plazos.html` + `plazos.js`): calculadora
+  de plazos legales orientativos (despido, amparo, demandas, recurso ante
+  el SAT) que cuenta días hábiles reales en México (excluye fines de
+  semana y los días de descanso obligatorio del Art. 74 LFT). Muestra una
+  cuenta regresiva con semáforo de urgencia, deja descargar un
+  recordatorio de calendario (.ics), copiar un resumen del caso para
+  WhatsApp, y saltar directo al buscador filtrado por la especialidad
+  correspondiente. Los plazos guardados también viven en `localStorage`
+  (`idoneo_plazos`) — cero cambios de Firestore o reglas. El catálogo de
+  trámites/plazos es editable directamente en el arreglo `TRAMITES` dentro
+  de `plazos.js`.
 
 ### 1. Crear el link de pago en Stripe
 

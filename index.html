@@ -131,6 +131,21 @@
   .skip-link{position:absolute; left:12px; top:-60px; background:var(--brass-light); color:var(--ink); padding:10px 16px; border-radius:2px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-decoration:none; z-index:100; transition:top 0.2s ease;}
   .skip-link:focus{top:12px;}
 
+  /* ---------- Radar de plazos (promo) ---------- */
+  .plazos-promo{border-bottom:1px solid var(--line); background:radial-gradient(ellipse 600px 300px at 12% 0%, rgba(217,171,82,0.1), transparent 60%);}
+  .plazos-promo-inner{display:flex; align-items:center; gap:32px; padding:44px 0;}
+  .plazos-promo-icon{flex-shrink:0; width:64px; height:64px; border-radius:50%; background:rgba(217,171,82,0.12); border:1px solid rgba(217,171,82,0.35); display:flex; align-items:center; justify-content:center;}
+  .plazos-promo-icon svg{width:30px; height:30px; color:var(--brass-light);}
+  .plazos-promo-text{flex:1; min-width:0;}
+  .plazos-promo-text .eyebrow{margin-bottom:10px;}
+  .plazos-promo-text h2{font-family:'Newsreader', serif; font-size:1.5rem; font-weight:600; margin-bottom:8px;}
+  .plazos-promo-text p{max-width:60ch; color:rgba(241,234,216,0.75); font-size:0.94rem; margin-bottom:18px;}
+  .plazos-promo-btn{display:inline-flex; align-items:center; gap:8px; background:var(--brass-light); color:var(--ink); text-decoration:none; padding:12px 22px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; transition:background 0.15s ease, transform 0.15s ease;}
+  .plazos-promo-btn:hover{background:#e6bd6f; transform:translateY(-1px);}
+  @media (max-width:720px){
+    .plazos-promo-inner{flex-direction:column; align-items:flex-start; text-align:left; gap:18px;}
+  }
+
   /* ---------- Asistente rápido ---------- */
   .asistente{border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
   .asistente-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
@@ -285,9 +300,10 @@
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
+        <a class="mega-primary" href="plazos.html">Radar de plazos</a>
+        <a href="guias.html">Guías legales</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
-        <a href="guias.html">Guías legales</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -373,6 +389,20 @@
         <span class="ac-title">No estoy seguro, quiero ver todo</span>
         <span class="ac-sub">Directorio completo</span>
       </button>
+    </div>
+  </div>
+</section>
+
+<section class="plazos-promo">
+  <div class="wrap plazos-promo-inner">
+    <div class="plazos-promo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    </div>
+    <div class="plazos-promo-text">
+      <span class="eyebrow">Exclusivo de Idóneo</span>
+      <h2>¿Tienes un plazo legal corriendo?</h2>
+      <p>Muchos derechos se pierden no por falta de razón, sino por falta de tiempo. Calcula en segundos cuándo vence tu plazo — despido, amparo, demanda, notificación del SAT — con días hábiles reales y recordatorio de calendario incluido.</p>
+      <a class="plazos-promo-btn" href="plazos.html">Calcular mi plazo →</a>
     </div>
   </div>
 </section>
@@ -507,6 +537,7 @@
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
+      <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
