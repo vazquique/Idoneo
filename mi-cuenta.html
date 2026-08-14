@@ -180,6 +180,11 @@
   .consulta-price-row input[type="number"]{width:160px; flex:none;}
   .consulta-gratis-check{display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:500; color:var(--ink-2); white-space:nowrap; cursor:pointer; flex-shrink:0;}
   .consulta-gratis-check input{width:auto;}
+  .promo-row{display:grid; grid-template-columns:1fr 160px; gap:12px;}
+  @media (max-width:520px){
+    .promo-row{grid-template-columns:1fr;}
+    .consulta-gratis-check{white-space:normal; flex-basis:100%;}
+  }
 
   .servicios-precio-list{display:flex; flex-direction:column; gap:8px; margin-bottom:10px;}
   .servicio-row{display:grid; grid-template-columns:1fr auto 110px auto; align-items:center; gap:8px;}
@@ -246,6 +251,9 @@
   .horario-builder{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .horario-builder select, .horario-builder input[type="time"]{width:auto; flex:1; min-width:110px;}
   .horario-sep{font-size:0.82rem; color:#8a8069;}
+  @media (max-width:520px){
+    .horario-builder select{flex-basis:100%;}
+  }
   .horario-24-row{display:flex; align-items:center; gap:7px; margin-top:8px; font-size:0.84rem; color:var(--ink-2);}
   .horario-24-row input{width:auto;}
   .horario-preview{font-size:0.78rem; color:#6b6250; margin-top:8px; font-style:italic;}
@@ -1037,7 +1045,7 @@
 
         <div class="field full">
           <label>Promoción temporal (opcional)</label>
-          <div class="row2">
+          <div class="promo-row">
             <input type="text" data-field="promoTexto" maxlength="90" value="${escapeHtml(l.promoTexto)}" placeholder="Ej. 20% de descuento en tu primera consulta">
             <input type="date" data-field="promoHasta" value="${escapeHtml(l.promoHasta)}">
           </div>

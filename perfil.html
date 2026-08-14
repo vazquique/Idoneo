@@ -66,6 +66,7 @@
   .sticky-contact-btn:hover{background:#1ebe57;}
   @media (max-width:680px){
     .sticky-contact-bar{display:flex;}
+    body{padding-bottom:76px;}
   }
   @media (prefers-reduced-motion: reduce){ .sticky-contact-bar{transition:none;} }
 
@@ -105,6 +106,7 @@
     display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #c0392b, #e0703a); color:#fff;
     font-family:'IBM Plex Mono', monospace; font-size:0.78rem; font-weight:700; padding:10px 16px; border-radius:4px; margin-bottom:18px;
   }
+  .promo-banner.has-badge-above{margin-top:38px;}
   .idioma-chip{border-color:var(--despacho); color:var(--despacho);}
 
   .galeria-carousel{position:relative; width:100%; height:320px; border-radius:8px; overflow:hidden; margin-bottom:20px; background:var(--ink-2);}
@@ -530,7 +532,7 @@
       ${galeriaCarouselHTML(ab)}
       <div class="profile-card${ab.tipo === 'despacho' ? ' is-despacho' : ''}">
         ${ab.destacado ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
-        ${activePromo(ab) ? `<div class="promo-banner">🎉 ${escapeHtml(activePromo(ab))}</div>` : ''}
+        ${activePromo(ab) ? `<div class="promo-banner${ab.destacado ? ' has-badge-above' : ''}">🎉 ${escapeHtml(activePromo(ab))}</div>` : ''}
         <div class="profile-top">
           <div class="avatar-lg">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="">` : escapeHtml(initials(ab.nombre))}</div>
           <div>
