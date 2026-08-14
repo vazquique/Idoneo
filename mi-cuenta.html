@@ -92,12 +92,24 @@
   .status-pill.despacho{background:rgba(61,110,120,0.14); color:var(--despacho); border:1px solid var(--despacho-light);}
   .status-pill.empresa{background:rgba(185,138,46,0.16); color:#8a6a1f; border:1px solid var(--brass-light);}
   .status-pill.destacado{background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink); border:1px solid var(--brass); font-weight:700;}
+  .status-pill svg{width:10px; height:10px; flex-shrink:0;}
 
   .destacado-status{display:flex; align-items:center; gap:14px; background:linear-gradient(135deg, rgba(217,171,82,0.14), rgba(185,138,46,0.08)); border:1px solid var(--brass-light); border-radius:6px; padding:16px 18px; margin-bottom:20px; flex-wrap:wrap;}
   .destacado-status svg{width:26px; height:26px; color:var(--brass); flex-shrink:0;}
   .destacado-status-text{flex:1; min-width:180px;}
   .destacado-status-text strong{font-family:'Newsreader', serif; font-size:1.02rem;}
   .destacado-status-text p{font-size:0.82rem; color:#6b6250; margin-top:2px;}
+
+  .disponible-toggle{display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:4px;}
+  .disponible-toggle input{position:absolute; opacity:0; width:0; height:0;}
+  .disponible-toggle-track{position:relative; width:38px; height:22px; border-radius:20px; background:#d9d0b5; flex-shrink:0; transition:background 0.2s ease;}
+  .disponible-toggle-thumb{position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.25); transition:transform 0.2s ease;}
+  .disponible-toggle input:checked + .disponible-toggle-track{background:#5cb85c;}
+  .disponible-toggle input:checked + .disponible-toggle-track .disponible-toggle-thumb{transform:translateX(16px);}
+  .disponible-toggle input:focus-visible + .disponible-toggle-track{outline:2px solid var(--brass); outline-offset:2px;}
+  .disponible-toggle-label{display:inline-flex; align-items:center; gap:6px; font-size:0.86rem; font-weight:600; color:var(--ink-2);}
+  .disponible-dot{width:8px; height:8px; border-radius:50%; background:#5cb85c; flex-shrink:0; animation:pulse-dot 2s ease-in-out infinite;}
+  @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
 
   .destacado-stats{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
   .stats-head{display:flex; align-items:center; gap:9px; margin-bottom:14px;}
@@ -332,6 +344,7 @@
   function initials(name){
     return (name || '').split(' ').filter(w => w.length > 1).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
   }
+  const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
   function starString(rating){
     const full = Math.round(rating);
     return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
@@ -564,7 +577,7 @@
       : '<span class="status-pill pending">Pendiente de revisión</span>';
     if(l.verificado) html += '<span class="status-pill verified">Cédula verificada</span>';
     if(l.tipo === 'despacho') html += '<span class="status-pill despacho">Despacho</span>';
-    if(l.destacado) html += '<span class="status-pill destacado">✨ Destacado</span>';
+    if(l.destacado) html += `<span class="status-pill destacado">${SPARKLE_ICON}Destacado</span>`;
     return html;
   }
 
@@ -584,9 +597,16 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
           <div class="destacado-status-text">
             <strong>Tu perfil es Destacado</strong>
-            <p>Apareces primero en el buscador y puedes registrar hasta 5 especialidades.</p>
+            <p>Apareces primero en el buscador, sin anuncios en tu perfil, y puedes registrar hasta 5 especialidades.</p>
           </div>
         </div>
+
+        <label class="disponible-toggle">
+          <input type="checkbox" data-role="disponibleCheck" ${l.disponible ? 'checked' : ''}>
+          <span class="disponible-toggle-track"><span class="disponible-toggle-thumb"></span></span>
+          <span class="disponible-toggle-label"><span class="disponible-dot"></span>Mostrar "Disponible ahora" en mi tarjeta y perfil</span>
+        </label>
+        <p class="field-hint" style="margin:-6px 0 16px;">Actívalo cuando tengas capacidad para tomar nuevos casos — es la señal de urgencia más directa que le puedes dar a quien te está comparando con otros perfiles.</p>
 
         <div class="destacado-stats">
           <div class="stats-head">
@@ -648,7 +668,9 @@
         </div>
         <ul class="destacado-cta-list">
           <li>Aparece primero en los resultados de tu ciudad y especialidad</li>
-          <li>Insignia "Destacado" en tu tarjeta y tu perfil</li>
+          <li>Insignia dorada "Destacado" en tu tarjeta y tu perfil</li>
+          <li>Sin anuncios de terceros en tu perfil público</li>
+          <li>Etiqueta "Disponible ahora" para avisar cuando tienes capacidad de tomar casos</li>
           <li>Hasta 5 especialidades en vez de 3</li>
           <li>Panel de estadísticas: clics a WhatsApp, tasa de conversión y desglose de tus reseñas</li>
           <li>Galería de hasta 4 fotos en carrusel rotativo en tu perfil público</li>
@@ -887,6 +909,24 @@
       if(gratisCheck.checked) desdeInput.value = '';
     });
     refreshAddBtn();
+  }
+
+  function wireDisponibleToggle(card, l){
+    const check = card.querySelector('[data-role="disponibleCheck"]');
+    if(!check) return;
+    check.addEventListener('change', async () => {
+      check.disabled = true;
+      try{
+        await window.IdoneoListings.updateMyListing(l.id, {disponible: check.checked});
+        l.disponible = check.checked;
+      } catch(err){
+        console.error(err);
+        check.checked = !check.checked;
+        alert('Algo falló al actualizar tu disponibilidad. Intenta de nuevo.');
+      } finally {
+        check.disabled = false;
+      }
+    });
   }
 
   function readFields(card){
@@ -1176,6 +1216,7 @@
     wireTipoToggle(card);
     wireEstadoCiudad(card);
     wirePrecios(card);
+    wireDisponibleToggle(card, l);
 
     card.querySelector('[data-action="save"]').addEventListener('click', async (e) => {
       if(!validateRequired(card)){

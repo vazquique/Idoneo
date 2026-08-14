@@ -177,6 +177,7 @@
       verificado: false,
       verificadoEmpresa: false,
       destacado: false,
+      disponible: false,
       experiencia: '',
       bio: '',
       direccion: '',
@@ -200,7 +201,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl'];
+  const OWNER_EDITABLE_FIELDS = ['tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};
@@ -213,6 +214,7 @@
     // del servidor — cortar aquí a 3 le rompería el beneficio a las
     // cuentas Destacado.
     if(typeof clean.telefono === 'string') clean.telefono = clean.telefono.replace(/\D/g, '');
+    if(Object.prototype.hasOwnProperty.call(clean, 'disponible')) clean.disponible = !!clean.disponible;
     if(Object.prototype.hasOwnProperty.call(clean, 'consultaDesde')){
       clean.consultaDesde = (clean.consultaDesde === '' || clean.consultaDesde === null || clean.consultaDesde === undefined)
         ? null : Math.max(0, Number(clean.consultaDesde) || 0);

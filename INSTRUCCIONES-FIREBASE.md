@@ -512,7 +512,11 @@ verificada sigue siendo gratis y por mérito, nunca algo que se compre.
 
 **Qué incluye "Destacado"** ($299 MXN/mes sugerido, ajústalo a tu gusto):
 - Aparece primero en los resultados de su ciudad/especialidad en `buscar.html`.
-- Insignia dorada "✨ Destacado" en su tarjeta y su perfil.
+- Insignia dorada "✦ Destacado" (con brillo animado) en su tarjeta y su perfil.
+- **Sin el bloque de publicidad** en su perfil público — una cuenta gratis sí lo ve.
+- **Etiqueta "Disponible ahora"** (punto verde pulsante), que el propio abogado
+  activa/desactiva desde "Mi cuenta" cuando tiene capacidad para tomar casos —
+  campo `disponible` (boolean), no necesita reglas nuevas de Firestore.
 - Hasta 5 especialidades en vez de 3.
 - **Panel de estadísticas** en "Mi cuenta": vistas totales, clics reales a
   WhatsApp, tasa de conversión (clics ÷ vistas) y desglose de sus

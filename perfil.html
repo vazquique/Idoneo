@@ -65,7 +65,23 @@
   .ad-label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(241,234,216,0.4); margin-bottom:8px;}
   .ad-slot-inner{min-height:100px; border:1px dashed rgba(241,234,216,0.25); border-radius:6px; display:flex; align-items:center; justify-content:center; background:rgba(241,234,216,0.03);}
   .ad-placeholder-text{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:rgba(241,234,216,0.45);}
-  .destacado-badge{position:absolute; top:0; right:0; background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:6px 16px; border-radius:0 0 0 8px;}
+  .destacado-badge{
+    position:absolute; top:16px; right:16px; z-index:2; overflow:hidden;
+    display:inline-flex; align-items:center; gap:6px;
+    background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink);
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+    padding:7px 15px; border-radius:20px; box-shadow:0 4px 14px rgba(185,138,46,0.4);
+  }
+  .destacado-badge svg{width:12px; height:12px; flex-shrink:0;}
+  .destacado-badge::after{
+    content:''; position:absolute; top:0; left:-60%; width:40%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,0.65), transparent);
+    animation:badge-shine 3.4s ease-in-out infinite;
+  }
+  @keyframes badge-shine{0%,40%{left:-60%;} 75%,100%{left:130%;}}
+  .disponible-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:#5c9e5c; margin-top:8px;}
+  .disponible-dot{width:8px; height:8px; border-radius:50%; background:#5cb85c; flex-shrink:0; animation:pulse-dot 2s ease-in-out infinite;}
+  @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
 
   .galeria-carousel{position:relative; width:100%; height:320px; border-radius:8px; overflow:hidden; margin-bottom:20px; background:var(--ink-2);}
   .carousel-slide{position:absolute; inset:0; opacity:0; transition:opacity 0.6s ease;}
@@ -290,6 +306,7 @@
     const full = Math.round(rating);
     return '★★★★★'.slice(0,full) + '☆☆☆☆☆'.slice(0, 5-full);
   }
+  const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
   function priceDisplay(ab){
     if(ab.consultaDesde === 0) return 'Consulta gratis';
     if(typeof ab.consultaDesde === 'number' && ab.consultaDesde > 0) return `Consulta desde $${ab.consultaDesde.toLocaleString('es-MX')} MXN`;
@@ -407,7 +424,7 @@
     content.innerHTML = `
       ${galeriaCarouselHTML(ab)}
       <div class="profile-card${ab.tipo === 'despacho' ? ' is-despacho' : ''}">
-        ${ab.destacado ? '<div class="destacado-badge">✨ Destacado</div>' : ''}
+        ${ab.destacado ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
         <div class="profile-top">
           <div class="avatar-lg">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="">` : initials(ab.nombre)}</div>
           <div>
@@ -416,6 +433,7 @@
             <div style="display:flex; flex-wrap:wrap; gap:4px 14px;">
               ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>${ab.tipo === 'despacho' ? 'Responsable con cédula verificada' : 'Cédula verificada'}</div>` : ''}
               ${ab.tipo === 'despacho' && ab.verificadoEmpresa ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Persona moral verificada</div>` : ''}
+              ${ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
             </div>
           </div>
         </div>
@@ -451,10 +469,11 @@
 
       ${preciosServicioHTML(ab)}
 
+      ${!ab.destacado ? `
       <div class="ad-slot">
         <span class="ad-label">Publicidad</span>
         <div class="ad-slot-inner"><span class="ad-placeholder-text">Espacio publicitario disponible</span></div>
-      </div>
+      </div>` : ''}
 
       <div class="reviews-head"><h2>Reseñas</h2></div>
       <div class="reviews-summary">
