@@ -169,6 +169,7 @@
       precio: '$$',
       rating: 0,
       reviews: 0,
+      views: 0,
       verificado: false,
       verificadoEmpresa: false,
       experiencia: '',
@@ -328,6 +329,8 @@
     const user = requireAuthUser();
     const texto = (data.texto || '').trim().slice(0, 2000);
     const estrellas = Math.min(5, Math.max(1, Math.round(Number(data.estrellas) || 0)));
+    // merge:true — así una edición del autor no borra la respuesta que el
+    // despacho ya haya publicado en ese mismo documento de reseña.
     await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).set({
       abogadoId: String(abogadoId),
       autorUid: user.uid,
@@ -335,12 +338,41 @@
       estrellas,
       texto,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    }, {merge: true});
   }
 
   async function deleteMyReview(abogadoId){
     const user = requireAuthUser();
     await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).delete();
+  }
+
+  // ---- Respuesta del despacho a una reseña ----
+  // Solo el dueño del despacho reseñado puede escribir/editar esto — las
+  // reglas de Firestore lo hacen cumplir aparte de esta capa de cliente
+  // (no pueden tocar el texto ni las estrellas de la reseña original).
+  async function submitReviewReply(reviewId, respuesta){
+    requireAuthUser();
+    const texto = (respuesta || '').trim().slice(0, 1000);
+    await requireDb().collection(REVIEWS_COLLECTION).doc(reviewId).update({
+      respuesta: texto,
+      respuestaAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  // ---- Contador de vistas de perfil ----
+  // Público a propósito (no requiere sesión) para contar visitas reales,
+  // no solo de cuentas logueadas. Las reglas de Firestore limitan esta
+  // escritura exclusivamente a incrementar el campo `views` en 1 — no se
+  // puede usar para cambiar ningún otro dato del registro.
+  async function incrementProfileView(abogadoId){
+    if(isDemo(abogadoId)) return;
+    try{
+      await requireDb().collection(COLLECTION).doc(String(abogadoId)).update({
+        views: firebase.firestore.FieldValue.increment(1)
+      });
+    } catch(err){
+      console.error('No se pudo registrar la vista del perfil.', err);
+    }
   }
 
   // ---- Sesión de administrador (Firebase Authentication) ----
@@ -361,7 +393,7 @@
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
-    getMyReview, submitReview, deleteMyReview,
+    getMyReview, submitReview, deleteMyReview, submitReviewReply, incrementProfileView,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };

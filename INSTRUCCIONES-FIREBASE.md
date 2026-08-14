@@ -172,7 +172,17 @@ service cloud.firestore {
                       && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
                       && request.resource.data.rating == resource.data.rating
                       && request.resource.data.reviews == resource.data.reviews
+                      && request.resource.data.get('views', 0) == resource.data.get('views', 0)
                       && request.resource.data.nombre == resource.data.nombre
+                    )
+                    // Contador de vistas del perfil: público a propósito (un
+                    // visitante no necesita cuenta para "ver" un perfil), pero
+                    // solo puede tocar el campo `views`, y solo para sumarle
+                    // exactamente 1 — no puede usarse para cambiar nada más
+                    // ni para inflar el contador de golpe.
+                    || (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views'])
+                      && request.resource.data.views == resource.data.get('views', 0) + 1
                     );
 
       allow delete: if isAdmin() || (request.auth != null && resource.data.ownerUid == request.auth.uid);
@@ -195,13 +205,32 @@ service cloud.firestore {
                     && request.resource.data.texto.size() <= 2000
                     && ownerOf(request.resource.data.abogadoId) != request.auth.uid;
       allow update: if request.auth != null
-                    && resource.data.autorUid == request.auth.uid
-                    && request.resource.data.autorUid == request.auth.uid
-                    && request.resource.data.estrellas is number
-                    && request.resource.data.estrellas >= 1
-                    && request.resource.data.estrellas <= 5
-                    && request.resource.data.texto is string
-                    && request.resource.data.texto.size() <= 2000;
+                    && (
+                      // El autor edita su propia reseña — no puede tocar la
+                      // respuesta que el despacho ya haya publicado ahí.
+                      (
+                        resource.data.autorUid == request.auth.uid
+                        && request.resource.data.autorUid == request.auth.uid
+                        && request.resource.data.estrellas is number
+                        && request.resource.data.estrellas >= 1
+                        && request.resource.data.estrellas <= 5
+                        && request.resource.data.texto is string
+                        && request.resource.data.texto.size() <= 2000
+                        && request.resource.data.get('respuesta', '') == resource.data.get('respuesta', '')
+                      )
+                      // El dueño del despacho reseñado responde — solo puede
+                      // tocar `respuesta`, nunca el texto ni las estrellas
+                      // de la reseña original.
+                      || (
+                        ownerOf(resource.data.abogadoId) == request.auth.uid
+                        && request.resource.data.abogadoId == resource.data.abogadoId
+                        && request.resource.data.autorUid == resource.data.autorUid
+                        && request.resource.data.texto == resource.data.texto
+                        && request.resource.data.estrellas == resource.data.estrellas
+                        && request.resource.data.respuesta is string
+                        && request.resource.data.respuesta.size() <= 1000
+                      )
+                    );
       allow delete: if request.auth != null
                     && (resource.data.autorUid == request.auth.uid || isAdmin());
     }
@@ -256,6 +285,20 @@ Qué hacen estas reglas:
   etiqueta "Cuenta de despacho registrado" — no se bloquea (podría ser una
   reseña legítima, como un abogado contratando a otro para su propio
   caso), pero queda visible que no es un cliente cualquiera.
+- **Respuesta pública del despacho a una reseña**: el dueño del despacho
+  reseñado (`ownerOf(abogadoId) == tu UID`) puede escribir o editar el
+  campo `respuesta` de esa reseña desde "Mi cuenta" — pero las reglas le
+  bloquean tocar `texto`, `estrellas` o `autorUid`, aunque lo intente
+  manipulando la petición directamente. El autor de la reseña, por su
+  lado, puede seguir editando su propio texto/estrellas pero no puede
+  tocar la `respuesta` que ya se haya publicado ahí.
+- **Contador de vistas de perfil** (`views` en `abogados_registrados`):
+  cualquier visitante, sin necesidad de cuenta, dispara un incremento de
+  este campo al abrir `perfil.html`. La regla es deliberadamente pública,
+  pero solo permite tocar `views`, y solo para sumarle exactamente 1 por
+  petición — no se puede usar para cambiar ningún otro dato del registro
+  ni para inflar el contador de golpe. Se muestra solo al dueño del
+  registro, en "Mi cuenta".
 
 > Si ya habías publicado unas reglas antes de que existieran `admins` o
 > `resenas`, vuelve a pegar este bloque completo y publica de nuevo.
@@ -313,6 +356,17 @@ Qué hacen estas reglas:
     "Especialidad", "Ciudad" o "WhatsApp" (los tres marcados con `*`) —
     debe rechazar el guardado y marcar el campo en rojo hasta que lo
     llenes de nuevo.
+12. Abre `perfil.html?id=<tu-id>` un par de veces (o recarga) — confirma
+    en **Mi cuenta** que el contador "visitas a tu perfil" va subiendo.
+13. Con la **segunda** cuenta (la que solo reseñó), escribe una reseña.
+    Con tu cuenta de despacho, ve a **Mi cuenta** → tus reseñas → dale
+    "Responder", escribe algo y guarda. Confirma que la respuesta aparece
+    en `perfil.html` bajo esa reseña, etiquetada con el nombre de tu
+    despacho. Confirma también que la segunda cuenta **no puede** editar
+    esa respuesta (no le aparece esa opción en ningún lado del sitio).
+14. En `perfil.html`, dale clic a "Compartir" — en celular debería abrir
+    el panel nativo de compartir; en escritorio debería copiar el link y
+    mostrar "✓ Link copiado".
 
 ## Estructura de carpetas
 
@@ -327,6 +381,8 @@ Escritorio/
     listings.js            ← lógica compartida con Firestore
     firebase-config.js      ← tus llaves reales
     auth.js                 ← login de visitantes (para reseñar y registrar despacho)
+    sitemap.xml             ← páginas fijas, para que Google las encuentre
+    robots.txt               ← le dice a Google dónde está el sitemap
   admin/                  ← panel de administración (se publica en GitHub Pages)
     index.html              ← antes se llamaba admin.html; GitHub Pages necesita index.html
     listings.js             ← copia idéntica a la de Idoneo/
@@ -360,6 +416,35 @@ aplicarlo en las dos copias.
 5. Recuerda agregar ese dominio de GitHub Pages a **Authorized domains**
    en Firebase Authentication (mismo paso que hiciste para el dominio de
    Netlify), si vas a iniciar sesión con Google desde ahí.
+
+## SEO básico
+
+El sitio ya trae lo esencial para que Google lo pueda indexar bien:
+
+1. **Reemplaza el dominio de ejemplo**: busca `TU-SITIO-PRINCIPAL.netlify.app`
+   en `index.html`, `buscar.html`, `sitemap.xml` y `robots.txt`, y
+   cámbialo por tu dominio real de Netlify (o el tuyo propio si usas uno).
+2. **`perfil.html` actualiza su propio SEO en automático**: en cuanto
+   carga los datos de un abogado/despacho, reescribe el `<title>`, la
+   meta descripción, y agrega datos estructurados (`schema.org`,
+   `Attorney`/`LegalService` con `AggregateRating` si ya tiene reseñas) —
+   así Google puede mostrar estrellas de calificación directo en el
+   resultado de búsqueda, sin que tengas que hacer nada manual por cada
+   perfil nuevo.
+3. **Sube `sitemap.xml`** a Google Search Console (Search Console →
+   Sitemaps → pega la URL completa, ej.
+   `https://tu-sitio.netlify.app/sitemap.xml`) para que Google encuentre
+   tus páginas fijas más rápido. Los perfiles individuales (`perfil.html
+   ?id=...`) no están en ese archivo porque son dinámicos — Google los
+   encuentra solo, siguiendo los links desde `buscar.html`.
+4. Ten en cuenta que el sitio es 100% HTML+JavaScript sin servidor — el
+   contenido de cada perfil se carga después de que la página abre, no
+   viene ya escrito en el HTML. Google normalmente sí ejecuta el
+   JavaScript al indexar, pero es una limitación real: si algún día el
+   tráfico de búsqueda se vuelve crítico para el negocio, lo siguiente
+   que valdría la pena invertir es un sitio con renderizado del lado del
+   servidor (por ejemplo con Next.js) — eso es un cambio de arquitectura
+   grande, no algo para hacer "de pasada".
 
 ## Notas
 
