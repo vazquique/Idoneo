@@ -29,6 +29,26 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://TU-SITIO-PRINCIPAL.netlify.app/guias.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://TU-SITIO-PRINCIPAL.netlify.app/guia-elegir-abogado.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://TU-SITIO-PRINCIPAL.netlify.app/guia-primera-consulta.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://TU-SITIO-PRINCIPAL.netlify.app/guia-verificar-cedula.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://TU-SITIO-PRINCIPAL.netlify.app/aviso-privacidad.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>

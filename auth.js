@@ -7,7 +7,7 @@
     <script src="firebase-config.js"></script>
     <script src="auth.js" defer></script>
   y requiere un elemento con id="navAuth" en el header de esa página
-  (fuera de .nav-links, para que siga visible aunque el menú colapse en móvil).
+  (fuera de .mega-menu, para que siga visible aunque el menú esté cerrado).
 
   Usa Firebase Authentication real (mismo proyecto que index.html, carpeta
   admin, usa para el panel) — no localStorage. Esto es lo que permite que "hay que tener
@@ -429,26 +429,30 @@
     }
   }
 
+  // Menú principal (icono de 3 rayas) — mismo comportamiento en escritorio
+  // y en móvil, solo cambia cómo se acomodan las columnas por CSS.
   function initMobileNav(){
     const toggle = document.getElementById('navToggle');
-    const links = document.getElementById('navLinks');
-    if(!toggle || !links) return;
+    const menu = document.getElementById('megaMenu');
+    if(!toggle || !menu) return;
+    function closeMenu(){
+      menu.classList.remove('open');
+      toggle.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
     toggle.addEventListener('click', (e) => {
       e.stopPropagation();
-      const isOpen = links.classList.toggle('open');
+      const isOpen = menu.classList.toggle('open');
+      toggle.classList.toggle('is-open', isOpen);
       toggle.setAttribute('aria-expanded', String(isOpen));
     });
     document.addEventListener('click', (e) => {
-      if(links.classList.contains('open') && !links.contains(e.target) && !toggle.contains(e.target)){
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
+      if(menu.classList.contains('open') && !menu.contains(e.target) && !toggle.contains(e.target)){
+        closeMenu();
       }
     });
-    window.addEventListener('resize', () => {
-      if(window.innerWidth > 680 && links.classList.contains('open')){
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeMenu();
     });
   }
 
