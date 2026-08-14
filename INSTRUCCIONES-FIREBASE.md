@@ -543,6 +543,40 @@ Stripe, nunca pasa por tus manos ni por este sitio), pero **tú activas
 "Destacado" a mano** en el panel de admin — el mismo patrón que ya usas
 para confirmar la cédula profesional.
 
+## Funciones gratuitas para todas las cuentas (no solo Destacado)
+
+Estas no necesitan reglas nuevas de Firestore — usan el mismo permiso
+general que ya tiene cualquier dueño para editar su propio perfil:
+
+- **Idiomas adicionales** (`idiomas`, arreglo de texto): el abogado marca
+  en qué idiomas atiende además de español (inglés, francés, portugués,
+  alemán, italiano, chino mandarín). Se muestra como insignia en su
+  tarjeta/perfil, y hay un filtro "Solo abogados que atienden en inglés"
+  en `buscar.html`.
+- **Promoción temporal** (`promoTexto` + `promoHasta`): el abogado escribe
+  un texto corto ("20% de descuento en tu primera consulta") y, si quiere,
+  una fecha límite — se muestra como una insignia roja/naranja llamativa
+  en su tarjeta y perfil mientras no haya vencido. Dejar `promoTexto`
+  vacío la quita.
+- **Medidor de perfil completo**: en "Mi cuenta" cada abogado ve un
+  porcentaje y qué le falta llenar (foto, bio, horario, dirección, sitio
+  web/red social, precio de consulta, precios por trámite) — no se guarda
+  en Firestore, se calcula al vuelo a partir de los campos que ya existen.
+- **Mensaje de WhatsApp precargado**: el botón "Contactar por WhatsApp" en
+  el perfil ya abre el chat con un mensaje inicial listo ("Hola, encontré
+  tu perfil en Idóneo y me gustaría platicar sobre un caso de ___."),
+  usando el parámetro `?text=` de wa.me — no se guarda nada nuevo.
+- **"Agregar a contactos"**: botón en el perfil que genera y descarga una
+  tarjeta vCard (.vcf) con nombre, teléfono, ciudad y especialidades —
+  para que el cliente lo guarde en los contactos de su teléfono con un
+  clic, sin necesidad de copiar el número a mano.
+- **Guardados** (favoritos del visitante): el ícono de marcador en cada
+  tarjeta de `buscar.html` y el botón "Guardar" en el perfil viven en
+  `localStorage` del navegador de quien los usa, no en Firestore — por
+  eso funcionan incluso sin iniciar sesión. Si el visitante sí tiene
+  cuenta, ve su lista completa en "Mi cuenta", junto con "Mis reseñas"
+  (todas las que ha escrito, sin importar a qué abogado).
+
 ### 1. Crear el link de pago en Stripe
 
 1. Crea una cuenta en https://stripe.com si no tienes una (necesitas

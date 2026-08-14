@@ -48,6 +48,11 @@
   const HIDDEN_DEMOS_COLLECTION = 'demos_ocultos';
   const REVIEWS_COLLECTION = 'resenas';
 
+  // Idiomas adicionales al español que un abogado puede ofrecer — se
+  // muestran como insignia en su tarjeta/perfil y como filtro en el
+  // buscador. El español no está en la lista porque se asume por default.
+  const IDIOMAS_OPTS = ['Inglés', 'Francés', 'Portugués', 'Alemán', 'Italiano', 'Chino mandarín'];
+
   // Los 32 estados de México con sus ciudades más importantes (capital +
   // las de mayor población/actividad). Se usa para armar los selectores
   // de Estado/Ciudad en registro.html, mi-cuenta.html y el filtro de
@@ -188,6 +193,9 @@
       horario: '',
       fotoUrl: '',
       galeria: [],
+      idiomas: [],
+      promoTexto: '',
+      promoHasta: '',
       reseñas: [],
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -201,7 +209,7 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible'];
+  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible', 'idiomas', 'promoTexto', 'promoHasta'];
 
   function pickOwnerEditableFields(edits){
     const clean = {};
@@ -235,7 +243,27 @@
         }))
         .filter(s => s.servicio);
     }
+    if(Array.isArray(clean.idiomas)){
+      clean.idiomas = clean.idiomas
+        .filter(i => IDIOMAS_OPTS.includes(i))
+        .slice(0, IDIOMAS_OPTS.length);
+    }
+    if(typeof clean.promoTexto === 'string') clean.promoTexto = clean.promoTexto.trim().slice(0, 90);
+    if(typeof clean.promoHasta === 'string'){
+      // Solo se acepta el formato YYYY-MM-DD que manda un <input type="date">
+      clean.promoHasta = /^\d{4}-\d{2}-\d{2}$/.test(clean.promoHasta) ? clean.promoHasta : '';
+    }
     return clean;
+  }
+
+  // Devuelve el texto de la promoción si está activa (tiene texto y, si
+  // puso fecha límite, todavía no pasó), o null si no debe mostrarse.
+  // Vive aquí para que todas las páginas que pintan tarjetas lo calculen
+  // exactamente igual.
+  function activePromo(l){
+    if(!l || !l.promoTexto) return null;
+    if(l.promoHasta && l.promoHasta < new Date().toISOString().slice(0, 10)) return null;
+    return l.promoTexto;
   }
 
   async function getMyListings(){
@@ -470,13 +498,13 @@
   }
 
   global.IdoneoListings = {
-    DEMO_ABOGADOS, MEXICO_ESTADOS,
+    DEMO_ABOGADOS, MEXICO_ESTADOS, IDIOMAS_OPTS,
     getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
-    getMyReview, getMyReviewsAll, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick,
+    getMyReview, getMyReviewsAll, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick, activePromo,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner, addToGaleria, removeFromGaleria,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };

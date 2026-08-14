@@ -112,6 +112,10 @@
   .completeness-hint{font-size:0.78rem; color:#8a8069; margin-top:8px;}
   .completeness-hint.is-done{color:#4d8c4d; font-weight:600;}
 
+  .idiomas-picker{display:flex; flex-wrap:wrap; gap:12px;}
+  .idioma-check{display:flex; align-items:center; gap:6px; font-size:0.86rem; color:var(--ink-2); cursor:pointer;}
+  .idioma-check input{width:auto;}
+
   /* ---- tarjeta de despacho ---- */
   @keyframes card-in{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
   .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px; animation:card-in 0.5s ease both; border-left:4px solid #c9bd9c;}
@@ -456,6 +460,7 @@
     return (Array.isArray(list) ? list : []).map(serviciosPrecioRowHTML).join('');
   }
   const MEXICO_ESTADOS = (typeof IdoneoListings !== 'undefined' && IdoneoListings.MEXICO_ESTADOS) || {};
+  const IDIOMAS_OPTS = (typeof IdoneoListings !== 'undefined' && IdoneoListings.IDIOMAS_OPTS) || ['Inglés', 'Francés', 'Portugués', 'Alemán', 'Italiano', 'Chino mandarín'];
   function parseCiudadEstado(ciudadStr){
     const str = (ciudadStr || '').trim();
     if(!str) return {ciudad: '', estado: ''};
@@ -873,7 +878,7 @@
   function computeCompleteness(l){
     const checks = [
       {label: 'foto de perfil', done: !!l.fotoUrl, weight: 15},
-      {label: 'una bio breve', done: !!(l.bio && l.bio.trim().length >= 20), weight: 15},
+      {label: 'una bio breve', done: !!(l.bio && l.bio.trim()), weight: 15},
       {label: 'tu experiencia', done: !!(l.experiencia && l.experiencia.trim()), weight: 10},
       {label: 'horario de atención', done: !!(l.horario && l.horario.trim()), weight: 10},
       {label: 'dirección', done: !!(l.direccion && l.direccion.trim()), weight: 10},
@@ -1023,6 +1028,23 @@
         </div>
 
         <div class="field full">
+          <label>Idiomas adicionales (opcional)</label>
+          <div class="idiomas-picker" data-role="idiomasPicker">
+            ${IDIOMAS_OPTS.map(idioma => `<label class="idioma-check"><input type="checkbox" value="${escapeHtml(idioma)}" ${(l.idiomas || []).includes(idioma) ? 'checked' : ''}> ${escapeHtml(idioma)}</label>`).join('')}
+          </div>
+          <p class="field-hint">Se muestran como insignia en tu tarjeta y perfil — útil si atiendes clientes extranjeros o negocios internacionales.</p>
+        </div>
+
+        <div class="field full">
+          <label>Promoción temporal (opcional)</label>
+          <div class="row2">
+            <input type="text" data-field="promoTexto" maxlength="90" value="${escapeHtml(l.promoTexto)}" placeholder="Ej. 20% de descuento en tu primera consulta">
+            <input type="date" data-field="promoHasta" value="${escapeHtml(l.promoHasta)}">
+          </div>
+          <p class="field-hint">Aparece como una insignia llamativa en tu tarjeta y perfil hasta la fecha que pongas — déjala vacía para que no expire sola. Borra el texto para quitarla en cualquier momento.</p>
+        </div>
+
+        <div class="field full">
           <label>Bio breve</label>
           <textarea rows="3" data-field="bio" placeholder="Área de práctica, enfoque...">${escapeHtml(l.bio)}</textarea>
         </div>
@@ -1154,6 +1176,9 @@
       telefono: card.querySelector('[data-field="telefono"]').value.trim(),
       consultaDesde: readConsultaDesde(card),
       serviciosPrecio: readServiciosPrecio(card),
+      idiomas: [...card.querySelectorAll('[data-role="idiomasPicker"] input:checked')].map(cb => cb.value),
+      promoTexto: card.querySelector('[data-field="promoTexto"]').value.trim(),
+      promoHasta: card.querySelector('[data-field="promoHasta"]').value,
       experiencia: card.querySelector('[data-field="experiencia"]').value.trim(),
       bio: card.querySelector('[data-field="bio"]').value.trim(),
       direccion: card.querySelector('[data-field="direccion"]').value.trim(),
