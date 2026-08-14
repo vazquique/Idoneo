@@ -171,7 +171,8 @@
   .disponible-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:#8fc47a; margin-top:4px;}
   .disponible-dot{width:7px; height:7px; border-radius:50%; background:#5cb85c; flex-shrink:0; animation:pulse-dot 2s ease-in-out infinite;}
   @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
-  .promo-strip{background:linear-gradient(135deg, #c0392b, #e0703a); color:#fff; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; font-weight:700; padding:6px 10px; border-radius:3px;}
+  .promo-strip{display:inline-flex; align-items:center; gap:6px; background:rgba(217,171,82,0.12); color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); font-family:'IBM Plex Mono', monospace; font-size:0.68rem; font-weight:600; padding:6px 11px; border-radius:3px;}
+  .promo-strip svg{width:11px; height:11px; flex-shrink:0; color:var(--brass-light);}
   .idioma-chip{border-color:#3d6e78; color:#5f96a0;}
   .dc-top{display:flex; gap:12px; align-items:flex-start;}
   .dc-avatar{width:46px; height:46px; border-radius:50%; background:var(--ink); color:var(--brass-light); display:flex; align-items:center; justify-content:center; font-family:'Newsreader', serif; font-weight:600; font-size:1.05rem; flex-shrink:0; overflow:hidden;}
@@ -607,7 +608,7 @@
             ${ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
           </div>
         </div>
-        ${activePromo(ab) ? `<div class="promo-strip">🎉 ${escapeHtml(activePromo(ab))}</div>` : ''}
+        ${activePromo(ab) ? `<div class="promo-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6l-8 8a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8l8-8A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.8z"/><circle cx="15.5" cy="8.5" r="1.5"/></svg>${escapeHtml(activePromo(ab))}</div>` : ''}
         <div class="dc-chips">${(ab.especialidades || []).slice(0,3).map(e => `<span class="dc-chip">${escapeHtml(e)}</span>`).join('')}${(ab.idiomas || []).map(i => `<span class="dc-chip idioma-chip">🌐 ${escapeHtml(i)}</span>`).join('')}</div>
         <div class="dc-meta">
           <span><span class="dc-stars">${starString(stats.average)}</span><span class="dc-rating-count">(${stats.total})</span></span>
