@@ -495,18 +495,20 @@
   }
   const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
 
-  // Vitrina de Destacado: se puede cerrar con la X y queda recordada por
-  // listado en localStorage -- así no se le muestra el mismo bloque grande
-  // cada vez que entra a "Mi cuenta", pero puede reabrirla cuando quiera.
+  // Vitrina de Destacado: se puede cerrar con la X, pero solo por esta
+  // sesión -- usamos sessionStorage (no localStorage) a propósito, para
+  // que no moleste en este momento sin desaparecer para siempre. La
+  // próxima vez que entre a "Mi cuenta" (nueva sesión del navegador)
+  // vuelve a aparecer.
   function isDestacadoDismissed(id){
-    try{ return localStorage.getItem('idoneo_destacado_dismissed_' + id) === '1'; }
+    try{ return sessionStorage.getItem('idoneo_destacado_dismissed_' + id) === '1'; }
     catch(err){ return false; }
   }
   function setDestacadoDismissed(id, val){
     try{
-      if(val) localStorage.setItem('idoneo_destacado_dismissed_' + id, '1');
-      else localStorage.removeItem('idoneo_destacado_dismissed_' + id);
-    } catch(err){ /* localStorage no disponible, no truena */ }
+      if(val) sessionStorage.setItem('idoneo_destacado_dismissed_' + id, '1');
+      else sessionStorage.removeItem('idoneo_destacado_dismissed_' + id);
+    } catch(err){ /* sessionStorage no disponible, no truena */ }
   }
   function starString(rating){
     const full = Math.round(rating);
