@@ -103,6 +103,15 @@
     .cliente-section{grid-template-columns:1fr;}
   }
 
+  .completeness-box{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:14px 18px; margin-bottom:20px;}
+  .completeness-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .completeness-label{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-2);}
+  .completeness-pct{font-family:'Newsreader', serif; font-weight:600; font-size:1.15rem; color:var(--ink);}
+  .completeness-track{height:7px; border-radius:4px; background:#ece3cd; overflow:hidden;}
+  .completeness-fill{height:100%; background:linear-gradient(90deg, var(--brass-light), var(--brass)); border-radius:4px; transition:width 0.4s ease;}
+  .completeness-hint{font-size:0.78rem; color:#8a8069; margin-top:8px;}
+  .completeness-hint.is-done{color:#4d8c4d; font-weight:600;}
+
   /* ---- tarjeta de despacho ---- */
   @keyframes card-in{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
   .listing-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:32px; margin-bottom:28px; animation:card-in 0.5s ease both; border-left:4px solid #c9bd9c;}
@@ -857,6 +866,41 @@
     `;
   }
 
+  // Qué tan lleno está un perfil — le da al abogado una razón concreta
+  // para volver y agregar más información, y de paso mejora lo que ve
+  // el cliente. Cada rubro pesa lo que aporta a la decisión de contratar,
+  // no lo fácil que es llenarlo.
+  function computeCompleteness(l){
+    const checks = [
+      {label: 'foto de perfil', done: !!l.fotoUrl, weight: 15},
+      {label: 'una bio breve', done: !!(l.bio && l.bio.trim().length >= 20), weight: 15},
+      {label: 'tu experiencia', done: !!(l.experiencia && l.experiencia.trim()), weight: 10},
+      {label: 'horario de atención', done: !!(l.horario && l.horario.trim()), weight: 10},
+      {label: 'dirección', done: !!(l.direccion && l.direccion.trim()), weight: 10},
+      {label: 'sitio web o red social', done: !!(l.sitioWeb || l.facebook || l.instagram || l.linkedin), weight: 10},
+      {label: 'precio de tu consulta', done: typeof l.consultaDesde === 'number', weight: 15},
+      {label: 'precios por trámite', done: Array.isArray(l.serviciosPrecio) && l.serviciosPrecio.length > 0, weight: 15}
+    ];
+    const pct = checks.reduce((sum, c) => sum + (c.done ? c.weight : 0), 0);
+    return {pct, missing: checks.filter(c => !c.done).map(c => c.label)};
+  }
+
+  function completenessBoxHTML(l){
+    const {pct, missing} = computeCompleteness(l);
+    return `
+      <div class="completeness-box">
+        <div class="completeness-head">
+          <span class="completeness-label">Perfil completo</span>
+          <span class="completeness-pct">${pct}%</span>
+        </div>
+        <div class="completeness-track"><div class="completeness-fill" style="width:${pct}%"></div></div>
+        ${missing.length > 0
+          ? `<p class="completeness-hint">Te falta agregar: ${missing.join(', ')}.</p>`
+          : `<p class="completeness-hint is-done">✓ Tu perfil está completo — así es más fácil que te contraten.</p>`}
+      </div>
+    `;
+  }
+
   function listingCardHTML(l){
     return `
       <div class="listing-card${l.status === 'approved' ? ' is-approved' : ''}${l.tipo === 'despacho' ? ' is-despacho' : ''}" data-id="${l.id}">
@@ -874,6 +918,8 @@
             : 'Estamos confirmando tu cédula profesional antes de publicar tu perfil — normalmente te contactamos por WhatsApp.'}
         </div>
 
+        ${completenessBoxHTML(l)}
+
         ${destacadoSectionHTML(l)}
 
         <div class="listing-photo-row">
@@ -889,19 +935,23 @@
         </div>
 
         <div class="field full">
-          <label>Nombre o razón social${l.verificado ? '' : '<span class="req">*</span>'}</label>
-          ${l.verificado
-            ? `<div class="field-locked">${escapeHtml(l.nombre)} — tu cédula ya está verificada con este nombre, escríbenos para corregirlo (ver pie de página).</div>`
+          <label>Nombre o razón social${l.status === 'approved' ? '' : '<span class="req">*</span>'}</label>
+          ${l.status === 'approved'
+            ? `<div class="field-locked">${escapeHtml(l.nombre)} — tu perfil ya está aprobado y publicado con este nombre, escríbenos para corregirlo (ver pie de página).</div>`
             : `<input type="text" data-field="nombre" data-required="1" value="${escapeHtml(l.nombre)}" placeholder="Lic. María Torres / Torres Abogados">
-               <p class="field-hint">Puedes corregirlo libremente mientras tu perfil no esté verificado — por ejemplo, si cambias a "Despacho" y necesitas poner el nombre de la firma.</p>`}
+               <p class="field-hint">Puedes corregirlo libremente mientras tu perfil siga en revisión — en cuanto se aprueba y publica, queda definitivo.</p>`}
         </div>
 
         <div class="field full">
           <label>Tipo de cuenta</label>
-          <select data-field="tipo" data-role="tipoSelect">
-            <option value="individual" ${l.tipo === 'despacho' ? '' : 'selected'}>Abogado individual</option>
-            <option value="despacho" ${l.tipo === 'despacho' ? 'selected' : ''}>Despacho / firma</option>
-          </select>
+          ${l.status === 'approved'
+            ? `<div class="field-locked">${l.tipo === 'despacho' ? 'Despacho / firma' : 'Abogado individual'} — tu registro ya quedó definido y no se puede cambiar. ¿Necesitas otro perfil de abogado o despacho? <a href="registro.html" style="color:var(--brass); text-decoration:underline;">Regístralo aparte</a>.</div>
+               <input type="hidden" data-field="tipo" data-role="tipoSelect" value="${escapeHtml(l.tipo)}">`
+            : `<select data-field="tipo" data-role="tipoSelect">
+                 <option value="individual" ${l.tipo === 'despacho' ? '' : 'selected'}>Abogado individual</option>
+                 <option value="despacho" ${l.tipo === 'despacho' ? 'selected' : ''}>Despacho / firma</option>
+               </select>
+               <p class="field-hint">Puedes cambiarlo libremente mientras tu perfil siga en revisión — en cuanto se aprueba y publica, queda definitivo.</p>`}
         </div>
         <div class="field-grid" data-role="despachoFields" style="${l.tipo === 'despacho' ? '' : 'display:none'}">
           <div class="field">

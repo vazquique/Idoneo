@@ -47,13 +47,15 @@ service cloud.firestore {
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.get('views', 0) == resource.data.get('views', 0)
                       && request.resource.data.get('contactClicks', 0) == resource.data.get('contactClicks', 0)
-                      // El nombre solo se bloquea despues de que el perfil ya
-                      // esta verificado (evita que alguien cambie de identidad
-                      // luego de que confirmamos su cedula). Antes de eso, el
-                      // dueno puede corregirlo o renombrarlo libremente -- por
-                      // ejemplo, al cambiar de "abogado individual" a "despacho"
-                      // y necesitar poner el nombre de la firma.
-                      && (resource.data.verificado == false || request.resource.data.nombre == resource.data.nombre)
+                      // El nombre y el tipo de cuenta (abogado individual vs.
+                      // despacho) solo se bloquean una vez que el admin aprobo
+                      // y publico el perfil -- el registro queda unico y
+                      // definitivo a partir de ahi. Mientras este en revision
+                      // ("pending"), el dueno puede corregir su nombre o el
+                      // tipo de cuenta libremente. Si despues necesita otro
+                      // perfil distinto, tiene que registrar uno nuevo aparte.
+                      && (resource.data.status != 'approved' || request.resource.data.nombre == resource.data.nombre)
+                      && (resource.data.status != 'approved' || request.resource.data.tipo == resource.data.tipo)
                       && (
                         resource.data.get('destacado', false)
                           ? request.resource.data.especialidades.size() <= 5

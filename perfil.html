@@ -554,6 +554,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
             Compartir
           </button>
+          <button type="button" class="share-btn" id="vcardBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M17 11h5M19.5 8.5v5"/></svg>
+            Agregar a contactos
+          </button>
           <span class="share-msg" id="shareMsg"></span>
         </div>
       </div>
@@ -609,6 +613,7 @@
     wireReviewControls();
     wireShareButton(ab);
     wireFavButton(ab);
+    wireVcardButton(ab);
     wireWhatsappTracking(ab);
     wireStickyContact(ab);
     wireGaleriaCarousel(ab.galeria);
@@ -649,6 +654,40 @@
         nombre: ab.nombre, ciudad: ab.ciudad, especialidades: ab.especialidades, fotoUrl: ab.fotoUrl, tipo: ab.tipo
       });
       paint(active);
+    });
+  }
+
+  // Escapa texto para meterlo en un campo de vCard (RFC 6350) — es un
+  // formato de texto plano, no HTML, así que necesita su propio escape
+  // de comas, punto y coma, diagonales y saltos de línea.
+  function escapeVcard(str){
+    return String(str || '').replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n');
+  }
+
+  function wireVcardButton(ab){
+    const btn = document.getElementById('vcardBtn');
+    if(!btn) return;
+    btn.addEventListener('click', () => {
+      const lines = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        `FN:${escapeVcard(ab.nombre)}`,
+        ab.tipo === 'despacho' ? `ORG:${escapeVcard(ab.nombre)}` : '',
+        ab.telefono ? `TEL;TYPE=CELL,VOICE:+${escapeVcard(ab.telefono)}` : '',
+        ab.ciudad ? `ADR:;;${escapeVcard(ab.ciudad)};;;;México` : '',
+        `NOTE:${escapeVcard((ab.especialidades || []).join(', '))} — encontrado en Idóneo`,
+        `URL:${escapeVcard(window.location.href)}`,
+        'END:VCARD'
+      ].filter(Boolean).join('\r\n');
+      const blob = new Blob([lines], {type: 'text/vcard;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(ab.nombre || 'contacto').replace(/[^a-z0-9]+/gi, '-')}.vcf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
   }
 
