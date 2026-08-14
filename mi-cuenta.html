@@ -83,8 +83,32 @@
   .destacado-status-text{flex:1; min-width:180px;}
   .destacado-status-text strong{font-family:'Newsreader', serif; font-size:1.02rem;}
   .destacado-status-text p{font-size:0.82rem; color:#6b6250; margin-top:2px;}
-  .destacado-clicks{text-align:center; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-2); background:rgba(255,255,255,0.5); border-radius:4px; padding:8px 14px;}
-  .destacado-clicks span{display:block; font-size:1.3rem; font-weight:700; color:var(--brass); font-family:'IBM Plex Sans', sans-serif;}
+
+  .destacado-stats{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
+  .stats-head{display:flex; align-items:center; gap:9px; margin-bottom:14px;}
+  .stats-head svg{width:18px; height:18px; color:var(--brass);}
+  .stats-head h3{font-family:'Newsreader', serif; font-size:1rem; font-weight:600; flex:1;}
+  .galeria-count{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; color:#8a8069;}
+  .stats-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:12px; margin-bottom:16px;}
+  .stat-box{background:#fff; border:1px solid #ece3cd; border-radius:4px; padding:12px; text-align:center;}
+  .stat-value{display:block; font-family:'IBM Plex Sans', sans-serif; font-size:1.4rem; font-weight:700; color:var(--ink);}
+  .stat-label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.04em; color:#8a8069; margin-top:3px;}
+  .stats-histogram{display:flex; flex-direction:column; gap:5px;}
+  .mini-hist-row{display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:#6b6250;}
+  .mini-hist-row span:first-child{width:22px; flex-shrink:0;}
+  .mini-hist-row span:last-child{width:20px; flex-shrink:0; text-align:right;}
+  .mini-hist-track{flex:1; height:6px; background:#ece3cd; border-radius:3px; overflow:hidden;}
+  .mini-hist-fill{height:100%; background:var(--brass-light); border-radius:3px;}
+
+  .galeria-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
+  .galeria-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:10px; margin-bottom:10px;}
+  .galeria-thumb{position:relative; aspect-ratio:1; border-radius:4px; overflow:hidden; background:#ece3cd;}
+  .galeria-thumb img{width:100%; height:100%; object-fit:cover;}
+  .galeria-remove{position:absolute; top:4px; right:4px; width:20px; height:20px; border-radius:50%; background:rgba(24,38,68,0.75); color:#fff; border:none; font-size:0.9rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .galeria-remove:hover{background:rgba(24,38,68,0.95);}
+  .galeria-add{aspect-ratio:1; border:1px dashed #c9bd9c; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; color:#8a8069; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.03em; transition:border-color 0.15s ease, color 0.15s ease;}
+  .galeria-add:hover{border-color:var(--brass); color:var(--brass);}
+  .galeria-add svg{width:20px; height:20px;}
 
   .destacado-cta{background:var(--ink); color:var(--parchment); border-radius:6px; padding:20px 22px; margin-bottom:20px;}
   .destacado-cta-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
@@ -484,11 +508,14 @@
   // Reemplaza este link por el tuyo real de Stripe (Payment Link) cuando
   // actives cobros — ver INSTRUCCIONES-FIREBASE.md, sección "Activar
   // cobros con Stripe".
-  const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/bJe14n1zJ6xParc8ozfw400';
+  const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/TU-LINK-DE-PAGO';
 
   function destacadoSectionHTML(l){
     if(l.status !== 'approved') return '';
     if(l.destacado){
+      const views = l.views || 0;
+      const clicks = l.contactClicks || 0;
+      const conversion = views ? ((clicks / views) * 100).toFixed(1) : '0.0';
       return `
         <div class="destacado-status">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
@@ -496,10 +523,57 @@
             <strong>Tu perfil es Destacado</strong>
             <p>Apareces primero en el buscador y puedes registrar hasta 5 especialidades.</p>
           </div>
-          <div class="destacado-clicks">
-            <span>${(l.contactClicks || 0).toLocaleString('es-MX')}</span>
-            clics a WhatsApp
+        </div>
+
+        <div class="destacado-stats">
+          <div class="stats-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M8 17V9m5 8V5m5 12v-6"/></svg>
+            <h3>Estadísticas</h3>
           </div>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-value">${views.toLocaleString('es-MX')}</span>
+              <span class="stat-label">Vistas totales</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-value">${clicks.toLocaleString('es-MX')}</span>
+              <span class="stat-label">Clics a WhatsApp</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-value">${conversion}%</span>
+              <span class="stat-label">Tasa de conversión</span>
+            </div>
+            <div class="stat-box" data-role="statRating">
+              <span class="stat-value">—</span>
+              <span class="stat-label">Calificación</span>
+            </div>
+          </div>
+          <div class="stats-histogram" data-role="statsHistogram"></div>
+        </div>
+
+        <div class="galeria-section">
+          <div class="stats-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+            <h3>Galería de fotos</h3>
+            <span class="galeria-count">${(l.galeria || []).length}/4</span>
+          </div>
+          <div class="galeria-grid" data-role="galeriaGrid">
+            ${(l.galeria || []).map(url => `
+              <div class="galeria-thumb">
+                <img src="${escapeHtml(url)}" alt="">
+                <button type="button" class="galeria-remove" data-action="remove-galeria" data-url="${escapeHtml(url)}" aria-label="Quitar foto">×</button>
+              </div>
+            `).join('')}
+            ${(l.galeria || []).length < 4 ? `
+              <label class="galeria-add" for="galeriaInput-${l.id}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                Agregar
+              </label>
+              <input type="file" id="galeriaInput-${l.id}" data-role="galeriaInput" accept="image/*" style="display:none">
+            ` : ''}
+          </div>
+          <span class="photo-msg" data-role="galeriaMsg"></span>
+          <p class="field-hint">Se muestran como carrusel rotativo en tu perfil público. Hasta 4 imágenes, 3MB cada una.</p>
         </div>
       `;
     }
@@ -513,7 +587,8 @@
           <li>Aparece primero en los resultados de tu ciudad y especialidad</li>
           <li>Insignia "Destacado" en tu tarjeta y tu perfil</li>
           <li>Hasta 5 especialidades en vez de 3</li>
-          <li>Ve cuántos clics reales a WhatsApp recibes, no solo vistas</li>
+          <li>Panel de estadísticas: clics a WhatsApp, tasa de conversión y desglose de tus reseñas</li>
+          <li>Galería de hasta 4 fotos en carrusel rotativo en tu perfil público</li>
         </ul>
         <a class="destacado-cta-btn" href="${STRIPE_DESTACADO_LINK}" target="_blank" rel="noopener">Destacar mi perfil</a>
         <p class="destacado-cta-note">Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.</p>
@@ -890,6 +965,70 @@
     }
   }
 
+  function wireGaleria(card, l){
+    const input = card.querySelector('[data-role="galeriaInput"]');
+    const msgEl = card.querySelector('[data-role="galeriaMsg"]');
+    if(!input && !msgEl) return; // no destacado, esta sección ni se renderizó
+    function showGaleriaMsg(text, kind){
+      if(!msgEl) return;
+      msgEl.textContent = text;
+      msgEl.className = 'photo-msg show ' + (kind || '');
+    }
+    if(input){
+      input.addEventListener('change', async () => {
+        const file = input.files[0];
+        if(!file) return;
+        if(!file.type.startsWith('image/')){
+          showGaleriaMsg('Selecciona un archivo de imagen (JPG, PNG...).', 'err');
+          return;
+        }
+        if(file.size > 3 * 1024 * 1024){
+          showGaleriaMsg('La imagen no puede pesar más de 3MB.', 'err');
+          return;
+        }
+        if((l.galeria || []).length >= 4){
+          showGaleriaMsg('Ya tienes 4 fotos — quita una para agregar otra.', 'err');
+          return;
+        }
+        if(!storage){
+          showGaleriaMsg('Firebase Storage no está activado en este proyecto todavía.', 'err');
+          return;
+        }
+        showGaleriaMsg('Subiendo foto…', '');
+        try{
+          const user = auth.currentUser;
+          const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+          const ref = storage.ref().child(`galeria/${user.uid}/${l.id}/${fileName}`);
+          await ref.put(file);
+          const url = await ref.getDownloadURL();
+          await window.IdoneoListings.addToGaleria(l.id, url);
+          l.galeria = (l.galeria || []).concat(url);
+          refreshOneCard(l);
+        } catch(err){
+          console.error(err);
+          showGaleriaMsg('No se pudo subir la foto. Intenta de nuevo.', 'err');
+        }
+      });
+    }
+    card.querySelectorAll('[data-action="remove-galeria"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const url = btn.dataset.url;
+        if(!confirm('¿Quitar esta foto de la galería?')) return;
+        try{
+          await window.IdoneoListings.removeFromGaleria(l.id, url);
+          l.galeria = (l.galeria || []).filter(u => u !== url);
+          if(storage){
+            try{ await storage.refFromURL(url).delete(); } catch(e){ /* puede no existir ya */ }
+          }
+          refreshOneCard(l);
+        } catch(err){
+          console.error(err);
+          alert('No se pudo quitar la foto. Intenta de nuevo.');
+        }
+      });
+    });
+  }
+
   function refreshOneCard(l){
     const old = content.querySelector(`.listing-card[data-id="${l.id}"]`);
     if(!old) return;
@@ -946,11 +1085,12 @@
       }
     });
 
-    wireMiniReviewReplies(card, l.id);
-    loadMiniReviews(card, l.id);
+    wireGaleria(card, l);
+    wireMiniReviewReplies(card, l);
+    loadMiniReviews(card, l);
   }
 
-  function wireMiniReviewReplies(card, abogadoId){
+  function wireMiniReviewReplies(card, l){
     const listEl = card.querySelector('[data-role="reviews-list"]');
     listEl.addEventListener('click', async (e) => {
       const toggleBtn = e.target.closest('[data-action="toggle-reply"]');
@@ -970,7 +1110,7 @@
         saveBtn.textContent = 'Guardando…';
         try{
           await window.IdoneoListings.submitReviewReply(reviewId, textarea.value);
-          await loadMiniReviews(card, abogadoId);
+          await loadMiniReviews(card, l);
         } catch(err){
           console.error(err);
           msgEl.textContent = 'Algo falló al guardar tu respuesta. Intenta de nuevo.';
@@ -981,15 +1121,32 @@
     });
   }
 
-  async function loadMiniReviews(card, abogadoId){
+  function miniHistogramHTML(histogram, total){
+    return [5, 4, 3, 2, 1].map(star => {
+      const count = (histogram && histogram[star]) || 0;
+      const pct = total ? Math.round((count / total) * 100) : 0;
+      return `<div class="mini-hist-row"><span>${star}★</span><div class="mini-hist-track"><div class="mini-hist-fill" style="width:${pct}%"></div></div><span>${count}</span></div>`;
+    }).join('');
+  }
+
+  async function loadMiniReviews(card, l){
+    const abogadoId = l.id;
     const summaryEl = card.querySelector('[data-role="reviews-summary"]');
     const listEl = card.querySelector('[data-role="reviews-list"]');
+    const statRatingEl = card.querySelector('[data-role="statRating"]');
+    const statsHistEl = card.querySelector('[data-role="statsHistogram"]');
     try{
       const reviews = await window.IdoneoListings.getReviews(abogadoId);
       const stats = window.IdoneoListings.computeReviewStats(reviews);
       summaryEl.innerHTML = stats.total
         ? `<span class="stars">${starString(stats.average)}</span> ${stats.average.toFixed(1)} · ${stats.total} reseña${stats.total === 1 ? '' : 's'}`
         : 'Aún sin reseñas';
+      if(statRatingEl){
+        statRatingEl.querySelector('.stat-value').textContent = stats.total ? stats.average.toFixed(1) : '—';
+      }
+      if(statsHistEl){
+        statsHistEl.innerHTML = miniHistogramHTML(stats.histogram, stats.total);
+      }
       if(reviews.length === 0){
         listEl.innerHTML = '<p class="empty-note">Todavía no tienes reseñas.</p>';
         return;

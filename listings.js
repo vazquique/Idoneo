@@ -183,6 +183,7 @@
       linkedin: '',
       horario: '',
       fotoUrl: '',
+      galeria: [],
       reseñas: [],
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -203,7 +204,11 @@
     OWNER_EDITABLE_FIELDS.forEach(key => {
       if(Object.prototype.hasOwnProperty.call(edits, key)) clean[key] = edits[key];
     });
-    if(Array.isArray(clean.especialidades)) clean.especialidades = clean.especialidades.slice(0, 3);
+    // No recortamos `especialidades` aquí a un número fijo: el tope real
+    // (3 gratis, 5 si es Destacado) ya lo aplica el selector en la
+    // interfaz y, de forma definitiva, las reglas de Firestore del lado
+    // del servidor — cortar aquí a 3 le rompería el beneficio a las
+    // cuentas Destacado.
     if(typeof clean.telefono === 'string') clean.telefono = clean.telefono.replace(/\D/g, '');
     return clean;
   }
@@ -222,6 +227,24 @@
   async function deleteMyListing(id){
     requireAuthUser();
     await requireDb().collection(COLLECTION).doc(id).delete();
+  }
+
+  // ---- Galería de fotos (exclusivo de cuentas Destacado) ----
+  // arrayUnion/arrayRemove evitan condiciones de carrera con lecturas
+  // viejas del arreglo. El tope real (hasta 4, solo si `destacado` es
+  // true) lo aplican las reglas de Firestore, no este archivo.
+  async function addToGaleria(id, url){
+    requireAuthUser();
+    await requireDb().collection(COLLECTION).doc(id).update({
+      galeria: firebase.firestore.FieldValue.arrayUnion(url)
+    });
+  }
+
+  async function removeFromGaleria(id, url){
+    requireAuthUser();
+    await requireDb().collection(COLLECTION).doc(id).update({
+      galeria: firebase.firestore.FieldValue.arrayRemove(url)
+    });
   }
 
   // Conveniencia para el panel de admin: ligar manualmente un registro
@@ -409,7 +432,7 @@
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
     getMyReview, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick,
-    getMyListings, updateMyListing, deleteMyListing, adminSetOwner,
+    getMyListings, updateMyListing, deleteMyListing, adminSetOwner, addToGaleria, removeFromGaleria,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };
 })(window);

@@ -91,6 +91,14 @@ service firebase.storage {
                    && request.resource.contentType.matches('image/.*');
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
+    match /galeria/{uid}/{listingId}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == uid
+                   && request.resource.size < 3 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
   }
 }
 ```
@@ -99,10 +107,12 @@ service firebase.storage {
 
 Qué hace esto: cada cuenta solo puede subir o borrar fotos que vivan bajo
 su propio UID (`avatars/<su UID>` para su foto personal, `logos/<su
-UID>/<id del despacho>` para la foto de cada despacho que administra) —
-no puede tocar la foto de nadie más —, el archivo tiene que ser una
-imagen, y no puede pesar más de 3MB. Cualquier visitante puede **ver**
-las fotos (son públicas, como cualquier foto de perfil o logo en un
+UID>/<id del despacho>` para la foto de cada despacho que administra,
+`galeria/<su UID>/<id del despacho>/<archivo>` para las fotos de galería
+de una cuenta Destacado) — no puede tocar la foto de nadie más —, el
+archivo tiene que ser una imagen, y no puede pesar más de 3MB. Cualquier
+visitante puede **ver** las fotos (son públicas, como cualquier foto de
+perfil o logo en un
 directorio).
 
 ## 5. Marcarte como administrador
@@ -185,6 +195,13 @@ service cloud.firestore {
                         resource.data.get('destacado', false)
                           ? request.resource.data.especialidades.size() <= 5
                           : request.resource.data.especialidades.size() <= 3
+                      )
+                      // Galería de fotos: 0 fotos si no es Destacado, hasta 4
+                      // si lo es — mismo principio que las especialidades.
+                      && (
+                        resource.data.get('destacado', false)
+                          ? request.resource.data.get('galeria', []).size() <= 4
+                          : request.resource.data.get('galeria', []).size() == 0
                       )
                     )
                     // Contador de vistas del perfil y de clics a WhatsApp:
@@ -395,6 +412,19 @@ Qué hacen estas reglas:
 14. En `perfil.html`, dale clic a "Compartir" — en celular debería abrir
     el panel nativo de compartir; en escritorio debería copiar el link y
     mostrar "✓ Link copiado".
+15. Marca a alguno de tus perfiles de prueba como "Destacado" desde el
+    panel de admin. En "Mi cuenta" con esa cuenta, confirma que aparece
+    el panel de estadísticas (vistas, clics, tasa de conversión,
+    reseñas) y la sección de galería. Sube 2-3 fotos a la galería, y
+    confirma que en `perfil.html` aparecen como un carrusel que rota
+    solo — prueba las flechas y los puntos, y confirma que se detiene
+    al pasar el mouse encima.
+16. Intenta subir una 5ª foto a la galería (debe bloquearlo con un
+    aviso) y quita una foto para confirmar que sí se borra tanto de la
+    lista como del carrusel público.
+17. Con una cuenta **sin** Destacado, confirma que no ve el panel de
+    estadísticas ni la sección de galería — solo la tarjeta "Destaca tu
+    perfil" con el botón de pago.
 
 ## Estructura de carpetas
 
@@ -484,7 +514,12 @@ verificada sigue siendo gratis y por mérito, nunca algo que se compre.
 - Aparece primero en los resultados de su ciudad/especialidad en `buscar.html`.
 - Insignia dorada "✨ Destacado" en su tarjeta y su perfil.
 - Hasta 5 especialidades en vez de 3.
-- Ve sus clics reales al botón de WhatsApp (no solo vistas de perfil) en "Mi cuenta".
+- **Panel de estadísticas** en "Mi cuenta": vistas totales, clics reales a
+  WhatsApp, tasa de conversión (clics ÷ vistas) y desglose de sus
+  reseñas por número de estrellas — nada de esto lo ve una cuenta gratis.
+- **Galería de hasta 4 fotos**, mostradas como carrusel rotativo en su
+  perfil público (oficinas, equipo, certificados) — una cuenta gratis
+  solo tiene la foto principal.
 
 **Por qué es manual en esta beta**: el sitio no tiene backend (es HTML +
 JavaScript + Firebase, sin servidor propio), así que no hay forma segura

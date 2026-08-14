@@ -1,0 +1,116 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+             && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Dueno del despacho abogadoId, o null si ese id no existe como
+    // documento real (por ejemplo, uno de los 8 perfiles de ejemplo).
+    // El operador ?: evalua el segundo get() solo si exists() es cierto,
+    // asi nunca se intenta leer un documento que no existe.
+    function ownerOf(abogadoId) {
+      return exists(/databases/$(database)/documents/abogados_registrados/$(abogadoId))
+        ? get(/databases/$(database)/documents/abogados_registrados/$(abogadoId)).data.ownerUid
+        : null;
+    }
+
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /abogados_registrados/{docId} {
+      allow read: if resource.data.status == 'approved'
+                  || isAdmin()
+                  || (request.auth != null && resource.data.ownerUid == request.auth.uid);
+
+      allow create: if request.auth != null
+                    && request.resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.status == 'pending'
+                    && request.resource.data.verificado == false
+                    && request.resource.data.rating == 0
+                    && request.resource.data.reviews == 0
+                    && request.resource.data.especialidades.size() <= 3;
+
+      allow update: if isAdmin()
+                    || (
+                      request.auth != null
+                      && resource.data.ownerUid == request.auth.uid
+                      && request.resource.data.ownerUid == resource.data.ownerUid
+                      && request.resource.data.status == resource.data.status
+                      && request.resource.data.verificado == resource.data.verificado
+                      && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
+                      && request.resource.data.get('destacado', false) == resource.data.get('destacado', false)
+                      && request.resource.data.rating == resource.data.rating
+                      && request.resource.data.reviews == resource.data.reviews
+                      && request.resource.data.get('views', 0) == resource.data.get('views', 0)
+                      && request.resource.data.get('contactClicks', 0) == resource.data.get('contactClicks', 0)
+                      && request.resource.data.nombre == resource.data.nombre
+                      && (
+                        resource.data.get('destacado', false)
+                          ? request.resource.data.especialidades.size() <= 5
+                          : request.resource.data.especialidades.size() <= 3
+                      )
+                      && (
+                        resource.data.get('destacado', false)
+                          ? request.resource.data.get('galeria', []).size() <= 4
+                          : request.resource.data.get('galeria', []).size() == 0
+                      )
+                    )
+                    || (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views'])
+                      && request.resource.data.views == resource.data.get('views', 0) + 1
+                    )
+                    || (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['contactClicks'])
+                      && request.resource.data.contactClicks == resource.data.get('contactClicks', 0) + 1
+                    );
+
+      allow delete: if isAdmin() || (request.auth != null && resource.data.ownerUid == request.auth.uid);
+    }
+
+    match /demos_ocultos/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /resenas/{reviewId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && reviewId == request.resource.data.abogadoId + '_' + request.auth.uid
+                    && request.resource.data.autorUid == request.auth.uid
+                    && request.resource.data.estrellas is number
+                    && request.resource.data.estrellas >= 1
+                    && request.resource.data.estrellas <= 5
+                    && request.resource.data.texto is string
+                    && request.resource.data.texto.size() <= 2000
+                    && ownerOf(request.resource.data.abogadoId) != request.auth.uid;
+      allow update: if request.auth != null
+                    && (
+                      (
+                        resource.data.autorUid == request.auth.uid
+                        && request.resource.data.autorUid == request.auth.uid
+                        && request.resource.data.estrellas is number
+                        && request.resource.data.estrellas >= 1
+                        && request.resource.data.estrellas <= 5
+                        && request.resource.data.texto is string
+                        && request.resource.data.texto.size() <= 2000
+                        && request.resource.data.get('respuesta', '') == resource.data.get('respuesta', '')
+                      )
+                      || (
+                        ownerOf(resource.data.abogadoId) == request.auth.uid
+                        && request.resource.data.abogadoId == resource.data.abogadoId
+                        && request.resource.data.autorUid == resource.data.autorUid
+                        && request.resource.data.texto == resource.data.texto
+                        && request.resource.data.estrellas == resource.data.estrellas
+                        && request.resource.data.respuesta is string
+                        && request.resource.data.respuesta.size() <= 1000
+                      )
+                    );
+      allow delete: if request.auth != null
+                    && (resource.data.autorUid == request.auth.uid || isAdmin());
+    }
+  }
+}
