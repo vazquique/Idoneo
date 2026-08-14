@@ -119,6 +119,12 @@
 
   /* ---------- Pricing ---------- */
   .pricing{padding:64px 0; border-bottom:1px solid var(--line); background:radial-gradient(ellipse 700px 340px at 50% 100%, rgba(217,171,82,0.08), transparent 60%);}
+  .pricing-toggle{display:flex; justify-content:center; gap:8px; margin-bottom:24px;}
+  .pricing-toggle-btn{position:relative; background:rgba(241,234,216,0.06); border:1px solid var(--line-strong); color:rgba(241,234,216,0.7); font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; padding:10px 20px; border-radius:20px; cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease, color 0.15s ease;}
+  .pricing-toggle-btn:hover{border-color:var(--brass-light);}
+  .pricing-toggle-btn.active{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink); font-weight:600;}
+  .pricing-toggle-badge{display:inline-block; margin-left:6px; font-size:0.66rem; background:#4d8c4d; color:#fff; padding:2px 7px; border-radius:10px; text-transform:none; letter-spacing:0;}
+  .pricing-toggle-btn.active .pricing-toggle-badge{background:var(--ink); color:var(--brass-light);}
   .pricing-card{max-width:460px; margin:0 auto; background:var(--parchment); color:var(--ink); border-radius:8px; padding:40px; text-align:center; box-shadow:0 24px 56px rgba(0,0,0,0.35);}
   .pricing-plan{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--brass);}
   .pricing-amount{font-family:'Newsreader', serif; font-size:3rem; font-weight:600; margin:10px 0 4px;}
@@ -129,8 +135,6 @@
   .pricing-list li::before{content:'✓'; position:absolute; left:0; color:#4d8c4d; font-weight:700;}
   .pricing-cta{display:block; background:var(--ink); color:var(--parchment); text-decoration:none; padding:14px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; transition:background 0.15s ease, transform 0.15s ease;}
   .pricing-cta:hover{background:var(--ink-2); transform:translateY(-1px);}
-  .pricing-annual{margin-top:16px; font-size:0.82rem; color:#6b6250;}
-  .pricing-annual a{color:var(--brass); text-decoration:underline;}
   .pricing-beta-note{max-width:460px; margin:18px auto 0; text-align:center; font-size:0.8rem; color:rgba(241,234,216,0.55);}
 
   /* ---------- FAQ ---------- */
@@ -216,6 +220,7 @@
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
         <a href="plazos.html">Radar de plazos</a>
         <a href="guias.html">Guías legales</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
@@ -358,22 +363,27 @@
       <span class="kicker" style="justify-content:center;">Precio</span>
       <h2>Simple, sin sorpresas.</h2>
     </div>
+    <div class="pricing-toggle" role="group" aria-label="Elegir periodo de pago">
+      <button type="button" class="pricing-toggle-btn active" id="toggleMonthly">Mensual</button>
+      <button type="button" class="pricing-toggle-btn" id="toggleAnnual">Anual <span class="pricing-toggle-badge">Ahorra 2 meses</span></button>
+    </div>
     <div class="pricing-card">
       <div class="pricing-plan">Idóneo Destacado</div>
-      <div class="pricing-amount">$299 <span>MXN / mes</span></div>
-      <p class="pricing-note">Cancela cuando quieras, sin contrato de permanencia.</p>
+      <div class="pricing-amount" id="pricingAmount">$299 <span>MXN / mes</span></div>
+      <p class="pricing-note" id="pricingNote">Cancela cuando quieras, sin contrato de permanencia.</p>
       <ul class="pricing-list">
         <li>Prioridad en los resultados de tu ciudad</li>
+        <li>Recomendado en el Radar de Plazos y el Cuestionario de Match</li>
         <li>Insignia dorada + etiqueta "Disponible ahora"</li>
         <li>Hasta 5 especialidades</li>
+        <li>Preguntas frecuentes personalizadas en tu perfil</li>
         <li>Panel de estadísticas completo</li>
         <li>Galería de hasta 4 fotos</li>
         <li>Perfil sin anuncios de terceros</li>
       </ul>
       <a class="pricing-cta" id="pricingCtaBtn" href="#" target="_blank" rel="noopener">Destacar mi perfil</a>
-      <p class="pricing-annual">¿Prefieres pagar anual con descuento? <a href="#footer-contacto">Escríbenos</a> y lo activamos manual mientras automatizamos ese plan.</p>
     </div>
-    <p class="pricing-beta-note">Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.</p>
+    <p class="pricing-beta-note" id="pricingBetaNote">Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.</p>
   </div>
 </section>
 
@@ -449,6 +459,7 @@
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
@@ -472,7 +483,42 @@
   // Mismo link de Stripe que usa mi-cuenta.html -- ver
   // INSTRUCCIONES-FIREBASE.md, sección "Activar cobros con Stripe".
   const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/TU-LINK-DE-PAGO';
-  document.getElementById('pricingCtaBtn').href = STRIPE_DESTACADO_LINK;
+  // El plan anual todavía no tiene checkout automático -- en vez de un
+  // link de Stripe roto o engañoso, manda un correo pre-armado. Cuando
+  // crees el segundo producto anual en Stripe, cambia esto por ese link.
+  const CONTACTO_ANUAL_EMAIL = 'contacto@TU-DOMINIO.com';
+  const ANUAL_MAILTO = `mailto:${CONTACTO_ANUAL_EMAIL}?subject=${encodeURIComponent('Quiero el plan anual de Idóneo Destacado')}&body=${encodeURIComponent('Hola, quiero activar el plan anual de Idóneo Destacado ($2,990 MXN/año). Este es el correo de mi cuenta:')}`;
+
+  const pricingCtaBtn = document.getElementById('pricingCtaBtn');
+  const pricingAmount = document.getElementById('pricingAmount');
+  const pricingNote = document.getElementById('pricingNote');
+  const pricingBetaNote = document.getElementById('pricingBetaNote');
+  const toggleMonthly = document.getElementById('toggleMonthly');
+  const toggleAnnual = document.getElementById('toggleAnnual');
+
+  function setPlan(plan){
+    const isAnnual = plan === 'annual';
+    toggleMonthly.classList.toggle('active', !isAnnual);
+    toggleAnnual.classList.toggle('active', isAnnual);
+    if(isAnnual){
+      pricingAmount.innerHTML = '$2,990 <span>MXN / año</span>';
+      pricingNote.textContent = 'Equivale a $249/mes — dos meses gratis frente al plan mensual.';
+      pricingCtaBtn.href = ANUAL_MAILTO;
+      pricingCtaBtn.target = '_self';
+      pricingCtaBtn.textContent = 'Escríbenos para activar el plan anual';
+      pricingBetaNote.textContent = 'El plan anual se activa por correo mientras automatizamos su cobro — te contestamos con el link de pago seguro.';
+    } else {
+      pricingAmount.innerHTML = '$299 <span>MXN / mes</span>';
+      pricingNote.textContent = 'Cancela cuando quieras, sin contrato de permanencia.';
+      pricingCtaBtn.href = STRIPE_DESTACADO_LINK;
+      pricingCtaBtn.target = '_blank';
+      pricingCtaBtn.textContent = 'Destacar mi perfil';
+      pricingBetaNote.textContent = 'Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.';
+    }
+  }
+  toggleMonthly.addEventListener('click', () => setPlan('monthly'));
+  toggleAnnual.addEventListener('click', () => setPlan('annual'));
+  setPlan('monthly');
 
   document.getElementById('faqList').addEventListener('click', (e) => {
     const btn = e.target.closest('.faq-q');

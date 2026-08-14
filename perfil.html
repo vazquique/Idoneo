@@ -79,6 +79,15 @@
   .precio-row:first-child{border-top:none;}
   .precio-desde{font-family:'IBM Plex Mono', monospace; font-size:0.86rem; color:var(--ink-2); white-space:nowrap;}
   .precios-note{margin-top:14px; font-size:0.76rem; color:#8a8069;}
+  .faq-personal-public-list{display:flex; flex-direction:column;}
+  .faq-personal-public-item{border-top:1px solid #ddd2b0;}
+  .faq-personal-public-item:first-child{border-top:none;}
+  .faq-personal-public-q{width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px; background:none; border:none; text-align:left; padding:14px 0; font-family:'Newsreader', serif; font-size:0.98rem; font-weight:600; color:var(--ink); cursor:pointer;}
+  .faq-personal-public-q svg{flex-shrink:0; width:15px; height:15px; color:var(--brass); transition:transform 0.2s ease;}
+  .faq-personal-public-item.open .faq-personal-public-q svg{transform:rotate(45deg);}
+  .faq-personal-public-a{max-height:0; overflow:hidden; transition:max-height 0.25s ease;}
+  .faq-personal-public-item.open .faq-personal-public-a{max-height:200px;}
+  .faq-personal-public-a p{padding:0 0 16px; font-size:0.9rem; color:#3a3222;}
 
   /* ---------- Publicidad ---------- */
   .ad-slot{margin-bottom:28px; text-align:center;}
@@ -100,6 +109,8 @@
   }
   @keyframes badge-shine{0%,40%{left:-60%;} 75%,100%{left:130%;}}
   .disponible-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:#5c9e5c; margin-top:8px;}
+  .urgente24h-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:#d9534f; margin-top:8px;}
+  .urgente24h-tag svg{width:13px; height:13px; flex-shrink:0;}
   .disponible-dot{width:8px; height:8px; border-radius:50%; background:#5cb85c; flex-shrink:0; animation:pulse-dot 2s ease-in-out infinite;}
   @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
   .promo-banner{
@@ -343,6 +354,7 @@
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
         <a class="mega-primary" href="plazos.html">Radar de plazos</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
@@ -401,6 +413,7 @@
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
@@ -453,6 +466,31 @@
         <p class="precios-note">Precios de referencia proporcionados por ${ab.tipo === 'despacho' ? 'el despacho' : 'el abogado'}. El costo final puede variar según tu caso — confírmalo directamente antes de contratar.</p>
       </div>
     `;
+  }
+  function faqPersonalHTML(ab){
+    const items = Array.isArray(ab.faqPersonal) ? ab.faqPersonal : [];
+    if(items.length === 0) return '';
+    return `
+      <div class="precios-card faq-personal-card">
+        <h2 class="precios-title">Preguntas frecuentes</h2>
+        <div class="faq-personal-public-list">
+          ${items.map((f, i) => `
+            <div class="faq-personal-public-item">
+              <button type="button" class="faq-personal-public-q" data-faq-idx="${i}">
+                ${escapeHtml(f.pregunta)}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+              <div class="faq-personal-public-a"><p>${escapeHtml(f.respuesta)}</p></div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  function wireFaqPersonalPublic(){
+    document.querySelectorAll('.faq-personal-public-q').forEach(btn => {
+      btn.addEventListener('click', () => btn.closest('.faq-personal-public-item').classList.toggle('open'));
+    });
   }
   function escapeHtml(str){
     const div = document.createElement('div');
@@ -579,6 +617,7 @@
               ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>${ab.tipo === 'despacho' ? 'Responsable con cédula verificada' : 'Cédula verificada'}</div>` : ''}
               ${ab.tipo === 'despacho' && ab.verificadoEmpresa ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Persona moral verificada</div>` : ''}
               ${ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
+              ${ab.urgente24h ? `<div class="urgente24h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Acepta casos urgentes 24/7</div>` : ''}
             </div>
           </div>
         </div>
@@ -635,6 +674,8 @@
 
       ${preciosServicioHTML(ab)}
 
+      ${faqPersonalHTML(ab)}
+
       ${!ab.destacado ? `
       <div class="ad-slot">
         <span class="ad-label">Publicidad</span>
@@ -688,6 +729,7 @@
     wireWhatsappTracking(ab);
     wireStickyContact(ab);
     wireGaleriaCarousel(ab.galeria);
+    wireFaqPersonalPublic();
     renderReviewForm();
     renderReviewsList();
   }

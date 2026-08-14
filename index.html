@@ -161,6 +161,18 @@
   /* ---------- Asistente rápido ---------- */
   .asistente{border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
   .asistente-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .quiz-callout{margin-top:16px; display:flex; align-items:center; gap:18px; background:linear-gradient(135deg, rgba(217,171,82,0.1), rgba(217,171,82,0.04)); border:1px solid rgba(217,171,82,0.35); border-radius:6px; padding:20px 24px; text-decoration:none; color:var(--parchment); transition:border-color 0.2s ease, transform 0.2s ease;}
+  .quiz-callout:hover{border-color:var(--brass-light); transform:translateY(-2px);}
+  .quiz-callout-icon{flex-shrink:0; width:44px; height:44px; border-radius:50%; background:rgba(217,171,82,0.14); display:flex; align-items:center; justify-content:center;}
+  .quiz-callout-icon svg{width:22px; height:22px; color:var(--brass-light);}
+  .quiz-callout-text{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;}
+  .quiz-callout-text strong{font-family:'Newsreader', serif; font-size:1.02rem; font-weight:600;}
+  .quiz-callout-text span{font-size:0.86rem; color:rgba(241,234,216,0.68);}
+  .quiz-callout-cta{flex-shrink:0; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--brass-light); font-weight:600;}
+  @media (max-width:640px){
+    .quiz-callout{flex-direction:column; align-items:flex-start;}
+    .quiz-callout-cta{margin-left:62px;}
+  }
   .asistente-card{background:var(--ink-2); border:1px solid var(--line-strong); border-radius:6px; padding:20px; text-align:left; cursor:pointer; color:var(--parchment); font-family:inherit; display:flex; flex-direction:column; gap:9px; transition:transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;}
   .asistente-card:hover{transform:translateY(-3px); border-color:var(--brass-light); box-shadow:0 14px 28px rgba(0,0,0,0.28);}
   .asistente-card svg{width:22px; height:22px; color:var(--brass-light); flex-shrink:0;}
@@ -315,6 +327,7 @@
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
         <a class="mega-primary" href="plazos.html">Radar de plazos</a>
         <a href="guias.html">Guías legales</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
@@ -405,6 +418,16 @@
         <span class="ac-sub">Directorio completo</span>
       </button>
     </div>
+    <a href="cuestionario.html" class="quiz-callout">
+      <div class="quiz-callout-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <div class="quiz-callout-text">
+        <strong>¿Ninguna te queda exacta? Responde 4 preguntas rápidas.</strong>
+        <span>Consideramos tu situación, urgencia, presupuesto y ciudad para darte una recomendación personalizada — no solo un filtro.</span>
+      </div>
+      <span class="quiz-callout-cta">Empezar →</span>
+    </a>
   </div>
 </section>
 
@@ -576,6 +599,7 @@
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="index.html#como-funciona">Cómo funciona</a>

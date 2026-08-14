@@ -196,6 +196,8 @@
       idiomas: [],
       promoTexto: '',
       promoHasta: '',
+      faqPersonal: [],
+      urgente24h: false,
       reseñas: [],
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -209,7 +211,8 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible', 'idiomas', 'promoTexto', 'promoHasta'];
+  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible', 'idiomas', 'promoTexto', 'promoHasta', 'faqPersonal', 'urgente24h'];
+  const MAX_FAQ_PERSONAL = 5;
 
   function pickOwnerEditableFields(edits){
     const clean = {};
@@ -253,6 +256,20 @@
       // Solo se acepta el formato YYYY-MM-DD que manda un <input type="date">
       clean.promoHasta = /^\d{4}-\d{2}-\d{2}$/.test(clean.promoHasta) ? clean.promoHasta : '';
     }
+    // FAQ personalizada -- funcionalidad de Destacado, pero el límite real
+    // lo aplica la interfaz (no se muestra el editor si el perfil no es
+    // Destacado); aquí solo sanitizamos por si acaso, igual que con
+    // especialidades.
+    if(Array.isArray(clean.faqPersonal)){
+      clean.faqPersonal = clean.faqPersonal
+        .slice(0, MAX_FAQ_PERSONAL)
+        .map(f => ({
+          pregunta: (f && f.pregunta || '').toString().trim().slice(0, 100),
+          respuesta: (f && f.respuesta || '').toString().trim().slice(0, 300)
+        }))
+        .filter(f => f.pregunta && f.respuesta);
+    }
+    if(Object.prototype.hasOwnProperty.call(clean, 'urgente24h')) clean.urgente24h = !!clean.urgente24h;
     return clean;
   }
 
@@ -498,7 +515,7 @@
   }
 
   global.IdoneoListings = {
-    DEMO_ABOGADOS, MEXICO_ESTADOS, IDIOMAS_OPTS,
+    DEMO_ABOGADOS, MEXICO_ESTADOS, IDIOMAS_OPTS, MAX_FAQ_PERSONAL,
     getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,

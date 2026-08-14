@@ -160,6 +160,8 @@
   .disponible-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#4d8c4d; margin-top:4px;}
   .disponible-dot{width:7px; height:7px; border-radius:50%; background:#5cb85c; flex-shrink:0; animation:pulse-dot 2s ease-in-out infinite;}
   @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
+  .urgente24h-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:#d9534f; margin-top:4px;}
+  .urgente24h-tag svg{width:11px; height:11px; flex-shrink:0;}
   @keyframes card-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   .lawyer-top{display:flex; gap:12px; align-items:flex-start;}
   .avatar{
@@ -379,6 +381,7 @@
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
         <a class="mega-primary" href="plazos.html">Radar de plazos</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
@@ -437,9 +440,13 @@
       </div>
       <button class="search-btn" id="btnBuscar">Buscar</button>
     </div>
-    <label class="lang-filter">
+    <label class="lang-filter" style="border-radius:0; box-shadow:none;">
       <input type="checkbox" id="fIdiomaIngles">
       <span>🌐 Solo abogados que atienden en inglés</span>
+    </label>
+    <label class="lang-filter" style="border-top:1px solid #ddd2b0;">
+      <input type="checkbox" id="fUrgente24h">
+      <span>🚨 Solo quienes aceptan casos urgentes 24/7</span>
     </label>
   </div>
   <div class="seal-wrap">
@@ -530,6 +537,7 @@
     </div>
     <div class="footer-col">
       <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
@@ -613,6 +621,7 @@
             <div class="lawyer-city">${escapeHtml(ab.ciudad)}</div>
             ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
             ${ab.destacado && ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
+            ${ab.urgente24h ? `<div class="urgente24h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Urgente 24/7</div>` : ''}
           </div>
         </div>
         ${activePromo(ab) ? `<div class="promo-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6l-8 8a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8l8-8A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.8z"/><circle cx="15.5" cy="8.5" r="1.5"/></svg>${escapeHtml(activePromo(ab))}</div>` : ''}
@@ -644,12 +653,14 @@
     const especialidad = document.getElementById('fEspecialidad').value;
     const tipoCuenta = document.getElementById('fTipoCuenta').value;
     const soloIngles = document.getElementById('fIdiomaIngles').checked;
+    const soloUrgente24h = document.getElementById('fUrgente24h').checked;
     const filtered = abogados.filter(ab =>
       (nombre === '' || normalize(ab.nombre).includes(nombre)) &&
       (ciudad === '' || ab.ciudad === ciudad) &&
       (especialidad === '' || (ab.especialidades || []).includes(especialidad)) &&
       (tipoCuenta === '' || (ab.tipo || 'individual') === tipoCuenta) &&
-      (!soloIngles || (ab.idiomas || []).includes('Inglés'))
+      (!soloIngles || (ab.idiomas || []).includes('Inglés')) &&
+      (!soloUrgente24h || ab.urgente24h)
     );
     // Los perfiles "Destacado" aparecen primero, sin reordenar dentro de
     // cada grupo (mantiene el orden en que ya venían).
@@ -776,6 +787,7 @@
   document.getElementById('fNombre').addEventListener('input', applyFilters);
   document.getElementById('fNombre').addEventListener('keydown', e => { if(e.key === 'Enter') applyFilters(); });
   document.getElementById('fIdiomaIngles').addEventListener('change', applyFilters);
+  document.getElementById('fUrgente24h').addEventListener('change', applyFilters);
 
   function renderSkeleton(count){
     const grid = document.getElementById('cardGrid');
