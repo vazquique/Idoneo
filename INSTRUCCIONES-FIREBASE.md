@@ -160,7 +160,8 @@ service cloud.firestore {
                     && request.resource.data.status == 'pending'
                     && request.resource.data.verificado == false
                     && request.resource.data.rating == 0
-                    && request.resource.data.reviews == 0;
+                    && request.resource.data.reviews == 0
+                    && request.resource.data.especialidades.size() <= 3;
 
       allow update: if isAdmin()
                     || (
@@ -170,19 +171,35 @@ service cloud.firestore {
                       && request.resource.data.status == resource.data.status
                       && request.resource.data.verificado == resource.data.verificado
                       && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
+                      && request.resource.data.get('destacado', false) == resource.data.get('destacado', false)
                       && request.resource.data.rating == resource.data.rating
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.get('views', 0) == resource.data.get('views', 0)
+                      && request.resource.data.get('contactClicks', 0) == resource.data.get('contactClicks', 0)
                       && request.resource.data.nombre == resource.data.nombre
+                      // Tope de especialidades: 3 gratis, 5 si el despacho es
+                      // "Destacado" (pagó) — el dueño no puede subir su propio
+                      // tope cambiando `destacado`, porque ese campo está
+                      // bloqueado arriba y solo lo puede tocar un admin.
+                      && (
+                        resource.data.get('destacado', false)
+                          ? request.resource.data.especialidades.size() <= 5
+                          : request.resource.data.especialidades.size() <= 3
+                      )
                     )
-                    // Contador de vistas del perfil: público a propósito (un
-                    // visitante no necesita cuenta para "ver" un perfil), pero
-                    // solo puede tocar el campo `views`, y solo para sumarle
-                    // exactamente 1 — no puede usarse para cambiar nada más
-                    // ni para inflar el contador de golpe.
+                    // Contador de vistas del perfil y de clics a WhatsApp:
+                    // públicos a propósito (un visitante no necesita cuenta
+                    // para "ver" un perfil o darle clic a WhatsApp), pero
+                    // cada uno solo puede tocar SU campo, y solo para
+                    // sumarle exactamente 1 — no se puede usar para cambiar
+                    // nada más ni para inflar el contador de golpe.
                     || (
                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views'])
                       && request.resource.data.views == resource.data.get('views', 0) + 1
+                    )
+                    || (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['contactClicks'])
+                      && request.resource.data.contactClicks == resource.data.get('contactClicks', 0) + 1
                     );
 
       allow delete: if isAdmin() || (request.auth != null && resource.data.ownerUid == request.auth.uid);
@@ -292,13 +309,24 @@ Qué hacen estas reglas:
   manipulando la petición directamente. El autor de la reseña, por su
   lado, puede seguir editando su propio texto/estrellas pero no puede
   tocar la `respuesta` que ya se haya publicado ahí.
-- **Contador de vistas de perfil** (`views` en `abogados_registrados`):
-  cualquier visitante, sin necesidad de cuenta, dispara un incremento de
-  este campo al abrir `perfil.html`. La regla es deliberadamente pública,
-  pero solo permite tocar `views`, y solo para sumarle exactamente 1 por
-  petición — no se puede usar para cambiar ningún otro dato del registro
-  ni para inflar el contador de golpe. Se muestra solo al dueño del
-  registro, en "Mi cuenta".
+- **Contador de vistas de perfil y de clics a WhatsApp** (`views` y
+  `contactClicks` en `abogados_registrados`): cualquier visitante, sin
+  necesidad de cuenta, dispara un incremento de `views` al abrir
+  `perfil.html`, y de `contactClicks` al darle clic al botón de
+  WhatsApp. Ambas reglas son deliberadamente públicas, pero cada una
+  solo permite tocar su propio campo, y solo para sumarle exactamente 1
+  por petición — no se puede usar para cambiar ningún otro dato del
+  registro ni para inflar los contadores de golpe. `views` se muestra a
+  cualquier dueño de registro en "Mi cuenta"; `contactClicks` es un
+  beneficio exclusivo de las cuentas "Destacado" (ver abajo).
+- **"Idóneo Destacado"** (`destacado` en `abogados_registrados`): igual
+  que `verificado`, es un campo exclusivo de admin — el dueño no puede
+  activarlo por su cuenta aunque manipule la petición directamente. Un
+  despacho "Destacado" aparece primero en `buscar.html`, puede registrar
+  hasta 5 especialidades en vez de 3 (la regla de `update` calcula el
+  tope según el valor de `destacado` que ya está guardado, no el que el
+  dueño intente mandar), y ve sus clics a WhatsApp en "Mi cuenta". Ver la
+  sección "Activar cobros" más abajo para cómo se activa en la práctica.
 
 > Si ya habías publicado unas reglas antes de que existieran `admins` o
 > `resenas`, vuelve a pegar este bloque completo y publica de nuevo.
@@ -445,6 +473,69 @@ El sitio ya trae lo esencial para que Google lo pueda indexar bien:
    que valdría la pena invertir es un sitio con renderizado del lado del
    servidor (por ejemplo con Next.js) — eso es un cambio de arquitectura
    grande, no algo para hacer "de pasada".
+
+## Activar cobros con Stripe ("Idóneo Destacado")
+
+Esto es la primera fase de monetización del sitio: un plan pagado que le
+da a un despacho/abogado más visibilidad, no más "confianza" — la cédula
+verificada sigue siendo gratis y por mérito, nunca algo que se compre.
+
+**Qué incluye "Destacado"** ($299 MXN/mes sugerido, ajústalo a tu gusto):
+- Aparece primero en los resultados de su ciudad/especialidad en `buscar.html`.
+- Insignia dorada "✨ Destacado" en su tarjeta y su perfil.
+- Hasta 5 especialidades en vez de 3.
+- Ve sus clics reales al botón de WhatsApp (no solo vistas de perfil) en "Mi cuenta".
+
+**Por qué es manual en esta beta**: el sitio no tiene backend (es HTML +
+JavaScript + Firebase, sin servidor propio), así que no hay forma segura
+de que un pago confirme algo automáticamente sin un webhook — y montar
+webhooks requiere un servidor (por ejemplo, Firebase Functions), que es
+una pieza de infraestructura nueva, no algo para agregar de pasada. La
+solución honesta para arrancar: el pago es real y seguro (lo procesa
+Stripe, nunca pasa por tus manos ni por este sitio), pero **tú activas
+"Destacado" a mano** en el panel de admin — el mismo patrón que ya usas
+para confirmar la cédula profesional.
+
+### 1. Crear el link de pago en Stripe
+
+1. Crea una cuenta en https://stripe.com si no tienes una (necesitas
+   datos de tu negocio/persona para poder recibir el dinero — Stripe te
+   va a pedir esto en algún momento antes del primer pago real, pero
+   puedes crear el link de pago antes de completar todo ese papeleo).
+2. En el Dashboard de Stripe → **Payment links** → **Crear link de pago**.
+3. Crea un producto nuevo: nombre "Idóneo Destacado", precio $299 MXN,
+   **recurrente, cada mes** (así Stripe cobra automáticamente cada mes
+   sin que el despacho tenga que volver a pagar a mano).
+4. Guarda el link — se ve algo como `https://buy.stripe.com/xxxxx`.
+
+### 2. Pegar el link en el sitio
+
+Busca `TU-LINK-DE-PAGO` en `Idoneo/mi-cuenta.html` (la constante
+`STRIPE_DESTACADO_LINK`, cerca de `destacadoSectionHTML`) y cámbialo por
+tu link real de Stripe.
+
+### 3. Activar "Destacado" cuando alguien paga
+
+1. Stripe te avisa por correo cuando alguien paga (o revisas el
+   Dashboard → Payments).
+2. Contacta al despacho (mismo WhatsApp/correo que usaste para
+   verificar su cédula) para confirmar cuál es su cuenta/perfil.
+3. Entra al panel de admin → pestaña de perfiles **aprobados** → busca
+   su tarjeta → marca la casilla **"✨ Destacado"** → Guardar cambios.
+4. Para renovaciones automáticas de Stripe, no necesitas hacer nada cada
+   mes — el cobro sigue solo. Solo tienes que estar pendiente si alguien
+   **cancela** su suscripción en Stripe, para entonces desmarcar la
+   casilla y que deje de aparecer como Destacado.
+
+### Qué automatizar más adelante (no ahora)
+
+Si esto funciona y quieres quitar el paso manual: la pieza que falta es
+un **webhook** de Stripe (`checkout.session.completed` /
+`invoice.paid`) que reciba el aviso de pago y actualice `destacado` en
+Firestore directamente — eso requiere un pequeño backend (Firebase
+Functions es la opción más natural, ya que ya usas Firebase). Es un
+cambio de arquitectura razonable cuando tengas varios despachos pagando
+y el proceso manual empiece a pesar, no algo urgente para el lanzamiento.
 
 ## Notas
 

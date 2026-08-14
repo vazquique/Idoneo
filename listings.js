@@ -30,10 +30,10 @@
     {id:4, nombre:"Lic. Renata Cabrera", tipo:"individual", especialidades:["Laboral"], ciudad:"Monterrey, Nuevo León", rating:4.3, reviews:9, precio:"$", verificado:false, telefono:"528112345678", experiencia:"4 años", bio:"Asesoría a trabajadores en despidos injustificados y liquidaciones.", reseñas:[
       {autor:"Jesús M.", texto:"Me orientó bien sobre mi liquidación, precio accesible.", estrellas:4}
     ]},
-    {id:5, nombre:"Lic. Marco Villaseñor", tipo:"individual", especialidades:["Migratorio"], ciudad:"Zapopan, Jalisco", rating:5.0, reviews:12, precio:"$$", verificado:true, telefono:"523312349999", experiencia:"7 años", bio:"Trámites de residencia, naturalización y regularización migratoria.", reseñas:[
+    {id:5, nombre:"Lic. Marco Villaseñor", tipo:"individual", destacado:true, contactClicks:38, especialidades:["Migratorio"], ciudad:"Zapopan, Jalisco", rating:5.0, reviews:12, precio:"$$", verificado:true, telefono:"523312349999", experiencia:"7 años", bio:"Trámites de residencia, naturalización y regularización migratoria.", reseñas:[
       {autor:"Laura P.", texto:"Todo el trámite de residencia salió sin contratiempos.", estrellas:5}
     ]},
-    {id:6, nombre:"Bufete Herrera Legal", tipo:"despacho", numAbogados:"12", anioFundacion:"2005", responsableNombre:"Lic. Fernanda Herrera", responsableCedula:"3456789", rfcPersonaMoral:"BHL050822CD2", verificadoEmpresa:true, especialidades:["Corporativo","Mercantil"], ciudad:"Ciudad de México", rating:4.7, reviews:41, precio:"$$$", verificado:true, telefono:"525587654321", experiencia:"20 años como despacho", bio:"Asesoría corporativa integral para empresas medianas y grandes: fusiones, cumplimiento y gobierno corporativo.", reseñas:[
+    {id:6, nombre:"Bufete Herrera Legal", tipo:"despacho", destacado:true, contactClicks:97, numAbogados:"12", anioFundacion:"2005", responsableNombre:"Lic. Fernanda Herrera", responsableCedula:"3456789", rfcPersonaMoral:"BHL050822CD2", verificadoEmpresa:true, especialidades:["Corporativo","Mercantil","Fiscal","Civil"], ciudad:"Ciudad de México", rating:4.7, reviews:41, precio:"$$$", verificado:true, telefono:"525587654321", experiencia:"20 años como despacho", bio:"Asesoría corporativa integral para empresas medianas y grandes: fusiones, cumplimiento y gobierno corporativo.", reseñas:[
       {autor:"Empresa Vertex", texto:"Manejaron nuestra fusión con mucha solidez legal.", estrellas:5}
     ]},
     {id:7, nombre:"Lic. Ana Belén Ruiz", tipo:"individual", especialidades:["Civil","Familiar"], ciudad:"Guadalajara, Jalisco", rating:4.4, reviews:15, precio:"$", verificado:true, telefono:"523398765432", experiencia:"6 años", bio:"Litigio civil: arrendamientos, incumplimiento de contratos y responsabilidad civil.", reseñas:[
@@ -170,8 +170,10 @@
       rating: 0,
       reviews: 0,
       views: 0,
+      contactClicks: 0,
       verificado: false,
       verificadoEmpresa: false,
+      destacado: false,
       experiencia: '',
       bio: '',
       direccion: '',
@@ -375,6 +377,19 @@
     }
   }
 
+  // Igual que arriba, pero para clics al botón de WhatsApp — la señal más
+  // directa de interés real (no solo "alguien abrió la página").
+  async function incrementContactClick(abogadoId){
+    if(isDemo(abogadoId)) return;
+    try{
+      await requireDb().collection(COLLECTION).doc(String(abogadoId)).update({
+        contactClicks: firebase.firestore.FieldValue.increment(1)
+      });
+    } catch(err){
+      console.error('No se pudo registrar el clic de contacto.', err);
+    }
+  }
+
   // ---- Sesión de administrador (Firebase Authentication) ----
   function adminSignIn(email, password){
     return auth.signInWithEmailAndPassword(email, password);
@@ -393,7 +408,7 @@
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
-    getMyReview, submitReview, deleteMyReview, submitReviewReply, incrementProfileView,
+    getMyReview, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };

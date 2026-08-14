@@ -76,6 +76,27 @@
   .status-pill.verified{background:#dbe6f5; color:#22406e; border:1px solid #7fa6d9;}
   .status-pill.despacho{background:rgba(61,110,120,0.14); color:var(--despacho); border:1px solid var(--despacho-light);}
   .status-pill.empresa{background:rgba(185,138,46,0.16); color:#8a6a1f; border:1px solid var(--brass-light);}
+  .status-pill.destacado{background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink); border:1px solid var(--brass); font-weight:700;}
+
+  .destacado-status{display:flex; align-items:center; gap:14px; background:linear-gradient(135deg, rgba(217,171,82,0.14), rgba(185,138,46,0.08)); border:1px solid var(--brass-light); border-radius:6px; padding:16px 18px; margin-bottom:20px; flex-wrap:wrap;}
+  .destacado-status svg{width:26px; height:26px; color:var(--brass); flex-shrink:0;}
+  .destacado-status-text{flex:1; min-width:180px;}
+  .destacado-status-text strong{font-family:'Newsreader', serif; font-size:1.02rem;}
+  .destacado-status-text p{font-size:0.82rem; color:#6b6250; margin-top:2px;}
+  .destacado-clicks{text-align:center; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-2); background:rgba(255,255,255,0.5); border-radius:4px; padding:8px 14px;}
+  .destacado-clicks span{display:block; font-size:1.3rem; font-weight:700; color:var(--brass); font-family:'IBM Plex Sans', sans-serif;}
+
+  .destacado-cta{background:var(--ink); color:var(--parchment); border-radius:6px; padding:20px 22px; margin-bottom:20px;}
+  .destacado-cta-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .destacado-cta-head svg{width:22px; height:22px; color:var(--brass-light); flex-shrink:0;}
+  .destacado-cta-head strong{font-family:'Newsreader', serif; font-size:1.1rem;}
+  .destacado-cta-list{list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:16px;}
+  .destacado-cta-list li{font-size:0.86rem; color:rgba(241,234,216,0.82); padding-left:20px; position:relative;}
+  .destacado-cta-list li::before{content:'✓'; position:absolute; left:0; color:var(--brass-light); font-weight:700;}
+  .destacado-cta-btn{display:inline-block; background:var(--brass-light); color:var(--ink); text-decoration:none; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; padding:11px 22px; border-radius:3px; transition:background 0.15s ease, transform 0.15s ease;}
+  .destacado-cta-btn:hover{background:#e6bd6f; transform:translateY(-1px);}
+  .destacado-cta-btn:active{transform:translateY(0);}
+  .destacado-cta-note{font-size:0.76rem; color:rgba(241,234,216,0.55); margin-top:10px;}
   .listing-meta{font-size:0.84rem; color:#6b6250; margin-bottom:20px;}
   .view-profile-link{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--brass); text-decoration:underline; white-space:nowrap;}
 
@@ -278,27 +299,31 @@
     });
   }
   const ESPECIALIDADES_OPTS = ['Familiar', 'Penal', 'Laboral', 'Mercantil', 'Migratorio', 'Corporativo', 'Civil', 'Fiscal', 'Bienes raíces', 'Amparo', 'Otra'];
-  const MAX_ESPECIALIDADES = 3;
+  const MAX_ESPECIALIDADES_GRATIS = 3;
+  const MAX_ESPECIALIDADES_DESTACADO = 5;
   function especialidadPickerHTML(selected){
     const sel = Array.isArray(selected) ? selected : [];
     return ESPECIALIDADES_OPTS.map(e => `<button type="button" class="esp-chip${sel.includes(e) ? ' selected' : ''}" data-esp="${e}">${e}</button>`).join('');
   }
-  function wireEspecialidadPicker(card){
+  function wireEspecialidadPicker(card, isDestacado){
     const picker = card.querySelector('[data-role="especialidadPicker"]');
+    const maxEsp = Number(picker.dataset.maxEsp) || MAX_ESPECIALIDADES_GRATIS;
     const hint = card.querySelector('[data-role="espHint"]');
     picker.querySelectorAll('.esp-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         const selectedCount = picker.querySelectorAll('.esp-chip.selected').length;
         if(chip.classList.contains('selected')){
           chip.classList.remove('selected');
-        } else if(selectedCount >= MAX_ESPECIALIDADES){
-          hint.textContent = `Máximo ${MAX_ESPECIALIDADES} especialidades — quita una para agregar otra.`;
+        } else if(selectedCount >= maxEsp){
+          hint.textContent = isDestacado
+            ? `Máximo ${maxEsp} especialidades — quita una para agregar otra.`
+            : `Máximo ${maxEsp} especialidades en el plan gratuito — hazte Destacado para tener hasta ${MAX_ESPECIALIDADES_DESTACADO}.`;
           hint.classList.add('err');
           return;
         } else {
           chip.classList.add('selected');
         }
-        hint.textContent = 'Selecciona de 1 a 3 especialidades.';
+        hint.textContent = `Selecciona de 1 a ${maxEsp} especialidades.`;
         hint.classList.remove('err');
       });
     });
@@ -452,7 +477,48 @@
       : '<span class="status-pill pending">Pendiente de revisión</span>';
     if(l.verificado) html += '<span class="status-pill verified">Cédula verificada</span>';
     if(l.tipo === 'despacho') html += '<span class="status-pill despacho">Despacho</span>';
+    if(l.destacado) html += '<span class="status-pill destacado">✨ Destacado</span>';
     return html;
+  }
+
+  // Reemplaza este link por el tuyo real de Stripe (Payment Link) cuando
+  // actives cobros — ver INSTRUCCIONES-FIREBASE.md, sección "Activar
+  // cobros con Stripe".
+  const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/TU-LINK-DE-PAGO';
+
+  function destacadoSectionHTML(l){
+    if(l.status !== 'approved') return '';
+    if(l.destacado){
+      return `
+        <div class="destacado-status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
+          <div class="destacado-status-text">
+            <strong>Tu perfil es Destacado</strong>
+            <p>Apareces primero en el buscador y puedes registrar hasta 5 especialidades.</p>
+          </div>
+          <div class="destacado-clicks">
+            <span>${(l.contactClicks || 0).toLocaleString('es-MX')}</span>
+            clics a WhatsApp
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="destacado-cta" id="destacado-cta">
+        <div class="destacado-cta-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
+          <strong>Destaca tu perfil — $299 MXN/mes</strong>
+        </div>
+        <ul class="destacado-cta-list">
+          <li>Aparece primero en los resultados de tu ciudad y especialidad</li>
+          <li>Insignia "Destacado" en tu tarjeta y tu perfil</li>
+          <li>Hasta 5 especialidades en vez de 3</li>
+          <li>Ve cuántos clics reales a WhatsApp recibes, no solo vistas</li>
+        </ul>
+        <a class="destacado-cta-btn" href="${STRIPE_DESTACADO_LINK}" target="_blank" rel="noopener">Destacar mi perfil</a>
+        <p class="destacado-cta-note">Pagas en una página segura de Stripe. Es beta: después de pagar, escríbenos (pie de página) para activarlo — todavía no se activa solo.</p>
+      </div>
+    `;
   }
 
   function proRibbonHTML(l){
@@ -484,6 +550,8 @@
             ? 'Tu perfil está visible en el buscador.'
             : 'Estamos confirmando tu cédula profesional antes de publicar tu perfil — normalmente te contactamos por WhatsApp.'}
         </div>
+
+        ${destacadoSectionHTML(l)}
 
         <div class="listing-photo-row">
           <div class="listing-photo" data-role="listingPhoto">
@@ -538,9 +606,9 @@
         </div>
 
         <div class="field full" style="margin-top:14px;">
-          <label>Especialidades (elige hasta 3)<span class="req">*</span></label>
-          <div class="especialidad-picker" data-role="especialidadPicker">${especialidadPickerHTML(l.especialidades)}</div>
-          <div class="esp-hint" data-role="espHint">Selecciona de 1 a 3 especialidades.</div>
+          <label>Especialidades (elige hasta ${l.destacado ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS})<span class="req">*</span></label>
+          <div class="especialidad-picker" data-role="especialidadPicker" data-max-esp="${l.destacado ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS}">${especialidadPickerHTML(l.especialidades)}</div>
+          <div class="esp-hint" data-role="espHint">Selecciona de 1 a ${l.destacado ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS} especialidades.${!l.destacado ? ' <a href="#destacado-cta" data-role="espUpsell" style="color:var(--brass); text-decoration:underline;">Destaca tu perfil</a> para tener hasta ' + MAX_ESPECIALIDADES_DESTACADO + '.' : ''}</div>
         </div>
         <div class="field-grid">
           <div class="field">
@@ -676,6 +744,8 @@
       if(empty) ok = false;
     });
     const espHint = card.querySelector('[data-role="espHint"]');
+    const espPicker = card.querySelector('[data-role="especialidadPicker"]');
+    const maxEsp = espPicker ? (Number(espPicker.dataset.maxEsp) || MAX_ESPECIALIDADES_GRATIS) : MAX_ESPECIALIDADES_GRATIS;
     if(getSelectedEspecialidades(card).length === 0){
       ok = false;
       if(espHint){
@@ -683,7 +753,7 @@
         espHint.classList.add('err');
       }
     } else if(espHint){
-      espHint.textContent = 'Selecciona de 1 a 3 especialidades.';
+      espHint.textContent = `Selecciona de 1 a ${maxEsp} especialidades.`;
       espHint.classList.remove('err');
     }
     const isDespacho = card.querySelector('[data-field="tipo"]').value === 'despacho';
@@ -837,7 +907,7 @@
     wireRequiredFields(card);
     wireHorarioBuilder(card);
     wireListingPhoto(card, l);
-    wireEspecialidadPicker(card);
+    wireEspecialidadPicker(card, !!l.destacado);
     wireTipoToggle(card);
     wireEstadoCiudad(card);
 

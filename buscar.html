@@ -110,12 +110,14 @@
   .resultados-count{font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:#6b6250;}
   .card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;}
   .lawyer-card{
-    background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:20px;
-    display:flex; flex-direction:column; gap:12px;
+    position:relative; background:#fbf8f0; border:1px solid #ddd2b0; border-radius:4px; padding:20px;
+    display:flex; flex-direction:column; gap:12px; overflow:hidden;
     animation:card-in 0.45s ease both;
     transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .lawyer-card:hover{transform:translateY(-3px); box-shadow:0 14px 28px rgba(24,38,68,0.12); border-color:#c9bd9c;}
+  .lawyer-card.is-destacado{border-color:var(--brass-light); box-shadow:0 6px 20px rgba(185,138,46,0.16);}
+  .destacado-badge{position:absolute; top:0; right:0; background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:5px 12px; border-radius:0 0 0 8px;}
   @keyframes card-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   .lawyer-top{display:flex; gap:12px; align-items:flex-start;}
   .avatar{
@@ -383,9 +385,10 @@
     list.forEach((ab, i) => {
       const stats = reviewStats[ab.id] || {average: 0, total: 0};
       const card = document.createElement('div');
-      card.className = 'lawyer-card' + (ab.tipo === 'despacho' ? ' is-despacho' : '');
+      card.className = 'lawyer-card' + (ab.tipo === 'despacho' ? ' is-despacho' : '') + (ab.destacado ? ' is-destacado' : '');
       card.style.animationDelay = Math.min(i * 0.05, 0.4) + 's';
       card.innerHTML = `
+        ${ab.destacado ? '<div class="destacado-badge">✨ Destacado</div>' : ''}
         <div class="lawyer-top">
           <div class="avatar">${ab.fotoUrl ? `<img src="${ab.fotoUrl}" alt="">` : initials(ab.nombre)}</div>
           <div>
@@ -423,7 +426,11 @@
       (especialidad === '' || (ab.especialidades || []).includes(especialidad)) &&
       (tipoCuenta === '' || (ab.tipo || 'individual') === tipoCuenta)
     );
-    renderCards(filtered);
+    // Los perfiles "Destacado" aparecen primero, sin reordenar dentro de
+    // cada grupo (mantiene el orden en que ya venían).
+    const destacados = filtered.filter(ab => ab.destacado);
+    const normales = filtered.filter(ab => !ab.destacado);
+    renderCards(destacados.concat(normales));
   }
 
   (function populateCiudadFilter(){
