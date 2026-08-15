@@ -108,6 +108,20 @@
   .porque-item p{margin-top:10px; font-size:0.88rem; color:rgba(241,234,216,0.72);}
   @media (max-width:760px){ .porque-grid{grid-template-columns:1fr;} }
 
+  .disponibilidad{padding:60px 0; border-bottom:1px solid var(--line);}
+  .disponibilidad-check{display:flex; gap:14px; flex-wrap:wrap; align-items:end; background:var(--ink-2); border:1px solid var(--line-strong); border-radius:6px; padding:22px;}
+  .disponibilidad-field{display:flex; flex-direction:column; gap:6px; flex:1; min-width:180px;}
+  .disponibilidad-field label{font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:rgba(241,234,216,0.6);}
+  .disponibilidad-field select{background:var(--ink); color:var(--parchment); border:1px solid var(--line-strong); border-radius:4px; padding:10px 12px; font-family:'IBM Plex Sans', sans-serif; font-size:0.88rem;}
+  .disponibilidad-btn{background:var(--brass-light); color:var(--ink); border:none; padding:12px 22px; border-radius:4px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; cursor:pointer; transition:transform 0.15s ease; white-space:nowrap;}
+  .disponibilidad-btn:hover{transform:translateY(-1px);}
+  .disponibilidad-result{margin-top:18px; display:flex; align-items:center; gap:12px; padding:16px 18px; border-radius:6px; font-size:0.9rem; line-height:1.5;}
+  .disponibilidad-result svg{width:20px; height:20px; flex-shrink:0;}
+  .disponibilidad-result.is-open{background:rgba(143,196,122,0.1); border:1px solid rgba(143,196,122,0.35); color:#a8d69a;}
+  .disponibilidad-result.is-low{background:rgba(217,171,82,0.12); border:1px solid rgba(217,171,82,0.4); color:var(--brass-light);}
+  .disponibilidad-result strong{font-weight:700;}
+  @media (max-width:640px){ .disponibilidad-check{flex-direction:column; align-items:stretch;} }
+
   /* ---------- Features detalladas ---------- */
   .features{padding:64px 0; border-bottom:1px solid var(--line);}
   .feature-detail{display:grid; grid-template-columns:52px 1fr; gap:20px; padding:26px 0; border-top:1px solid var(--line);}
@@ -305,6 +319,38 @@
   </div>
 </section>
 
+<section class="disponibilidad">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:26px;">
+      <span class="kicker">Sin cupo, sin límite</span>
+      <h2>Cualquiera puede destacarse. La pregunta es si tu competencia ya lo hizo.</h2>
+      <p style="font-size:0.92rem; color:rgba(241,234,216,0.72); max-width:62ch; margin-top:10px;">No limitamos cuántos despachos pueden ser Destacado — todos los que quieran pueden activarse cuando quieran. La ventaja competitiva es real de otra forma: revisa cuántos de tus competidores directos, en tu misma ciudad y especialidad, ya se destacaron antes que tú.</p>
+    </div>
+    <div class="disponibilidad-check">
+      <div class="disponibilidad-field">
+        <label for="dispCiudad">Tu ciudad</label>
+        <select id="dispCiudad"><option value="">Elige tu ciudad</option></select>
+      </div>
+      <div class="disponibilidad-field">
+        <label for="dispEspecialidad">Tu especialidad</label>
+        <select id="dispEspecialidad">
+          <option value="">Elige tu especialidad</option>
+          <option>Familiar</option>
+          <option>Penal</option>
+          <option>Laboral</option>
+          <option>Mercantil</option>
+          <option>Migratorio</option>
+          <option>Corporativo</option>
+          <option>Civil</option>
+          <option>Fiscal</option>
+        </select>
+      </div>
+      <button type="button" class="disponibilidad-btn" id="dispCheckBtn">Ver mi competencia</button>
+    </div>
+    <div class="disponibilidad-result" id="dispResult" style="display:none"></div>
+  </div>
+</section>
+
 <section class="features">
   <div class="wrap">
     <div class="section-head">
@@ -316,7 +362,14 @@
       <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
       <div>
         <h3>Prioridad en los resultados de tu ciudad y especialidad</h3>
-        <p>Cuando alguien busca "abogado familiar en Guadalajara", los perfiles Destacados aparecen antes que el resto. Es la diferencia entre estar en la mesa o no estar en la conversación.</p>
+        <p>Cuando alguien busca "abogado familiar en Guadalajara", los perfiles Destacados aparecen antes que el resto. Es la diferencia entre estar en la mesa o no estar en la conversación. Y no hay cupo — cualquier cuenta puede destacarse cuando quiera, sin esperar a que se libere un lugar.</p>
+      </div>
+    </div>
+    <div class="feature-detail">
+      <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></div>
+      <div>
+        <h3>Entre Destacados, el orden se lo gana quien se esfuerza más</h3>
+        <p>Pagar te mete al grupo que aparece primero, pero dentro de ese grupo el orden lo deciden señales reales: si tienes "Disponible ahora" activo, tu calificación promedio y qué tan completo está tu perfil. Si tu competencia Destacada se esfuerza más que tú, te va a ganar el primer lugar aunque los dos paguen lo mismo — la competencia sigue siendo real todo el tiempo, no solo el día que pagas.</p>
       </div>
     </div>
     <div class="feature-detail">
@@ -343,8 +396,8 @@
     <div class="feature-detail">
       <div class="feature-detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M8 17V9m5 8V5m5 12v-6"/></svg></div>
       <div>
-        <h3>Panel de estadísticas</h3>
-        <p>Vistas totales, clics a WhatsApp y tasa de conversión — para que sepas si tu perfil está funcionando y qué ajustar, no solo esperar a que "algo pase".</p>
+        <h3>Panel de estadísticas, con comparación contra tu categoría</h3>
+        <p>Vistas totales, clics a WhatsApp, tasa de conversión — y cuánto vas por encima o por debajo del promedio de otros perfiles en tu misma ciudad y especialidad. No es solo "tienes 340 vistas", es "vas 40% arriba del promedio" — la prueba de que Destacado está funcionando, no solo un número suelto.</p>
       </div>
     </div>
     <div class="feature-detail">
@@ -385,7 +438,7 @@
         <li>Hasta 5 especialidades</li>
         <li>Preguntas frecuentes personalizadas en tu perfil</li>
         <li>Equipo del despacho, con contacto directo por integrante (despachos)</li>
-        <li>Panel de estadísticas completo</li>
+        <li>Panel de estadísticas con comparación contra tu categoría</li>
         <li>Galería de hasta 4 fotos</li>
         <li>Perfil sin anuncios de terceros</li>
       </ul>
@@ -421,6 +474,10 @@
       <div class="faq-item">
         <button class="faq-q" type="button">¿Cómo se activa después de pagar?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
         <div class="faq-a"><p>Ahora mismo el pago se procesa en Stripe pero la activación es manual mientras terminamos de automatizarlo — después de pagar, escríbenos por el contacto del pie de página con el correo de tu cuenta, y activamos Destacado en tu perfil.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Hay un límite de cuántos despachos pueden ser Destacado?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>No, cualquier cuenta puede activarse cuando quiera — no hay cupo ni lista de espera. Dentro de los resultados Destacados, el orden lo siguen decidiendo señales reales de tu perfil (qué tan completo está, tu calificación, si tienes "Disponible ahora" activo), no solo quién pagó primero. La ventaja competitiva no viene de dejar fuera a tu competencia — viene de que, si ellos se destacan y tú no, ellos aparecen antes que tú cada vez que alguien busca en tu categoría.</p></div>
       </div>
     </div>
   </div>
@@ -532,6 +589,65 @@
     const btn = e.target.closest('.faq-q');
     if(!btn) return;
     btn.parentElement.classList.toggle('open');
+  });
+
+  // ---- Verificador de competencia Destacado por ciudad + especialidad ----
+  // No hay cupo: esto solo muestra cuántos competidores directos ya se
+  // destacaron, para que la decisión de pagar se base en presión
+  // competitiva real, no en un límite artificial de lugares.
+  (function populateDispCiudad(){
+    const select = document.getElementById('dispCiudad');
+    const MEXICO_ESTADOS = (window.IdoneoListings && window.IdoneoListings.MEXICO_ESTADOS) || {};
+    Object.keys(MEXICO_ESTADOS).forEach(estado => {
+      const group = document.createElement('optgroup');
+      group.label = estado;
+      MEXICO_ESTADOS[estado].forEach(ciudad => {
+        const value = ciudad === estado ? ciudad : `${ciudad}, ${estado}`;
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = ciudad;
+        group.appendChild(opt);
+      });
+      select.appendChild(group);
+    });
+  })();
+
+  let dispListingsCache = null;
+  const dispResult = document.getElementById('dispResult');
+
+  document.getElementById('dispCheckBtn').addEventListener('click', async () => {
+    const ciudad = document.getElementById('dispCiudad').value;
+    const especialidad = document.getElementById('dispEspecialidad').value;
+    if(!ciudad || !especialidad){
+      dispResult.className = 'disponibilidad-result is-low';
+      dispResult.style.display = 'flex';
+      dispResult.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span>Elige tu ciudad y tu especialidad para ver tu competencia.</span>';
+      return;
+    }
+    dispResult.className = 'disponibilidad-result is-low';
+    dispResult.style.display = 'flex';
+    dispResult.innerHTML = '<span>Consultando tu categoría…</span>';
+    try{
+      if(!dispListingsCache){
+        dispListingsCache = await window.IdoneoListings.getApproved();
+      }
+      const {destacados, total} = window.IdoneoListings.getCategoriaCompetencia(dispListingsCache, ciudad, especialidad);
+      const otros = Math.max(0, total - 1);
+      if(otros === 0){
+        dispResult.className = 'disponibilidad-result is-open';
+        dispResult.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>Todavía no hay perfiles registrados en <strong>${ciudad} · ${especialidad}</strong>. Sé el primero en aparecer ahí. <a href="#pricing" style="color:inherit; text-decoration:underline;">Destácate</a>.</span>`;
+      } else if(destacados === 0){
+        dispResult.className = 'disponibilidad-result is-open';
+        dispResult.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>Ningún despacho de <strong>${especialidad} · ${ciudad}</strong> es Destacado todavía. Sé el primero en tu categoría antes de que lo sea tu competencia. <a href="#pricing" style="color:inherit; text-decoration:underline;">Destácate</a>.</span>`;
+      } else {
+        dispResult.className = 'disponibilidad-result is-low';
+        dispResult.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg><span><strong>${destacados} de ${otros}</strong> competidores en <strong>${ciudad} · ${especialidad}</strong> ya son Destacado — aparecen antes que tú cada vez que alguien busca ahí. <a href="#pricing" style="color:inherit; text-decoration:underline;">Iguálalos</a>.</span>`;
+      }
+    } catch(err){
+      console.error(err);
+      dispResult.className = 'disponibilidad-result is-low';
+      dispResult.innerHTML = '<span>No se pudo consultar tu categoría. Intenta de nuevo en un momento.</span>';
+    }
   });
 </script>
 

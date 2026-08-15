@@ -662,11 +662,26 @@
       (!soloIngles || (ab.idiomas || []).includes('Inglés')) &&
       (!soloUrgente24h || ab.urgente24h)
     );
-    // Los perfiles "Destacado" aparecen primero, sin reordenar dentro de
-    // cada grupo (mantiene el orden en que ya venían).
-    const destacados = filtered.filter(ab => ab.destacado);
+    // Los perfiles "Destacado" aparecen primero, pero pagar no basta para
+    // ganar el primer lugar dentro de ese grupo: se ordenan por señales
+    // reales (disponibilidad, calificación, qué tan completo está el
+    // perfil) para que quien de verdad se esfuerza compita mejor que
+    // quien solo pagó y dejó el perfil a medias.
+    const destacados = filtered.filter(ab => ab.destacado).sort((a, b) => destacadoScore(b) - destacadoScore(a));
     const normales = filtered.filter(ab => !ab.destacado);
     renderCards(destacados.concat(normales));
+  }
+
+  function destacadoScore(ab){
+    const stats = reviewStats[ab.id] || {average: 0, total: 0};
+    let score = 0;
+    if(ab.disponible) score += 30;
+    score += stats.average * 10;
+    score += Math.min(stats.total, 20);
+    if(ab.fotoUrl) score += 5;
+    if(ab.bio && ab.bio.trim()) score += 5;
+    if(ab.urgente24h) score += 5;
+    return score;
   }
 
   // ---------- Comparador de perfiles ----------

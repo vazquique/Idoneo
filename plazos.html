@@ -222,7 +222,7 @@
 
 <main class="wrap">
   <div class="disclaimer-banner">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
     <div><strong>Esto es una guía orientativa, no asesoría legal.</strong> El plazo exacto de tu caso puede variar según tu estado, el tipo de proceso o circunstancias particulares. Úsalo para no perder de vista tu fecha límite, pero confírmalo siempre con un abogado antes de actuar.</div>
   </div>
 
@@ -342,8 +342,14 @@
     fechaHint.textContent = `Usa esta fecha: ${t.base}.`;
   });
 
+  function saludoHora(){
+    const h = new Date().getHours();
+    if(h >= 5 && h < 12) return 'Buenos días';
+    if(h >= 12 && h < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
   function buildResumenMensaje(t, deadline){
-    return `Hola, tengo un caso de ${t.label.toLowerCase()} y mi plazo vence aproximadamente el ${formatFechaLarga(deadline)}. Me gustaría agendar una consulta lo antes posible.`;
+    return `${saludoHora()}, tengo un caso de ${t.label.toLowerCase()} y mi plazo vence aproximadamente el ${formatFechaLarga(deadline)}. Me gustaría saber más información y agendar una consulta lo antes posible.`;
   }
 
   function renderResult(result){

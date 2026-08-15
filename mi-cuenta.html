@@ -139,7 +139,7 @@
   .destacado-status-text strong{font-family:'Newsreader', serif; font-size:1.02rem;}
   .destacado-status-text p{font-size:0.82rem; color:#6b6250; margin-top:2px;}
 
-  .disponible-toggle{display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:4px;}
+  .disponible-toggle, .field .disponible-toggle{position:relative; display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:4px;}
   .disponible-toggle input{position:absolute; opacity:0; width:0; height:0;}
   .disponible-toggle-track{position:relative; width:38px; height:22px; border-radius:20px; background:#d9d0b5; flex-shrink:0; transition:background 0.2s ease;}
   .disponible-toggle-thumb{position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.25); transition:transform 0.2s ease;}
@@ -165,6 +165,13 @@
   .mini-hist-row span:last-child{width:20px; flex-shrink:0; text-align:right;}
   .mini-hist-track{flex:1; height:6px; background:#ece3cd; border-radius:3px; overflow:hidden;}
   .mini-hist-fill{height:100%; background:var(--brass-light); border-radius:3px;}
+
+  .stats-benchmark{display:flex; align-items:flex-start; gap:9px; margin-top:14px; padding:11px 13px; border-radius:4px; font-size:0.82rem; line-height:1.5;}
+  .stats-benchmark svg{width:15px; height:15px; flex-shrink:0; margin-top:2px;}
+  .stats-benchmark.is-up{background:rgba(92,184,92,0.1); border:1px solid rgba(92,184,92,0.3); color:#3d7a3d;}
+  .stats-benchmark.is-up strong{color:#2f6b2f;}
+  .stats-benchmark.is-down{background:rgba(196,90,58,0.08); border:1px solid rgba(196,90,58,0.28); color:#a1502f;}
+  .stats-benchmark.is-down strong{color:#8a3f24;}
 
   .galeria-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
   .galeria-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:10px; margin-bottom:10px;}
@@ -236,6 +243,13 @@
   .destacado-showcase-head h3{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; margin-bottom:8px;}
   .destacado-showcase-head p{font-size:0.88rem; color:rgba(241,234,216,0.72); max-width:48ch;}
   .destacado-showcase-body{position:relative; z-index:1; display:grid; grid-template-columns:230px 1fr; gap:28px; align-items:start;}
+
+  .destacado-scarcity{position:relative; z-index:1; display:flex; align-items:flex-start; gap:10px; background:rgba(217,171,82,0.1); border:1px solid rgba(217,171,82,0.32); border-radius:5px; padding:12px 14px; margin-bottom:22px; font-size:0.82rem; line-height:1.5; color:rgba(241,234,216,0.82);}
+  .destacado-scarcity svg{width:16px; height:16px; flex-shrink:0; margin-top:1px; color:var(--brass-light);}
+  .destacado-scarcity strong{color:var(--brass-light);}
+  .destacado-scarcity.is-low{background:rgba(196,90,58,0.12); border-color:rgba(196,90,58,0.4);}
+  .destacado-scarcity.is-low svg{color:#d97a56;}
+  .destacado-scarcity.is-low strong{color:#e08a63;}
 
   .preview-label{font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; color:rgba(241,234,216,0.45); margin-bottom:10px;}
   .preview-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:16px; position:relative; overflow:hidden; box-shadow:0 16px 32px rgba(0,0,0,0.32);}
@@ -685,6 +699,7 @@
   }
 
   const content = document.getElementById('accountContent');
+  let approvedListingsCache = [];
 
   function renderLoggedOut(){
     content.innerHTML = `
@@ -889,6 +904,51 @@
   // cobros con Stripe".
   const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/TU-LINK-DE-PAGO';
 
+  // Compara tus vistas de perfil contra el promedio de otros perfiles en tu
+  // misma ciudad y especialidad — convierte "tienes 340 vistas" (dato suelto)
+  // en "vas 40% arriba del promedio" (prueba de que Destacado está funcionando).
+  function categoriaBenchmarkHTML(l){
+    const especialidadPrincipal = (l.especialidades || [])[0];
+    if(!l.ciudad || !especialidadPrincipal) return '';
+    const pares = approvedListingsCache.filter(ab =>
+      ab.id !== l.id && ab.ciudad === l.ciudad && (ab.especialidades || []).includes(especialidadPrincipal)
+    );
+    if(pares.length === 0) return '';
+    const promedioVistas = pares.reduce((sum, ab) => sum + (ab.views || 0), 0) / pares.length;
+    if(promedioVistas === 0) return '';
+    const misVistas = l.views || 0;
+    const diff = Math.round(((misVistas - promedioVistas) / promedioVistas) * 100);
+    const arriba = diff >= 0;
+    return `
+      <div class="stats-benchmark${arriba ? ' is-up' : ' is-down'}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${arriba ? '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>' : '<path d="M3 7l6 6 4-4 8 8M21 11v6h-6"/>'}</svg>
+        <span>Tus vistas van <strong>${Math.abs(diff)}% ${arriba ? 'por encima' : 'por debajo'}</strong> del promedio de otros perfiles en ${escapeHtml(especialidadPrincipal)} · ${escapeHtml(l.ciudad)} (${pares.length} perfil${pares.length === 1 ? '' : 'es'} comparado${pares.length === 1 ? '' : 's'}).</span>
+      </div>
+    `;
+  }
+
+  // No hay cupo ni tope de cuántos pueden ser Destacado — cualquiera puede
+  // pagar y activarse. La presión competitiva es real sin necesidad de
+  // límite artificial: si tu competencia directa ya se destacó y tú no,
+  // ellos aparecen primero cada vez que alguien busca en tu categoría.
+  function destacadoCompetenciaHTML(l){
+    const especialidadPrincipal = (l.especialidades || [])[0];
+    if(!l.ciudad || !especialidadPrincipal) return '';
+    const {destacados, total} = window.IdoneoListings.getCategoriaCompetencia(approvedListingsCache, l.ciudad, especialidadPrincipal);
+    const otros = Math.max(0, total - 1);
+    if(otros === 0) return '';
+    const urgente = destacados > 0;
+    return `
+      <div class="destacado-scarcity${urgente ? ' is-low' : ''}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        ${urgente
+          ? `<span><strong>${destacados} de ${otros} despacho${otros === 1 ? '' : 's'}</strong> que compiten contigo en ${escapeHtml(especialidadPrincipal)} · ${escapeHtml(l.ciudad)} ya son Destacado — aparecen antes que tú cada vez que alguien busca ahí. No hay cupo ni límite: puedes destacarte cuando quieras.</span>`
+          : `<span>Todavía ningún despacho de ${escapeHtml(especialidadPrincipal)} en ${escapeHtml(l.ciudad)} es Destacado. Sé el primero en tu categoría antes de que lo sea tu competencia.</span>`
+        }
+      </div>
+    `;
+  }
+
   function destacadoSectionHTML(l){
     if(l.status !== 'approved') return '';
     if(l.destacado){
@@ -935,6 +995,7 @@
             </div>
           </div>
           <div class="stats-histogram" data-role="statsHistogram"></div>
+          ${categoriaBenchmarkHTML(l)}
         </div>
 
         <div class="galeria-section">
@@ -988,11 +1049,19 @@
       `;
     }
     if(isDestacadoDismissed(l.id)){
+      const especialidadPrincipal = (l.especialidades || [])[0];
+      let reminderNote = 'Puedes destacar tu perfil cuando quieras — $299 MXN/mes.';
+      if(l.ciudad && especialidadPrincipal){
+        const {destacados} = window.IdoneoListings.getCategoriaCompetencia(approvedListingsCache, l.ciudad, especialidadPrincipal);
+        if(destacados > 0){
+          reminderNote = `${destacados} de tu competencia en ${escapeHtml(especialidadPrincipal)} · ${escapeHtml(l.ciudad)} ya son Destacado — $299 MXN/mes.`;
+        }
+      }
       return `
         <div class="destacado-reminder" id="destacado-cta">
           <div class="destacado-reminder-text">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
-            <span>Puedes destacar tu perfil cuando quieras — $299 MXN/mes.</span>
+            <span>${reminderNote}</span>
           </div>
           <button type="button" data-action="reopen-destacado">Ver detalles</button>
         </div>
@@ -1008,6 +1077,7 @@
           <h3>Así se vería tu tarjeta con Destacado</h3>
           <p>Una vista previa real con tu nombre, tu ciudad y tus especialidades — así aparecerías primero frente a quien te está comparando con otros abogados.</p>
         </div>
+        ${destacadoCompetenciaHTML(l)}
         <div class="destacado-showcase-body">
           <div>
             <span class="preview-label">Vista previa</span>
@@ -1938,7 +2008,11 @@
     content.innerHTML = profileCardHTML(user) + '<p class="empty-note">Cargando tu cuenta…</p>';
     wireProfileCard();
     try{
-      const listings = await window.IdoneoListings.getMyListings();
+      const [listings, approved] = await Promise.all([
+        window.IdoneoListings.getMyListings(),
+        window.IdoneoListings.getApproved().catch(() => [])
+      ]);
+      approvedListingsCache = approved || [];
       content.innerHTML = profileCardHTML(user) + clienteSectionHTML() + (listings.length === 0 ? emptyStateHTML() : listingsHTML(listings));
       wireProfileCard();
       renderGuardados();

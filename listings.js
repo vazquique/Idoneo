@@ -216,6 +216,24 @@
   const MAX_FAQ_PERSONAL = 5;
   const MAX_EQUIPO_MIEMBROS = 8;
 
+  // ---- Adopción de Destacado por ciudad + especialidad ----
+  // No hay cupo ni límite de cuántas cuentas pueden ser Destacado —
+  // cualquiera puede pagar y activarse, sin tope. Esto solo mide, para
+  // una categoría (ciudad + especialidad), cuántos de los competidores
+  // ya son Destacado frente al total — la presión competitiva real no
+  // viene de un cupo artificial, sino de que tu competencia ya te está
+  // ganando el primer lugar en el buscador mientras tú no pagas.
+  function getCategoriaCompetencia(listings, ciudad, especialidad){
+    if(!ciudad || !especialidad) return {destacados: 0, total: 0};
+    const enCategoria = (listings || []).filter(ab =>
+      ab.status === 'approved' && ab.ciudad === ciudad && (ab.especialidades || []).includes(especialidad)
+    );
+    return {
+      destacados: enCategoria.filter(ab => ab.destacado).length,
+      total: enCategoria.length
+    };
+  }
+
   function pickOwnerEditableFields(edits){
     const clean = {};
     OWNER_EDITABLE_FIELDS.forEach(key => {
@@ -461,6 +479,11 @@
     const user = requireAuthUser();
     const texto = (data.texto || '').trim().slice(0, 2000);
     const estrellas = Math.min(5, Math.max(1, Math.round(Number(data.estrellas) || 0)));
+    // miembroNombre es opcional -- deja que quien reseña un despacho
+    // etiquete su experiencia con un integrante específico del equipo
+    // (ver "Equipo del despacho" en mi-cuenta.html) en vez de que la
+    // reseña quede genérica sobre todo el despacho.
+    const miembroNombre = (data.miembroNombre || '').toString().trim().slice(0, 80);
     // merge:true — así una edición del autor no borra la respuesta que el
     // despacho ya haya publicado en ese mismo documento de reseña.
     await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).set({
@@ -469,6 +492,7 @@
       autorNombre: user.displayName || user.email || 'Usuario de Idóneo',
       estrellas,
       texto,
+      miembroNombre,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge: true});
   }
@@ -533,6 +557,7 @@
 
   global.IdoneoListings = {
     DEMO_ABOGADOS, MEXICO_ESTADOS, IDIOMAS_OPTS, MAX_FAQ_PERSONAL, MAX_EQUIPO_MIEMBROS,
+    getCategoriaCompetencia,
     getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,

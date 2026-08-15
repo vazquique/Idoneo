@@ -619,10 +619,34 @@ independientes, una por archivo):
    verificar su cédula) para confirmar cuál es su cuenta/perfil.
 3. Entra al panel de admin → pestaña de perfiles **aprobados** → busca
    su tarjeta → marca la casilla **"✨ Destacado"** → Guardar cambios.
+   No hay cupo ni límite de cuántas cuentas pueden ser Destacado —
+   actívalas todas las que paguen, sin excepción ni lista de espera.
 4. Para renovaciones automáticas de Stripe, no necesitas hacer nada cada
    mes — el cobro sigue solo. Solo tienes que estar pendiente si alguien
    **cancela** su suscripción en Stripe, para entonces desmarcar la
    casilla y que deje de aparecer como Destacado.
+
+### Competencia entre despachos (sin cupo)
+
+En vez de limitar cuántas cuentas pueden ser Destacado, el sitio genera
+presión competitiva real de dos formas, ambas sin quitarle nada a las
+cuentas gratuitas ni topar cuántas pueden pagar:
+- **Adopción por categoría**: `mi-cuenta.html` le muestra a cualquier
+  cuenta no-Destacado cuántos de sus competidores directos (misma
+  ciudad + especialidad) ya son Destacado (`getCategoriaCompetencia` en
+  `listings.js`) — "3 de 5 despachos de Familiar en tu ciudad ya se
+  destacaron". `destacado.html` tiene el mismo verificador para
+  cualquier visitante, antes de pagar. Esto crea urgencia orgánica: entre
+  más gente compra Destacado, más se queda atrás quien no lo hace — sin
+  que tú tengas que topar nada.
+- **Orden por desempeño dentro de Destacado**: pagar solo te mete al
+  grupo que aparece primero — dentro de ese grupo, `buscar.html` ordena
+  por señales reales (`destacadoScore` en `buscar.html`): si tiene
+  "Disponible ahora" activo, su calificación promedio, número de
+  reseñas, y qué tan completo está el perfil (foto, bio, urgente 24/7).
+  Así que un despacho Destacado que se esfuerza le puede ganar el primer
+  lugar a otro Destacado que solo pagó y dejó el perfil a medias — la
+  competencia sigue siendo real todos los días, no solo el día del pago.
 
 ### Qué automatizar más adelante (no ahora)
 
@@ -651,7 +675,30 @@ número si lo puso, o al número general del despacho si no) — para que
 el cliente elija con quién quiere hablar en vez de escribirle a un
 número genérico sin saber quién le va a contestar. Se edita en "Mi
 cuenta" (campo `equipo`, hasta 8 integrantes) y se ve como directorio
-en `perfil.html`.
+en `perfil.html`. Ahora los clientes también pueden dejar una reseña
+sobre un integrante específico del equipo (campo `miembroNombre` en la
+reseña, seleccionable en el formulario de `perfil.html` y filtrable en
+la lista de reseñas del perfil) — no solo del despacho en general.
+
+También está construido el **panel de estadísticas con comparación de
+categoría**: además de vistas, clics a WhatsApp y conversión, Destacado
+ahora le dice a cada abogado/despacho cuánto va por encima o por debajo
+del promedio de otros perfiles en su misma ciudad y especialidad
+(`categoriaBenchmarkHTML` en `mi-cuenta.html`) — convierte un número
+suelto ("340 vistas") en una prueba de que la suscripción está
+funcionando ("40% arriba del promedio de tu categoría").
+
+Y está construida la **competencia entre despachos sin cupo** (ver
+sección "Competencia entre despachos (sin cupo)" arriba): cualquier
+cuenta puede ser Destacado sin límite ni lista de espera, pero
+`mi-cuenta.html` y `destacado.html` le muestran a cada quien cuántos de
+sus competidores directos ya se destacaron, y dentro del grupo
+Destacado el orden en `buscar.html` lo deciden señales reales
+(disponibilidad, calificación, qué tan completo está el perfil), no
+solo quién pagó primero. Genera presión competitiva real ("tu
+competencia ya te está ganando el primer lugar") sin topar cuántas
+cuentas pueden pagar ni quitarle nada a las cuentas gratuitas.
+
 Estas son ideas adicionales, pensadas pero no construidas del todo,
 para cuando quieras seguir creciendo el negocio:
 
@@ -678,6 +725,48 @@ para cuando quieras seguir creciendo el negocio:
   campo `verificadoEmpresa` en el código; falta un flujo de cobro. A
   diferencia de Destacado (recurrente), esto podría ser un pago único
   por confirmar acta constitutiva/RFC del despacho.
+- **Comisión por caso ganado ("success fee"), como alternativa a la
+  suscripción** — en vez de $299/mes fijo, un despacho puede elegir
+  pagar solo cuando un lead se convierte en cliente real: marca un
+  botón "Cerré este caso" en "Mi cuenta" ligado a una reseña o contacto
+  específico, y tú le facturas un porcentaje pequeño o un monto fijo
+  (ej. $150–300 MXN por caso) en vez del mes de Destacado. Es
+  autoreportado (funciona sobre confianza, como Upwork o Thumbtack al
+  inicio), pero para un despacho nuevo que no quiere arriesgar $299 sin
+  saber si funciona, es la puerta de entrada perfecta — cero riesgo
+  para ellos, ingreso variable pero real para ti. Se puede ofrecer
+  desde ya sin código nuevo (factura manual), y programar más adelante
+  como un campo `casosGanados` que alimente el mismo panel de
+  estadísticas.
+- **Red de referidos entre cuentas Destacado** — cuando un despacho
+  Destacado recibe un caso fuera de su especialidad, puede referirlo a
+  otro despacho Destacado dentro de la misma red (ej. un abogado
+  Familiar recibe una consulta fiscal y la turna a un Destacado Fiscal
+  de su ciudad). Es un beneficio exclusivo de pagar — acceso a una red
+  de colegas verificados — que no le quita nada a las cuentas gratuitas
+  y le da otra razón concreta para destacarse más allá de aparecer
+  primero en el buscador.
+
+**Para monetizar directamente al cliente (no al abogado), éticas y sin
+tocar nada de lo gratuito — "aparecer primero" y buscar/contactar
+abogados se queda gratis para siempre, esto es valor extra opcional:**
+- **Kit de documentos legales descargables** — plantillas simples
+  (carta poder, contrato de arrendamiento básico, formato de queja ante
+  PROFECO, aviso de rescisión laboral) vendidas como descarga individual
+  (ej. $39 MXN) o en paquete. No toca el directorio para nada — es un
+  producto digital nuevo, aprovechando el contenido que ya generaste en
+  `guias.html`. Pago único por Stripe, mismo patrón beta que ya usas
+  (activación manual al inicio). Ayuda de verdad a quien no puede pagar
+  un abogado para algo simple, y dirige tráfico nuevo al sitio (la gente
+  busca "formato de carta poder México" en Google).
+- **"Idóneo Protegido" — garantía de primera respuesta** (ambiciosa,
+  no construida): el cliente paga una cuota pequeña y única (ej. $79
+  MXN) al contactar a un abogado por el sitio; si no responde en 24
+  horas, se le reembolsa automáticamente y se le ofrece contactar a
+  otro abogado de la misma especialidad sin costo extra. Es un producto
+  de confianza real (no solo "aparece primero"), pero requiere manejar
+  reembolsos y un flujo de disputa — es una pieza de backend más grande
+  que el resto de esta lista, por eso no se construyó esta vez.
 
 **Ambiciosas, no necesariamente de cobro (para cuando quieras seguir
 "pensando en grande"):**
