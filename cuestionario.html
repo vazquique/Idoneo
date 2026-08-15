@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="theme-color" content="#182644">
-<title>¿Qué abogado necesito? — Cuestionario de match — Idóneo</title>
-<meta name="description" content="Responde 4 preguntas rápidas y te recomendamos los abogados o despachos que mejor se ajustan a tu situación, urgencia, presupuesto y ciudad — no solo un filtro, un match real.">
+<title>¿Qué abogado necesito? — Asistente de Idóneo</title>
+<meta name="description" content="Cuéntanos qué te pasó con tus propias palabras y el asistente de Idóneo identifica la especialidad, la urgencia y el presupuesto para recomendarte a quién conviene contactar primero.">
 <link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/cuestionario.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,12 +62,8 @@
   main{padding:40px 0 64px;}
 
   .quiz-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:36px; margin-bottom:28px;}
-  .quiz-progress{display:flex; gap:6px; margin-bottom:28px;}
-  .quiz-progress-dot{flex:1; height:4px; border-radius:2px; background:#e4dbc4;}
-  .quiz-progress-dot.done{background:var(--brass);}
-  .quiz-progress-dot.active{background:var(--brass-light);}
-  .quiz-step-label{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--brass); margin-bottom:8px;}
-  .quiz-question{font-family:'Newsreader', serif; font-size:1.4rem; font-weight:600; margin-bottom:22px; max-width:26ch;}
+  .quiz-step-label{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--brass); margin-bottom:8px; display:block;}
+  .quiz-question{font-family:'Newsreader', serif; font-size:1.4rem; font-weight:600; margin-bottom:22px; max-width:30ch;}
   .quiz-options{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .quiz-options.single-col{grid-template-columns:1fr;}
   .quiz-option{display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; background:#fbf8f0; border:1px solid #c9bd9c; border-radius:5px; padding:14px 16px; cursor:pointer; font-family:inherit; color:var(--ink); transition:border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;}
@@ -76,15 +72,29 @@
   .quiz-option strong{font-size:0.92rem; font-weight:600; line-height:1.3;}
   .quiz-option span{font-size:0.78rem; color:#8a8069;}
   .quiz-select{width:100%; padding:12px 14px; border:1px solid #c9bd9c; border-radius:4px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.94rem; color:var(--ink); margin-bottom:14px;}
-  .quiz-nav{display:flex; justify-content:space-between; align-items:center; margin-top:26px;}
-  .quiz-back{background:none; border:none; color:#8a8069; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; padding:8px 4px;}
-  .quiz-back:hover{color:var(--ink);}
-  .quiz-back:disabled{visibility:hidden;}
-  .quiz-skip{background:none; border:none; color:var(--brass); font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-decoration:underline; cursor:pointer;}
+  .quiz-skip{background:none; border:none; color:var(--brass); font-family:'IBM Plex Mono', monospace; font-size:0.78rem; text-decoration:underline; cursor:pointer; padding:8px 0;}
   @media (max-width:560px){
     .quiz-options{grid-template-columns:1fr;}
     .quiz-card{padding:24px;}
   }
+
+  /* ---------- Asistente (entrada de texto libre) ---------- */
+  .asistente-textarea{width:100%; padding:14px 16px; border:1px solid #c9bd9c; border-radius:5px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.95rem; color:var(--ink); resize:vertical; min-height:104px;}
+  .asistente-textarea:focus{outline:2px solid var(--brass); outline-offset:1px;}
+  .asistente-actions{display:flex; justify-content:space-between; align-items:center; margin-top:14px; flex-wrap:wrap; gap:10px;}
+  .asistente-submit-btn{background:var(--ink); color:var(--parchment); border:none; border-radius:4px; padding:12px 22px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; transition:background 0.15s ease, transform 0.15s ease;}
+  .asistente-submit-btn:hover{background:var(--ink-2); transform:translateY(-1px);}
+  .asistente-disclaimer{margin-top:16px; font-size:0.76rem; color:#8a8069; line-height:1.5; padding-top:14px; border-top:1px solid #e4dbc4;}
+  #manualPickWrap{margin-top:18px; padding-top:18px; border-top:1px solid #e4dbc4;}
+
+  /* ---------- Resumen / ajuste ---------- */
+  .resumen-card{background:var(--parchment); color:var(--ink); border-radius:6px; padding:28px 30px; margin-bottom:20px;}
+  .resumen-chips{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 16px;}
+  .resumen-chip{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; background:rgba(185,138,46,0.14); border:1px solid var(--brass-light); color:var(--ink); padding:6px 13px; border-radius:20px; font-weight:600;}
+  .resumen-chip.is-empty{background:none; border-style:dashed; border-color:#c9bd9c; color:#8a8069; font-weight:400;}
+  .ajustar-wrap{margin-top:16px; padding-top:18px; border-top:1px solid #e4dbc4;}
+  .ajustar-block{margin-bottom:18px;}
+  .ajustar-label{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a8069; margin-bottom:8px;}
 
   /* ---------- Resultados ---------- */
   .results-head{margin-bottom:22px;}
@@ -207,17 +217,25 @@
 
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">Exclusivo de Idóneo</span>
+    <span class="eyebrow">Asistente de Idóneo</span>
     <h1>¿Qué abogado necesito?</h1>
-    <p class="hero-sub">Muchas personas no llegan a buscar ayuda simplemente porque no saben qué tipo de especialista buscar. Responde 4 preguntas rápidas — no es un filtro, es un match: consideramos tu situación, tu urgencia, tu presupuesto y tu ciudad para recomendarte a quién de verdad conviene contactar primero.</p>
+    <p class="hero-sub">Muchas personas no buscan ayuda simplemente porque no saben qué tipo de especialista necesitan. Cuéntanos qué te pasó, con tus propias palabras, y el asistente identifica la especialidad, la urgencia y el presupuesto para recomendarte a quién de verdad conviene contactar primero.</p>
   </div>
 </section>
 
 <main class="wrap">
-  <div class="quiz-card" id="quizCard">
-    <div class="quiz-progress" id="quizProgress"></div>
-    <div id="quizBody"></div>
+  <div class="quiz-card" id="asistenteCard">
+    <span class="quiz-step-label">Cuéntame qué pasó</span>
+    <div class="quiz-question">¿Qué te trae por aquí?</div>
+    <textarea class="asistente-textarea" id="asistenteInput" rows="4" placeholder="Ej. Me despidieron sin liquidación hace dos semanas y necesito ayuda urgente en Monterrey..."></textarea>
+    <div class="asistente-actions">
+      <button type="button" class="quiz-skip" id="elegirManualBtn">Prefiero elegir de una lista →</button>
+      <button type="button" class="asistente-submit-btn" id="asistenteSubmitBtn">Preguntar al asistente →</button>
+    </div>
+    <p class="asistente-disclaimer">Este asistente analiza lo que escribes con palabras clave para sugerirte la especialidad correcta — no es un chatbot con inteligencia artificial real, así que si el resultado no encaja bien, lo puedes ajustar abajo o <a href="buscar.html" style="color:var(--brass); text-decoration:underline;">buscar manualmente</a>.</p>
+    <div id="manualPickWrap" style="display:none;"></div>
   </div>
+  <div id="resumenSlot"></div>
   <div id="resultsSlot"></div>
 </main>
 
@@ -286,12 +304,13 @@
     const full = Math.round(rating);
     return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
   }
+  function normalize(str){
+    return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
   const SPARKLE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>';
 
-  // ---------- Preguntas ----------
-  const STEPS = ['situacion', 'urgencia', 'presupuesto', 'ubicacion'];
-  const STEP_LABELS = {situacion: 'Pregunta 1 de 4', urgencia: 'Pregunta 2 de 4', presupuesto: 'Pregunta 3 de 4', ubicacion: 'Pregunta 4 de 4'};
-
+  // ---------- Opciones (usadas tanto para elegir de lista como para
+  // ajustar/corregir lo que el asistente entendió) ----------
   const SITUACIONES = [
     {id: 'Familiar', label: 'Divorcio, pensión, custodia o herencia', sub: 'Derecho familiar'},
     {id: 'Penal', label: 'Me detuvieron o tengo un caso penal', sub: 'Derecho penal'},
@@ -314,20 +333,70 @@
     {id: 'normal', label: 'Un precio normal de mercado', sub: 'No busco lo más barato ni lo más caro'},
     {id: 'premium', label: 'Priorizo experiencia sobre precio', sub: 'El costo no es mi principal filtro'},
   ];
+  const ESPECIALIDAD_LABELS = Object.fromEntries(SITUACIONES.map(s => [s.id, s.label]));
+  const URGENCIA_LABELS = Object.fromEntries(URGENCIAS.map(u => [u.id, u.label]));
+  const PRESUPUESTO_LABELS = Object.fromEntries(PRESUPUESTOS.map(p => [p.id, p.label]));
 
-  let currentStepIdx = 0;
-  const answers = {situacion: null, urgencia: null, presupuesto: null, estado: ''};
+  // ---------- Clasificador simple por palabras clave ----------
+  // Esto NO es un modelo de lenguaje ni llama a ninguna API externa —
+  // es una lista de palabras/frases típicas por especialidad, contadas
+  // sobre el texto normalizado (sin acentos, minúsculas). Es "IA sencilla"
+  // en el sentido honesto: automatiza una decisión que antes requería
+  // clics, sin pretender ser un chatbot real. Documentado en
+  // INSTRUCCIONES-FIREBASE.md cómo conectar un LLM de verdad si se quiere
+  // ir más lejos.
+  const ESPECIALIDAD_KEYWORDS = {
+    'Familiar': ['divorcio','divorciar','divorciarme','pension alimenticia','pension','custodia','patria potestad','matrimonio','casarme','herencia','testamento','adopcion','concubinato','violencia familiar','guarda y custodia','ex esposa','ex esposo','ex pareja'],
+    'Penal': ['detuvieron','detenido','arrestaron','arresto','denuncia','denunciar','delito','robaron','robo','carcel','preso','fianza','ministerio publico','me acusan','acusado','proceso penal','delito grave','audiencia','fiscalia'],
+    'Laboral': ['despidieron','despido','indemnizacion','liquidacion','finiquito','patron','mi jefe','imss','renuncie','acoso laboral','sindicato','horas extra','no me pagaron','salario','trabajo me'],
+    'Mercantil': ['proveedor','no me pago','no pago mi cliente','socio no','cobranza','pagare','factura','incumplio el contrato','deuda','cliente no pago','contrato mercantil'],
+    'Corporativo': ['constituir empresa','formar empresa','abrir empresa','startup','acta constitutiva','capital social','registrar mi empresa','sociedad anonima','socios de mi empresa'],
+    'Migratorio': ['visa','residencia','migracion','deportacion','naturalizacion','permiso de trabajo','estatus migratorio','tramite migratorio','extranjero','ciudadania'],
+    'Bienes raíces': ['renta','arrendamiento','inquilino','casero','propietario no','terreno','escritura','desalojo','invasion de terreno','no me quiere desalojar','vecino'],
+    'Fiscal': ['sat me','impuestos','declaracion anual','auditoria','multa fiscal','requerimiento del sat','devolucion de impuestos','no declare','contabilidad fiscal'],
+    'Amparo': ['notificaron','demanda','juicio','acto de autoridad','amparo','embargo','danos y perjuicios','me demandaron','responsabilidad civil'],
+  };
+  const URGENCIA_KEYWORDS = ['urgente','ahorita','hoy mismo','ahora mismo','cuanto antes','se vence','vence manana','emergencia','lo antes posible','esta semana','me detuvieron'];
+  const PRESUPUESTO_ECONOMICO_KEYWORDS = ['no tengo dinero','no puedo pagar','barato','economico','sin dinero','gratis','poco presupuesto','no tengo mucho dinero'];
+  const PRESUPUESTO_PREMIUM_KEYWORDS = ['lo que sea necesario','presupuesto amplio','el mejor abogado','no importa el costo','sin importar el precio','tengo buen presupuesto'];
 
-  const quizBody = document.getElementById('quizBody');
-  const quizProgress = document.getElementById('quizProgress');
-  const resultsSlot = document.getElementById('resultsSlot');
-
-  function renderProgress(){
-    quizProgress.innerHTML = STEPS.map((s, i) => {
-      const cls = i < currentStepIdx ? 'done' : (i === currentStepIdx ? 'active' : '');
-      return `<span class="quiz-progress-dot ${cls}"></span>`;
-    }).join('');
+  function contarCoincidencias(textoNorm, keywords){
+    let count = 0;
+    keywords.forEach(k => { if(textoNorm.includes(normalize(k))) count++; });
+    return count;
   }
+  function detectarEspecialidad(textoNorm){
+    let best = null, bestScore = 0;
+    Object.keys(ESPECIALIDAD_KEYWORDS).forEach(esp => {
+      const score = contarCoincidencias(textoNorm, ESPECIALIDAD_KEYWORDS[esp]);
+      if(score > bestScore){ bestScore = score; best = esp; }
+    });
+    return {especialidad: best || 'Otra', confianza: bestScore};
+  }
+  function detectarUrgencia(textoNorm){
+    return contarCoincidencias(textoNorm, URGENCIA_KEYWORDS) > 0 ? 'urgente' : null;
+  }
+  function detectarPresupuesto(textoNorm){
+    if(contarCoincidencias(textoNorm, PRESUPUESTO_ECONOMICO_KEYWORDS) > 0) return 'economico';
+    if(contarCoincidencias(textoNorm, PRESUPUESTO_PREMIUM_KEYWORDS) > 0) return 'premium';
+    return null;
+  }
+  function detectarEstado(textoNorm){
+    const estados = (window.IdoneoListings && window.IdoneoListings.MEXICO_ESTADOS) || {};
+    for(const estado of Object.keys(estados)){
+      if(textoNorm.includes(normalize(estado))) return estado;
+      const ciudades = estados[estado] || [];
+      for(const ciudad of ciudades){
+        if(ciudad !== estado && textoNorm.includes(normalize(ciudad))) return estado;
+      }
+    }
+    return '';
+  }
+
+  // ---------- Estado y flujo ----------
+  const answers = {situacion: null, urgencia: null, presupuesto: null, estado: ''};
+  const resumenSlot = document.getElementById('resumenSlot');
+  const resultsSlot = document.getElementById('resultsSlot');
 
   function optionButtonsHTML(options, answerKey, singleCol){
     return `<div class="quiz-options${singleCol ? ' single-col' : ''}" data-key="${answerKey}">
@@ -340,81 +409,118 @@
     </div>`;
   }
 
-  function renderStep(){
-    renderProgress();
-    const step = STEPS[currentStepIdx];
-    let bodyHTML = `<span class="quiz-step-label">${STEP_LABELS[step]}</span>`;
+  document.getElementById('elegirManualBtn').addEventListener('click', () => {
+    const wrap = document.getElementById('manualPickWrap');
+    const abierto = wrap.style.display !== 'none';
+    if(abierto){ wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    wrap.innerHTML = optionButtonsHTML(SITUACIONES, 'situacion');
+    wrap.querySelector('.quiz-options').addEventListener('click', (e) => {
+      const btn = e.target.closest('.quiz-option');
+      if(!btn) return;
+      procesarConsulta({especialidadManual: btn.dataset.value});
+    });
+  });
 
-    if(step === 'situacion'){
-      bodyHTML += `<div class="quiz-question">¿Qué te trae por aquí?</div>`;
-      bodyHTML += optionButtonsHTML(SITUACIONES, 'situacion');
-    } else if(step === 'urgencia'){
-      bodyHTML += `<div class="quiz-question">¿Qué tan urgente es tu situación?</div>`;
-      bodyHTML += optionButtonsHTML(URGENCIAS, 'urgencia', true);
-    } else if(step === 'presupuesto'){
-      bodyHTML += `<div class="quiz-question">¿Qué buscas en cuanto a costo?</div>`;
-      bodyHTML += optionButtonsHTML(PRESUPUESTOS, 'presupuesto', true);
-    } else if(step === 'ubicacion'){
-      const estados = (window.IdoneoListings && window.IdoneoListings.MEXICO_ESTADOS) ? Object.keys(window.IdoneoListings.MEXICO_ESTADOS) : [];
-      bodyHTML += `<div class="quiz-question">¿En qué estado buscas?</div>`;
-      bodyHTML += `<select class="quiz-select" id="estadoSelect">
-        <option value="">Cualquier estado</option>
-        ${estados.map(e => `<option value="${escapeHtml(e)}" ${answers.estado === e ? 'selected' : ''}>${escapeHtml(e)}</option>`).join('')}
-      </select>`;
+  document.getElementById('asistenteSubmitBtn').addEventListener('click', () => {
+    const input = document.getElementById('asistenteInput');
+    const texto = input.value.trim();
+    if(!texto){
+      input.focus();
+      return;
     }
+    procesarConsulta({texto});
+  });
 
-    bodyHTML += `<div class="quiz-nav">
-      <button type="button" class="quiz-back" id="quizBackBtn" ${currentStepIdx === 0 ? 'disabled' : ''}>← Atrás</button>
-      ${step === 'ubicacion' ? '<button type="button" class="calc-btn quiz-option" style="background:var(--ink); color:var(--parchment); padding:12px 22px; text-align:center;" id="quizFinishBtn">Ver mis recomendaciones →</button>' : '<button type="button" class="quiz-skip" id="quizSkipBtn">Omitir esta pregunta →</button>'}
-    </div>`;
+  function procesarConsulta({texto, especialidadManual}){
+    const textoNorm = normalize(texto || '');
+    let confianza = 0;
+    if(especialidadManual){
+      answers.situacion = especialidadManual;
+      confianza = 99;
+    } else {
+      const det = detectarEspecialidad(textoNorm);
+      answers.situacion = det.especialidad;
+      confianza = det.confianza;
+    }
+    answers.urgencia = detectarUrgencia(textoNorm) || answers.urgencia;
+    answers.presupuesto = detectarPresupuesto(textoNorm) || answers.presupuesto;
+    const estadoDet = detectarEstado(textoNorm);
+    if(estadoDet) answers.estado = estadoDet;
 
-    quizBody.innerHTML = bodyHTML;
-    wireStep();
+    document.getElementById('asistenteCard').style.display = 'none';
+    renderResumen(confianza);
+    showResults();
+    document.getElementById('resumenSlot').scrollIntoView({behavior: 'smooth', block: 'start'});
   }
 
-  function wireStep(){
-    const step = STEPS[currentStepIdx];
-    const optionsWrap = quizBody.querySelector('.quiz-options');
-    if(optionsWrap){
-      optionsWrap.addEventListener('click', (e) => {
+  function renderResumen(confianza){
+    const bajaConfianza = confianza === 0 && answers.situacion === 'Otra';
+    resumenSlot.innerHTML = `
+      <div class="resumen-card">
+        <span class="quiz-step-label">${bajaConfianza ? 'No estoy seguro de tu especialidad' : 'Esto entendí de tu situación'}</span>
+        <div class="resumen-chips">
+          <span class="resumen-chip">${escapeHtml(ESPECIALIDAD_LABELS[answers.situacion] || answers.situacion)}</span>
+          ${answers.urgencia ? `<span class="resumen-chip">${escapeHtml(URGENCIA_LABELS[answers.urgencia])}</span>` : ''}
+          ${answers.presupuesto ? `<span class="resumen-chip">${escapeHtml(PRESUPUESTO_LABELS[answers.presupuesto])}</span>` : ''}
+          ${answers.estado ? `<span class="resumen-chip">${escapeHtml(answers.estado)}</span>` : `<span class="resumen-chip is-empty">Cualquier estado</span>`}
+        </div>
+        <button type="button" class="quiz-skip" id="ajustarBtn">Ajustar mi búsqueda →</button>
+        <div id="ajustarWrap" class="ajustar-wrap" style="display:none;"></div>
+      </div>
+    `;
+    document.getElementById('ajustarBtn').addEventListener('click', () => {
+      const wrap = document.getElementById('ajustarWrap');
+      const abierto = wrap.style.display !== 'none';
+      wrap.style.display = abierto ? 'none' : 'block';
+      if(!abierto) renderAjustar(wrap);
+    });
+  }
+
+  function renderAjustar(wrap){
+    const estados = (window.IdoneoListings && window.IdoneoListings.MEXICO_ESTADOS) ? Object.keys(window.IdoneoListings.MEXICO_ESTADOS) : [];
+    wrap.innerHTML = `
+      <div class="ajustar-block">
+        <div class="ajustar-label">Tipo de caso</div>
+        ${optionButtonsHTML(SITUACIONES, 'situacion')}
+      </div>
+      <div class="ajustar-block">
+        <div class="ajustar-label">Urgencia</div>
+        ${optionButtonsHTML(URGENCIAS, 'urgencia', true)}
+      </div>
+      <div class="ajustar-block">
+        <div class="ajustar-label">Presupuesto</div>
+        ${optionButtonsHTML(PRESUPUESTOS, 'presupuesto', true)}
+      </div>
+      <div class="ajustar-block">
+        <div class="ajustar-label">Estado</div>
+        <select class="quiz-select" id="ajustarEstado">
+          <option value="">Cualquier estado</option>
+          ${estados.map(e => `<option value="${escapeHtml(e)}" ${answers.estado === e ? 'selected' : ''}>${escapeHtml(e)}</option>`).join('')}
+        </select>
+      </div>
+      <button type="button" class="asistente-submit-btn" id="actualizarBtn">Actualizar resultados →</button>
+    `;
+    wrap.querySelectorAll('.quiz-options').forEach(optWrap => {
+      const key = optWrap.dataset.key;
+      optWrap.addEventListener('click', (e) => {
         const btn = e.target.closest('.quiz-option');
         if(!btn) return;
-        answers[step] = btn.dataset.value;
-        goNext();
+        answers[key] = btn.dataset.value;
+        optWrap.querySelectorAll('.quiz-option').forEach(b => b.classList.toggle('selected', b === btn));
       });
-    }
-    const backBtn = document.getElementById('quizBackBtn');
-    if(backBtn) backBtn.addEventListener('click', goBack);
-    const skipBtn = document.getElementById('quizSkipBtn');
-    if(skipBtn) skipBtn.addEventListener('click', () => { answers[step] = null; goNext(); });
-    const finishBtn = document.getElementById('quizFinishBtn');
-    if(finishBtn){
-      finishBtn.addEventListener('click', () => {
-        const sel = document.getElementById('estadoSelect');
-        answers.estado = sel ? sel.value : '';
-        showResults();
-      });
-    }
-  }
-
-  function goNext(){
-    if(currentStepIdx < STEPS.length - 1){
-      currentStepIdx++;
-      renderStep();
-      document.getElementById('quizCard').scrollIntoView({behavior: 'smooth', block: 'start'});
-    }
-  }
-  function goBack(){
-    if(currentStepIdx > 0){
-      currentStepIdx--;
-      renderStep();
-    }
+    });
+    document.getElementById('actualizarBtn').addEventListener('click', () => {
+      const sel = document.getElementById('ajustarEstado');
+      answers.estado = sel.value;
+      renderResumen(99);
+      showResults();
+    });
   }
 
   // ---------- Puntuación y resultados ----------
   function scoreListing(ab, stats){
     let score = 0;
-    // El match de especialidad es obligatorio -- se filtra antes de llegar aquí.
     if(window.IdoneoListings.isDestacadoActivo(ab)) score += 50; // el mayor peso: es la ventaja principal de Destacado
     if(answers.urgencia === 'urgente' && ab.disponible) score += 25;
     if(answers.presupuesto === 'economico' && typeof ab.consultaDesde === 'number' && ab.consultaDesde <= 500) score += 15;
@@ -463,7 +569,6 @@
   }
 
   async function showResults(){
-    quizBody.parentElement.style.display = 'none';
     resultsSlot.innerHTML = `<div class="results-head"><span class="quiz-step-label">Resultados</span><h2>Calculando tu match…</h2></div>`;
 
     const situacion = answers.situacion;
@@ -490,7 +595,7 @@
             <p>Todavía no hay abogados registrados que cubran exactamente esta combinación — pero puedes ver el directorio completo o probar otra especialidad.</p>
             <a class="match-btn primary" href="buscar.html">Ver todos los abogados</a>
           </div>
-          <div class="results-restart"><button type="button" id="restartBtn">Volver a empezar el cuestionario</button></div>
+          <div class="results-restart"><button type="button" id="restartBtn">Empezar de nuevo</button></div>
         `;
         wireResultsFooter();
         return;
@@ -504,7 +609,7 @@
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
 
-      const especialidadUrl = `buscar.html?especialidad=${encodeURIComponent(situacion === 'Otra' ? '' : situacion)}${answers.estado ? '' : ''}`;
+      const especialidadUrl = `buscar.html?especialidad=${encodeURIComponent(situacion === 'Otra' ? '' : situacion)}`;
 
       resultsSlot.innerHTML = `
         <div class="results-head">
@@ -515,7 +620,7 @@
         ${fallbackNote ? `<div class="results-fallback-note">${fallbackNote}</div>` : ''}
         ${ranked.map((r, i) => matchCardHTML(r.ab, r.stats, i + 1)).join('')}
         <div class="results-more"><a href="${especialidadUrl}">Ver todos los resultados de esta especialidad →</a></div>
-        <div class="results-restart"><button type="button" id="restartBtn">Volver a empezar el cuestionario</button></div>
+        <div class="results-restart"><button type="button" id="restartBtn">Empezar de nuevo</button></div>
       `;
       wireResultsFooter();
     } catch(err){
@@ -533,16 +638,15 @@
   function wireResultsFooter(){
     const btn = document.getElementById('restartBtn');
     if(btn) btn.addEventListener('click', () => {
-      currentStepIdx = 0;
       answers.situacion = null; answers.urgencia = null; answers.presupuesto = null; answers.estado = '';
+      document.getElementById('asistenteInput').value = '';
+      document.getElementById('manualPickWrap').style.display = 'none';
+      resumenSlot.innerHTML = '';
       resultsSlot.innerHTML = '';
-      quizBody.parentElement.style.display = '';
-      renderStep();
+      document.getElementById('asistenteCard').style.display = '';
       window.scrollTo({top: 0, behavior: 'smooth'});
     });
   }
-
-  renderStep();
 </script>
 
 </body>

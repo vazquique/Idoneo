@@ -78,6 +78,16 @@
   .guia-card p{font-size:0.88rem; color:rgba(241,234,216,0.68);}
   .guia-card-read{margin-top:auto; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--brass-light);}
 
+  .documentos-callout{display:flex; align-items:center; gap:22px; flex-wrap:wrap; background:var(--ink-2); border:1px solid var(--brass-light); border-radius:8px; padding:24px 28px; margin:0 0 48px; text-decoration:none; color:inherit; transition:transform 0.2s ease, box-shadow 0.2s ease;}
+  .documentos-callout:hover{transform:translateY(-2px); box-shadow:0 16px 32px rgba(0,0,0,0.3);}
+  .documentos-callout-icon{flex-shrink:0; width:44px; height:44px; border-radius:50%; background:rgba(217,171,82,0.14); display:flex; align-items:center; justify-content:center;}
+  .documentos-callout-icon svg{width:22px; height:22px; color:var(--brass-light);}
+  .documentos-callout-text{flex:1; min-width:220px;}
+  .documentos-callout-text strong{display:block; font-family:'Newsreader', serif; font-size:1.1rem; font-weight:600; margin-bottom:4px;}
+  .documentos-callout-text span{font-size:0.86rem; color:rgba(241,234,216,0.68);}
+  .documentos-callout-cta{flex-shrink:0; font-family:'IBM Plex Mono', monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--brass-light); white-space:nowrap;}
+  @media (max-width:520px){ .documentos-callout{padding:20px;} }
+
   footer{padding:56px 0 28px; border-top:1px solid var(--line);}
   .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
   .footer-brand .brand{justify-self:start; margin-bottom:12px;}
@@ -171,6 +181,17 @@
 
 <section class="guias-section">
   <div class="wrap">
+
+    <a class="documentos-callout" href="documentos.html">
+      <div class="documentos-callout-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+      </div>
+      <div class="documentos-callout-text">
+        <strong>¿Ya sabes qué necesitas y solo te falta el documento?</strong>
+        <span>Carta poder, contrato de arrendamiento, queja PROFECO y más — plantillas listas para adaptar, desde $49 MXN.</span>
+      </div>
+      <span class="documentos-callout-cta">Ver el Kit de documentos →</span>
+    </a>
 
     <div class="guias-group">
       <div class="guias-group-head">

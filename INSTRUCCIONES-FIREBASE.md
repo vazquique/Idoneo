@@ -872,13 +872,93 @@ Functions es la opción más natural, ya que ya usas Firebase). Es un
 cambio de arquitectura razonable cuando tengas varios despachos pagando
 y el proceso manual empiece a pesar, no algo urgente para el lanzamiento.
 
+## Asistente "¿Qué abogado necesito?" (`cuestionario.html`)
+
+Antes era un cuestionario de 4 preguntas de opción múltiple, clic por
+clic. Ahora es una sola caja de texto: el visitante escribe qué le pasó
+con sus propias palabras ("Me despidieron sin liquidación y necesito
+ayuda urgente en Monterrey"), y un clasificador local detecta la
+especialidad, la urgencia, el presupuesto y el estado, y muestra los
+mejores matches de inmediato — sin la fricción de ir preguntando uno
+por uno. Quien prefiere no escribir puede elegir de una lista con un
+clic ("Prefiero elegir de una lista"), y quien quiere corregir lo que
+el asistente entendió puede hacerlo con "Ajustar mi búsqueda" (misma
+lógica de antes, ahora usada para corregir en vez de para preguntar).
+
+**Cómo funciona de verdad — esto es importante para que no prometas de
+más**: es un clasificador por palabras clave (`ESPECIALIDAD_KEYWORDS`,
+`URGENCIA_KEYWORDS`, etc. en `cuestionario.html`), no un modelo de
+lenguaje ni un chatbot con IA real. Cuenta cuántas palabras/frases
+típicas de cada especialidad aparecen en el texto (sin acentos, en
+minúsculas) y elige la que más coincidencias tuvo. Funciona bien para
+casos claros ("me despidieron", "me detuvieron", "quiero divorciarme")
+y es honesto en la interfaz sobre esa limitación (el aviso debajo del
+botón lo dice explícitamente) — si el texto es ambiguo, cae en modo
+"no estoy seguro" y deja elegir manualmente. No llama a ninguna API
+externa, así que no tiene costo variable ni depende de que un tercero
+esté disponible.
+
+Para agregar más palabras clave a una especialidad (si notas que la
+gente describe su caso con términos que el clasificador no reconoce
+todavía), edita los arreglos `ESPECIALIDAD_KEYWORDS` /
+`URGENCIA_KEYWORDS` / `PRESUPUESTO_ECONOMICO_KEYWORDS` /
+`PRESUPUESTO_PREMIUM_KEYWORDS` directamente en `cuestionario.html` — son
+listas planas de strings, no requieren ningún cambio de arquitectura.
+
+### Cómo conectar un modelo de lenguaje real (si quieres ir más lejos)
+
+Si en algún momento quieres que el asistente entienda casos más
+ambiguos o mantenga una conversación de verdad (no solo clasificar un
+mensaje), la pieza que falta es un **backend real** — este sitio no
+tiene uno a propósito (es HTML + JavaScript + Firebase, sin servidor
+propio), y llamar a la API de un modelo de lenguaje directamente desde
+el navegador expondría tu clave de API a cualquiera que abra las
+herramientas de desarrollador de Chrome — eso es lo que te robarían y
+usarían para cobrarte a ti, así que no es algo que debas hacer nunca,
+ni yo ni nadie debería configurarlo así. El camino correcto:
+
+1. **Activa el plan Blaze de Firebase** (pago por uso, con una capa
+   gratuita generosa) — Firebase Functions no funciona en el plan
+   gratuito Spark. Esto requiere que ligues una tarjeta a tu proyecto de
+   Firebase; solo tú puedes hacerlo, es tu cuenta y tu método de pago.
+2. **Crea una cuenta y una API key** con el proveedor del modelo que
+   quieras usar — por ejemplo, [console.anthropic.com](https://console.anthropic.com)
+   para la API de Claude. De nuevo, esto requiere tus propios datos de
+   pago; nadie más lo puede hacer por ti.
+3. **Escribe una Firebase Function** (Node.js) que reciba el texto del
+   usuario, la mande a la API del modelo con tu API key (guardada como
+   secreto de Functions, `firebase functions:secrets:set`, nunca en el
+   código ni en el HTML), y regrese la especialidad/urgencia/presupuesto
+   detectados — o una respuesta conversacional completa, si quieres que
+   sea un chat de verdad en vez de una sola clasificación.
+4. **Cambia `procesarConsulta()` en `cuestionario.html`** para que, en
+   vez de (o además de) correr `detectarEspecialidad()` localmente,
+   llame a esa Function (`fetch('https://TU-REGION-TU-PROYECTO.cloudfunctions.net/asistente', {...})`)
+   y use su respuesta. El resto de la página —el resumen editable, el
+   cálculo de matches, las tarjetas de resultado— no necesita cambiar
+   nada, porque ya está desacoplado de cómo se llenan `answers.situacion`
+   / `answers.urgencia` / `answers.presupuesto` / `answers.estado`.
+5. Considera un límite de uso (ej. por IP o por sesión) dentro de la
+   Function, para que nadie pueda hacerte gastar tu presupuesto de API
+   mandando miles de peticiones automatizadas.
+
+Esto es deliberadamente el único paso de todo este documento que no se
+construyó por ti de inicio a fin — requiere que abras cuentas y ligues
+métodos de pago tuyos en dos servicios externos (Firebase Blaze y el
+proveedor del modelo), y no es algo que deba hacerse en automático sin
+que tú decidas activarlo. El clasificador local de hoy ya resuelve el
+caso principal (identificar especialidad, urgencia y presupuesto a
+partir de una descripción libre) sin nada de esto — el LLM es para
+cuando quieras ir más allá de clasificar, hacia una conversación real.
+
 ## Ideas para seguir monetizando y mejorando (sin implementar todavía)
 
 Ya está construido: la página de ventas `destacado.html` (con toggle
 mensual/anual), el espacio publicitario en `plazos.html` (un despacho
 Destacado recomendado según la especialidad del plazo que acaba de
 calcular el visitante — el momento de mayor intención de todo el
-sitio), el Cuestionario de Match (`cuestionario.html`), la insignia
+sitio), el Asistente "¿Qué abogado necesito?" (`cuestionario.html`, ver
+sección propia arriba), la insignia
 "Urgente 24/7" (gratis, en `buscar.html` y `perfil.html`), las
 Preguntas frecuentes personalizadas por perfil (exclusivas de
 Destacado, se editan en "Mi cuenta" y se ven en el perfil público), y
