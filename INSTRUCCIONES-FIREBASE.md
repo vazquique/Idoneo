@@ -182,6 +182,7 @@ service cloud.firestore {
                       && request.resource.data.verificado == resource.data.verificado
                       && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
                       && request.resource.data.get('destacado', false) == resource.data.get('destacado', false)
+                      && request.resource.data.get('destacadoHasta', null) == resource.data.get('destacadoHasta', null)
                       && request.resource.data.rating == resource.data.rating
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.get('views', 0) == resource.data.get('views', 0)
@@ -235,6 +236,33 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Espacio publicitario vendible (perfil.html, tarjeta ".ad-slot" en
+    // perfiles que no son Destacado) — ver sección "Espacio publicitario
+    // vendible" abajo. Solo el admin crea/edita avisos (se hace a mano
+    // desde la consola de Firestore, no hay panel todavía), cualquiera
+    // los puede leer para que se muestren.
+    match /avisos/{avisoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Auto-reporte de "caso ganado" para el esquema de comisión por
+    // éxito — ver sección "Comisión por caso ganado" abajo. Es un
+    // registro inmutable: el dueño del perfil lo crea una vez (no lo
+    // puede editar ni borrar después, para que sirva como bitácora
+    // confiable de lo que hay que facturar), y solo él o el admin lo
+    // pueden leer.
+    match /casos_ganados/{casoId} {
+      allow read: if isAdmin() || (request.auth != null && ownerOf(resource.data.abogadoId) == request.auth.uid);
+      allow create: if request.auth != null
+                    && ownerOf(request.resource.data.abogadoId) == request.auth.uid
+                    && request.resource.data.reportedByUid == request.auth.uid
+                    && request.resource.data.abogadoId is string
+                    && request.resource.data.nota is string
+                    && request.resource.data.nota.size() <= 300;
+      allow update, delete: if false;
+    }
+
     match /resenas/{reviewId} {
       allow read: if true;
       allow create: if request.auth != null
@@ -279,6 +307,8 @@ service cloud.firestore {
   }
 }
 ```
+
+(Este bloque es exactamente el contenido de `firestore.rules` en la carpeta del proyecto — si en algún momento no coinciden, confía en el archivo, no en esta copia.)
 
 3. Clic en **Publicar**.
 
@@ -352,11 +382,27 @@ Qué hacen estas reglas:
   tope según el valor de `destacado` que ya está guardado, no el que el
   dueño intente mandar), y ve sus clics a WhatsApp en "Mi cuenta". Ver la
   sección "Activar cobros" más abajo para cómo se activa en la práctica.
+- **"Impulso puntual"** (`destacadoHasta` en `abogados_registrados`):
+  igual que `destacado`, exclusivo de admin. Cuando lo pones junto con
+  `destacado: true`, el perfil cuenta como Destacado solo hasta esa
+  fecha/hora — pasada, deja de aparecer como tal en todo el sitio
+  automáticamente (lo calcula `isDestacadoActivo()` en `listings.js`),
+  sin que tengas que acordarte de desmarcar la casilla. Ver "Impulso
+  puntual" más abajo.
+- **`avisos`** (espacio publicitario vendible): colección aparte,
+  pública para leer, exclusiva de admin para escribir — ver "Espacio
+  publicitario vendible" más abajo.
+- **`casos_ganados`** (comisión por caso ganado): colección aparte,
+  cada documento lo crea una sola vez el dueño del perfil al que
+  pertenece y después nadie lo puede editar ni borrar (ni el dueño ni
+  el admin) — sirve como bitácora confiable de qué facturar. Ver
+  "Comisión por caso ganado" más abajo.
 
-> Si ya habías publicado unas reglas antes de que existieran `admins` o
-> `resenas`, vuelve a pegar este bloque completo y publica de nuevo.
-> **Importante:** haz esto ANTES de anunciar el sitio públicamente — con
-> las reglas viejas, cualquier cuenta nueva podía editar el directorio.
+> Si ya habías publicado unas reglas antes de que existieran `admins`,
+> `resenas`, `avisos` o `casos_ganados`, vuelve a pegar este bloque
+> completo y publica de nuevo. **Importante:** haz esto ANTES de anunciar
+> el sitio públicamente — con las reglas viejas, cualquier cuenta nueva
+> podía editar el directorio.
 
 ## 7. Copiar la configuración a tu sitio
 
@@ -626,6 +672,39 @@ independientes, una por archivo):
    **cancela** su suscripción en Stripe, para entonces desmarcar la
    casilla y que deje de aparecer como Destacado.
 
+### Impulso puntual — Destacado de 72 horas por $99 MXN
+
+Alternativa a la suscripción mensual para quien no quiere comprometerse:
+todas las ventajas de Destacado durante 3 días, pago único. Vive en
+`destacado.html` (tarjeta debajo del precio principal, con su propio
+botón "Activar mi Impulso de 72h").
+
+1. **Crear el link de pago** (opcional pero recomendado): en Stripe,
+   Payment Links → producto nuevo "Impulso puntual — Idóneo Destacado",
+   $99 MXN, **pago único** (no recurrente). Mientras no lo crees, el
+   botón manda un correo pre-armado — busca `IMPULSO_MAILTO` en
+   `destacado.html` y `CONTACTO_ANUAL_EMAIL` (mismo correo que usa el
+   plan anual) y cámbialo por el tuyo.
+2. **Cuando alguien pague/pida un Impulso**: panel de admin → perfil
+   aprobado → marca **"✨ Destacado"** igual que con la suscripción
+   normal, **y además** ponle una fecha/hora límite al campo
+   `destacadoHasta` (formato ISO, ej. `2026-08-17T18:00:00` — 72 horas
+   después de activarlo). Si el panel de admin no tiene un campo para
+   esto todavía, agrégalo ahí (es un campo más de texto en el mismo
+   documento de Firestore) o edítalo directamente desde la consola de
+   Firestore → colección `abogados_registrados` → el documento del
+   perfil → agrega el campo `destacadoHasta` (tipo string).
+3. **No tienes que acordarte de quitarlo**: pasada esa fecha,
+   `isDestacadoActivo()` en `listings.js` deja de contarlo como
+   Destacado en todo el sitio automáticamente (buscador, insignias,
+   panel de estadísticas, especialidades extra, todo) — nunca desmarques
+   la casilla "Destacado" a mano para un Impulso, solo pon la fecha y
+   olvídalo.
+4. Si el despacho decide pasarse a la suscripción mensual antes de que
+   termine su Impulso, simplemente borra el campo `destacadoHasta` (o
+   ponlo vacío) para que vuelva a ser Destacado indefinido, como
+   cualquier suscripción normal.
+
 ### Competencia entre despachos (sin cupo)
 
 En vez de limitar cuántas cuentas pueden ser Destacado, el sitio genera
@@ -647,6 +726,141 @@ cuentas gratuitas ni topar cuántas pueden pagar:
   Así que un despacho Destacado que se esfuerza le puede ganar el primer
   lugar a otro Destacado que solo pagó y dejó el perfil a medias — la
   competencia sigue siendo real todos los días, no solo el día del pago.
+
+## Otros esquemas de cobro (ya construidos)
+
+Todo lo de esta sección funciona hoy — cada uno es independiente de los
+demás y de la suscripción Destacado, así que puedes activar solo los que
+te interesen. Ninguno le quita nada a las cuentas gratuitas.
+
+### Espacio publicitario vendible
+
+`perfil.html` reserva un espacio con la etiqueta "Publicidad" en
+perfiles que **no** son Destacado (para no competir con quien sí pagó).
+Antes solo decía "Espacio publicitario disponible"; ahora carga avisos
+reales desde Firestore (`getAvisoActivo()` en `listings.js`, colección
+`avisos`) filtrados por especialidad, o generales si no hay uno
+específico.
+
+**A quién vendérselo**: negocios complementarios que quieren estar
+frente a alguien que ya está viendo un abogado — peritos, traductores
+certificados, contadores, notarías, agencias de trámites migratorios.
+No a otros abogados (competirían directamente con el perfil que están
+viendo).
+
+**Cómo se administra** (no hay panel todavía, se hace a mano):
+1. Ponte de acuerdo con el negocio sobre precio y duración (sugerido:
+   $499–999 MXN/mes según qué tan específica sea la especialidad).
+2. Firestore → colección `avisos` → nuevo documento con estos campos:
+   - `texto` (string): el mensaje del aviso, ej. "Contadora certificada
+     — declaraciones anuales desde $499".
+   - `linkUrl` (string, opcional): a dónde va si le hacen clic. Si lo
+     dejas vacío, se muestra el texto sin liga.
+   - `especialidad` (string, opcional): déjalo vacío para que aparezca
+     en cualquier especialidad, o pon el nombre exacto de una (ej.
+     "Fiscal") para que solo aparezca ahí.
+   - `activo` (boolean): `true` para que se muestre. Cuando termine el
+     periodo pagado, ponlo en `false` (no lo borres — así conservas el
+     historial de qué has vendido).
+3. Listo — empieza a aparecer en los perfiles no-Destacado que
+   correspondan, elegido al azar si hay varios avisos activos para la
+   misma especialidad.
+
+### Verificación de persona moral — $299 MXN, pago único
+
+Ya existía el campo `verificadoEmpresa` y su insignia ("Persona moral
+verificada"); lo que faltaba era el flujo de cobro. Ahora "Mi cuenta"
+le muestra a cualquier despacho aprobado sin verificar una tarjeta
+"Verifica tu persona moral" con un botón que manda un correo
+pre-armado (constante `EMPRESA_VERIF_MAILTO` en `mi-cuenta.html`, mismo
+correo que ya configuraste para el plan anual y el Impulso puntual).
+
+1. El despacho te escribe pidiendo la verificación (con acta
+   constitutiva y RFC adjuntos, según el mensaje pre-armado) y paga —
+   mándale un Payment Link de Stripe para el monto que decidas cobrar
+   (no es recurrente, así que un link simple sin suscripción basta).
+2. Confirmas los documentos igual que ya confirmas cédulas
+   profesionales.
+3. Panel de admin → su perfil aprobado → marca el campo
+   `verificadoEmpresa` → Guardar. La insignia "Persona moral verificada"
+   aparece de inmediato en su perfil público y en "Mi cuenta".
+
+### Comisión por caso ganado — alternativa sin riesgo a la suscripción
+
+Para quien no quiere comprometerse a $299/mes: reporta cada caso real
+que cerró gracias a Idóneo y le facturas aparte, solo por resultados.
+Vive en "Mi cuenta" (tarjeta "Comisión por caso ganado", visible para
+**cualquier** cuenta aprobada, no solo Destacado) — el dueño del perfil
+escribe una nota breve y la envía; queda guardada en Firestore
+(colección `casos_ganados`) de forma inmutable (ni él ni tú la pueden
+editar o borrar después) para que sirva como bitácora confiable de qué
+facturar.
+
+**Precio sugerido**: $150–350 MXN por caso confirmado (monto fijo, no
+porcentaje — no tienes forma de verificar cuánto cobró el despacho por
+el caso, así que un monto fijo es lo único que se puede facturar de
+forma justa y sin fricción).
+
+**Cómo cobrar**:
+1. Revisa periódicamente los reportes: no hay vista de admin todavía,
+   así que entra a Firestore → colección `casos_ganados` para ver todos
+   los reportes de todos los despachos (`abogadoId` te dice de quién
+   es, cruza con `abogados_registrados` para el nombre/contacto).
+2. Factura por fuera (transferencia, Stripe Payment Link, como
+   prefieras) — este esquema no tiene checkout automático, es
+   deliberadamente manual y basado en confianza, como cualquier cobro
+   por resultados al inicio de un negocio.
+3. Si alguien reporta casos falsos para presumir (poco probable, no hay
+   incentivo — no le da nada gratis, solo te avisa que te debe dinero),
+   trátalo como cualquier otro problema de honestidad con un cliente: es
+   un riesgo aceptado de un modelo basado en confianza, no un hueco de
+   seguridad de Firestore.
+
+### Red de referidos entre Destacados (beneficio incluido, no se vende aparte)
+
+No es un producto nuevo que cobrar — es una razón más para que alguien
+elija la suscripción Destacado en vez del plan gratuito. "Mi cuenta" le
+muestra a cualquier cuenta Destacado activa un directorio de otras
+cuentas Destacado (priorizando especialidades distintas a la suya y su
+misma ciudad — lo más útil para referir) con un botón "Referir un caso"
+que abre WhatsApp con un mensaje profesional ya armado. No necesita
+configuración de tu parte — funciona solo, en automático, a partir de
+quién ya es Destacado.
+
+### Kit de documentos legales descargables
+
+Página nueva, `documentos.html` (enlazada desde el menú y el pie de
+página de todo el sitio): 5 plantillas legales de referencia (carta
+poder, contrato de arrendamiento básico, queja PROFECO, aviso de
+rescisión laboral, contrato de prestación de servicios) desde $49 MXN
+cada una, o las 5 juntas en el "Kit completo" por $199 MXN. Es el único
+producto de este sitio dirigido al **cliente**, no al abogado — no
+toca el directorio ni la búsqueda para nada, es un producto digital
+aparte.
+
+**Importante — esto no es contenido legal real todavía**: la página
+describe los productos (nombre, precio, para qué sirve cada uno) pero
+tú tienes que conseguir/redactar las plantillas de verdad antes de
+vender nada — no uses un documento generado por IA sin que un abogado
+real lo revise primero. Es exactamente el mismo principio que el resto
+del sitio: aquí se construyó la tienda, no el producto legal.
+
+1. **Consigue o redacta las 5 plantillas** — idealmente con un abogado
+   real (tú mismo, si lo eres, o alguien de tu red) revisando cada una,
+   en Word y PDF.
+2. **Crea el link de pago del Kit completo** en Stripe (Payment Links →
+   producto "Kit de documentos legales Idóneo", $199 MXN, pago único) y
+   pégalo en `documentos.html` reemplazando `STRIPE_KIT_LINK`.
+3. Para las compras individuales, el botón "Pedir por correo" de cada
+   documento ya manda un correo pre-armado a `DOCUMENTOS_EMAIL` (mismo
+   patrón que el resto del sitio) — busca esa constante en
+   `documentos.html` y cámbiala por tu correo real.
+4. Cuando te escriban pidiendo un documento: mándales un Payment Link
+   de Stripe para ese monto específico (o cóbrales por otro medio) y,
+   una vez pagado, respóndeles el correo con el documento adjunto.
+5. Si un documento en particular se vende mucho, vale la pena crearle
+   su propio Payment Link fijo (como el del Kit completo) en vez de
+   cobrarlo por correo cada vez.
 
 ### Qué automatizar más adelante (no ahora)
 
@@ -699,74 +913,41 @@ solo quién pagó primero. Genera presión competitiva real ("tu
 competencia ya te está ganando el primer lugar") sin topar cuántas
 cuentas pueden pagar ni quitarle nada a las cuentas gratuitas.
 
-Estas son ideas adicionales, pensadas pero no construidas del todo,
-para cuando quieras seguir creciendo el negocio:
+Y ahora está construido todo el resto de esquemas de cobro descritos
+arriba en "Otros esquemas de cobro (ya construidos)": Impulso puntual
+(Destacado de 72h por $99 MXN), espacio publicitario vendible
+(`avisos`), verificación de persona moral como cargo único, comisión
+por caso ganado (`casos_ganados`), red de referidos entre Destacados, y
+el Kit de documentos legales (`documentos.html`). Cada uno tiene su
+propia sección más arriba con los pasos exactos para activarlo/cobrarlo
+— este resumen es solo para que no se te pierda ninguno:
 
-**Formas de cobrar, éticas y dentro del mismo modelo:**
-- **Impulso puntual de 48–72 horas** — en vez de comprometerse a
-  $299/mes, un abogado paga un monto menor (ej. $99 MXN) por aparecer
-  Destacado unos días — útil para quien tiene un pico de necesidad
-  (campaña local, temporada alta). **Ya lo puedes ofrecer hoy sin
-  código nuevo**: en el panel de admin, marca su casilla "✨ Destacado"
-  igual que con la suscripción normal, y ponte un recordatorio (Google
-  Calendar, una nota) para desmarcarla pasadas las 48–72 horas. Cuando
-  tengas varios pedidos así por semana y el recordatorio manual empiece
-  a pesar, vale la pena agregar un campo `destacadoHasta` en Firestore
-  que las páginas revisen igual que `promoHasta` (fecha límite después
-  de la cual deja de contar como Destacado automáticamente, sin que
-  tengas que acordarte de quitarlo tú).
-- **Vender el espacio de "Publicidad" que ya existe** — `perfil.html` ya
-  reserva un `.ad-slot` con la etiqueta "Publicidad" en perfiles que NO
-  son Destacado (para no competir con quien sí pagó). Ahora mismo solo
-  dice "Espacio publicitario disponible" — se le puede vender a negocios
-  complementarios (peritos, traductores certificados, contadores) sin
-  competir directamente con los abogados del directorio.
-- **Verificación de "Persona moral" como cargo único** — ya existe el
-  campo `verificadoEmpresa` en el código; falta un flujo de cobro. A
-  diferencia de Destacado (recurrente), esto podría ser un pago único
-  por confirmar acta constitutiva/RFC del despacho.
-- **Comisión por caso ganado ("success fee"), como alternativa a la
-  suscripción** — en vez de $299/mes fijo, un despacho puede elegir
-  pagar solo cuando un lead se convierte en cliente real: marca un
-  botón "Cerré este caso" en "Mi cuenta" ligado a una reseña o contacto
-  específico, y tú le facturas un porcentaje pequeño o un monto fijo
-  (ej. $150–300 MXN por caso) en vez del mes de Destacado. Es
-  autoreportado (funciona sobre confianza, como Upwork o Thumbtack al
-  inicio), pero para un despacho nuevo que no quiere arriesgar $299 sin
-  saber si funciona, es la puerta de entrada perfecta — cero riesgo
-  para ellos, ingreso variable pero real para ti. Se puede ofrecer
-  desde ya sin código nuevo (factura manual), y programar más adelante
-  como un campo `casosGanados` que alimente el mismo panel de
-  estadísticas.
-- **Red de referidos entre cuentas Destacado** — cuando un despacho
-  Destacado recibe un caso fuera de su especialidad, puede referirlo a
-  otro despacho Destacado dentro de la misma red (ej. un abogado
-  Familiar recibe una consulta fiscal y la turna a un Destacado Fiscal
-  de su ciudad). Es un beneficio exclusivo de pagar — acceso a una red
-  de colegas verificados — que no le quita nada a las cuentas gratuitas
-  y le da otra razón concreta para destacarse más allá de aparecer
-  primero en el buscador.
+| Esquema | A quién le cobra | Precio sugerido | Sección |
+|---|---|---|---|
+| Destacado (suscripción) | Abogado/despacho | $299 MXN/mes o $2,990/año | "Activar cobros con Stripe" |
+| Impulso puntual | Abogado/despacho | $99 MXN / 72h | "Impulso puntual" |
+| Espacio publicitario | Negocios complementarios | $499–999 MXN/mes | "Espacio publicitario vendible" |
+| Verificación persona moral | Despacho | $299 MXN, único | "Verificación de persona moral" |
+| Comisión por caso ganado | Abogado/despacho | $150–350 MXN/caso | "Comisión por caso ganado" |
+| Red de referidos | (incluido en Destacado) | — | "Red de referidos" |
+| Kit de documentos | Cliente final | $49–79 c/u, $199 el kit | "Kit de documentos legales" |
 
-**Para monetizar directamente al cliente (no al abogado), éticas y sin
-tocar nada de lo gratuito — "aparecer primero" y buscar/contactar
-abogados se queda gratis para siempre, esto es valor extra opcional:**
-- **Kit de documentos legales descargables** — plantillas simples
-  (carta poder, contrato de arrendamiento básico, formato de queja ante
-  PROFECO, aviso de rescisión laboral) vendidas como descarga individual
-  (ej. $39 MXN) o en paquete. No toca el directorio para nada — es un
-  producto digital nuevo, aprovechando el contenido que ya generaste en
-  `guias.html`. Pago único por Stripe, mismo patrón beta que ya usas
-  (activación manual al inicio). Ayuda de verdad a quien no puede pagar
-  un abogado para algo simple, y dirige tráfico nuevo al sitio (la gente
-  busca "formato de carta poder México" en Google).
-- **"Idóneo Protegido" — garantía de primera respuesta** (ambiciosa,
-  no construida): el cliente paga una cuota pequeña y única (ej. $79
-  MXN) al contactar a un abogado por el sitio; si no responde en 24
-  horas, se le reembolsa automáticamente y se le ofrece contactar a
-  otro abogado de la misma especialidad sin costo extra. Es un producto
-  de confianza real (no solo "aparece primero"), pero requiere manejar
-  reembolsos y un flujo de disputa — es una pieza de backend más grande
-  que el resto de esta lista, por eso no se construyó esta vez.
+Quedan estas ideas sin construir, para cuando quieras seguir creciendo
+el negocio:
+
+- **"Idóneo Protegido" — garantía de primera respuesta** (ambiciosa, no
+  construida a propósito): el cliente pagaría una cuota pequeña y única
+  (ej. $79 MXN) al contactar a un abogado por el sitio; si no responde
+  en 24 horas, se le reembolsa automáticamente y se le ofrece contactar
+  a otro abogado de la misma especialidad sin costo extra. Es un
+  producto de confianza real (no solo "aparece primero"), pero un sitio
+  estático sin backend no puede prometer reembolsos automáticos de
+  forma segura y honesta — necesitas manejar dinero en depósito y un
+  flujo de disputa real, que es una pieza de infraestructura mucho más
+  grande que el resto de este documento. No se construyó una versión a
+  medias porque una "garantía" que no se puede cumplir de verdad es
+  peor que no ofrecerla — cuando tengas un backend real (ver "Qué
+  automatizar más adelante" abajo), retómala.
 
 **Ambiciosas, no necesariamente de cobro (para cuando quieras seguir
 "pensando en grande"):**

@@ -200,6 +200,7 @@
         <a href="cuestionario.html">¿Qué abogado necesito?</a>
         <a class="mega-primary" href="plazos.html">Radar de plazos</a>
         <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       </div>
@@ -284,6 +285,7 @@
       <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
       <a href="terminos.html">Términos y condiciones</a>
@@ -437,7 +439,7 @@
     try{
       const all = await window.IdoneoListings.getAllListings();
       const matches = (all || []).filter(a =>
-        a.status === 'approved' && a.destacado && (a.especialidades || []).includes(tramite.area)
+        a.status === 'approved' && window.IdoneoListings.isDestacadoActivo(a) && (a.especialidades || []).includes(tramite.area)
       );
       if(matches.length === 0) return;
       const ab = matches[Math.floor(Math.random() * matches.length)];

@@ -130,6 +130,12 @@
   .status-pill.verified{background:#dbe6f5; color:#22406e; border:1px solid #7fa6d9;}
   .status-pill.despacho{background:rgba(61,110,120,0.14); color:var(--despacho); border:1px solid var(--despacho-light);}
   .status-pill.empresa{background:rgba(185,138,46,0.16); color:#8a6a1f; border:1px solid var(--brass-light);}
+  .empresa-verif-cta{display:flex; align-items:center; gap:16px; flex-wrap:wrap; background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:14px 16px; margin-top:10px;}
+  .empresa-verif-cta-text{flex:1; min-width:220px;}
+  .empresa-verif-cta-text strong{display:block; font-size:0.88rem; color:var(--ink); margin-bottom:4px;}
+  .empresa-verif-cta-text p{font-size:0.8rem; color:#6b6250; line-height:1.5;}
+  .empresa-verif-cta-btn{flex-shrink:0; display:inline-block; background:var(--ink); color:var(--parchment); text-decoration:none; padding:10px 18px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.04em; transition:background 0.15s ease;}
+  .empresa-verif-cta-btn:hover{background:var(--ink-2);}
   .status-pill.destacado{background:linear-gradient(135deg, var(--brass-light), var(--brass)); color:var(--ink); border:1px solid var(--brass); font-weight:700;}
   .status-pill svg{width:10px; height:10px; flex-shrink:0;}
 
@@ -191,6 +197,26 @@
   .faq-personal-row-foot{display:flex; justify-content:flex-end;}
   .faq-personal-remove{background:none; border:1px solid #c9bd9c; color:#8a8069; border-radius:3px; padding:5px 10px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; cursor:pointer; transition:border-color 0.15s ease, color 0.15s ease;}
   .faq-personal-remove:hover{border-color:#b23b3b; color:#b23b3b;}
+
+  .casos-ganados-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
+  .casos-ganados-list{display:flex; flex-direction:column; gap:6px; margin-bottom:10px;}
+  .caso-ganado-row{display:flex; gap:12px; align-items:baseline; background:#fff; border:1px solid #ece3cd; border-radius:4px; padding:9px 12px; font-size:0.82rem;}
+  .caso-ganado-fecha{font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:#8a8069; flex-shrink:0;}
+  .caso-ganado-nota{color:var(--ink); flex:1;}
+  .caso-ganado-form{margin-top:10px; display:flex; flex-direction:column; gap:8px;}
+  .caso-ganado-form textarea{width:100%; padding:9px 11px; border:1px solid #c9bd9c; border-radius:3px; background:#fff; font-family:'IBM Plex Sans', sans-serif; font-size:0.86rem; color:var(--ink); resize:vertical; min-height:60px;}
+  .caso-ganado-form-actions{display:flex; gap:10px;}
+  .caso-ganado-msg{font-size:0.78rem; color:#b23b3b;}
+
+  .red-referidos-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
+  .red-referidos-list{display:flex; flex-direction:column; gap:8px;}
+  .referido-row{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; background:#fff; border:1px solid #ece3cd; border-radius:4px; padding:10px 14px;}
+  .referido-info{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .referido-nombre{font-size:0.88rem; font-weight:600; color:var(--ink);}
+  .referido-despacho-tag{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; text-transform:uppercase; color:var(--brass); border:1px solid var(--brass-light); border-radius:20px; padding:1px 7px; margin-left:4px; vertical-align:middle;}
+  .referido-meta{font-size:0.76rem; color:#8a8069;}
+  .referido-btn{flex-shrink:0; display:inline-block; background:var(--ink); color:var(--parchment); text-decoration:none; padding:8px 16px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; transition:background 0.15s ease;}
+  .referido-btn:hover{background:var(--ink-2);}
 
   .equipo-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
   .equipo-list{display:flex; flex-direction:column; gap:10px; margin-bottom:10px;}
@@ -446,6 +472,7 @@
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
         <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -496,6 +523,7 @@
       <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -895,7 +923,7 @@
       : '<span class="status-pill pending">Pendiente de revisión</span>';
     if(l.verificado) html += '<span class="status-pill verified">Cédula verificada</span>';
     if(l.tipo === 'despacho') html += '<span class="status-pill despacho">Despacho</span>';
-    if(l.destacado) html += `<span class="status-pill destacado">${SPARKLE_ICON}Destacado</span>`;
+    if(window.IdoneoListings.isDestacadoActivo(l)) html += `<span class="status-pill destacado">${SPARKLE_ICON}Destacado</span>`;
     return html;
   }
 
@@ -903,6 +931,12 @@
   // actives cobros — ver INSTRUCCIONES-FIREBASE.md, sección "Activar
   // cobros con Stripe".
   const STRIPE_DESTACADO_LINK = 'https://buy.stripe.com/TU-LINK-DE-PAGO';
+
+  // Verificación de persona moral: pago único, se pide por correo igual
+  // que el plan anual (mismo patrón beta) — ver INSTRUCCIONES-FIREBASE.md,
+  // sección "Verificación de persona moral".
+  const EMPRESA_VERIF_EMAIL = 'contacto@TU-DOMINIO.com';
+  const EMPRESA_VERIF_MAILTO = `mailto:${EMPRESA_VERIF_EMAIL}?subject=${encodeURIComponent('Quiero verificar mi persona moral')}&body=${encodeURIComponent('Hola, quiero verificar la persona moral de mi despacho en Idóneo ($299 MXN, pago único). Adjunto mi acta constitutiva y RFC. Este es el correo de mi cuenta:')}`;
 
   // Compara tus vistas de perfil contra el promedio de otros perfiles en tu
   // misma ciudad y especialidad — convierte "tienes 340 vistas" (dato suelto)
@@ -931,6 +965,64 @@
   // pagar y activarse. La presión competitiva es real sin necesidad de
   // límite artificial: si tu competencia directa ya se destacó y tú no,
   // ellos aparecen primero cada vez que alguien busca en tu categoría.
+  // ---- Red de referidos entre cuentas Destacado ----
+  // Beneficio exclusivo de Destacado que no le quita nada a las cuentas
+  // gratuitas: acceso a un directorio de otros despachos/abogados
+  // Destacado para turnarles casos fuera de tu especialidad, en vez de
+  // dejarlos ir o mandarlos con alguien que no verificaste. Prioriza
+  // especialidades distintas a la tuya (lo más útil para referir) y tu
+  // misma ciudad (lo más práctico para el cliente).
+  function redReferidosHTML(l){
+    const misEspecialidades = new Set(l.especialidades || []);
+    const candidatos = approvedListingsCache.filter(ab =>
+      ab.id !== l.id && window.IdoneoListings.isDestacadoActivo(ab)
+    );
+    if(candidatos.length === 0){
+      return `
+        <div class="red-referidos-section">
+          <div class="stats-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h3>Red de referidos</h3>
+          </div>
+          <p class="field-hint" style="margin:0;">Todavía no hay otras cuentas Destacado con quién armar red en tu zona — en cuanto se destaque alguien más, aparece aquí para que le puedas referir casos fuera de tu especialidad.</p>
+        </div>
+      `;
+    }
+    const puntuado = candidatos.map(ab => {
+      let score = 0;
+      const compEsp = (ab.especialidades || []).filter(e => !misEspecialidades.has(e));
+      if(compEsp.length > 0) score += 10;
+      if(ab.ciudad === l.ciudad) score += 5;
+      return {ab, score};
+    }).sort((a, b) => b.score - a.score).slice(0, 8);
+
+    return `
+      <div class="red-referidos-section">
+        <div class="stats-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <h3>Red de referidos</h3>
+        </div>
+        <p class="field-hint" style="margin-top:-6px; margin-bottom:12px;">Beneficio exclusivo de Destacado: cuando te llegue un caso fuera de tu especialidad, refiérelo a un colega verificado de la red en vez de dejarlo ir.</p>
+        <div class="red-referidos-list">
+          ${puntuado.map(({ab}) => `
+            <div class="referido-row">
+              <div class="referido-info">
+                <span class="referido-nombre">${escapeHtml(ab.nombre)}${ab.tipo === 'despacho' ? ' <span class="referido-despacho-tag">Despacho</span>' : ''}</span>
+                <span class="referido-meta">${escapeHtml(ab.ciudad || '')} · ${(ab.especialidades || []).map(e => escapeHtml(e)).join(', ')}</span>
+              </div>
+              <a class="referido-btn" href="${referirCasoHref(l, ab)}" target="_blank" rel="noopener">Referir un caso</a>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function referirCasoHref(l, ab){
+    const mensaje = `Hola, soy de ${l.nombre || 'un despacho'} — vi tu perfil Destacado en Idóneo. Tengo un caso que no es de mi especialidad pero podría interesarte referírtelo. ¿Podemos platicar?`;
+    return `https://wa.me/${encodeURIComponent(ab.telefono || '')}?text=${encodeURIComponent(mensaje)}`;
+  }
+
   function destacadoCompetenciaHTML(l){
     const especialidadPrincipal = (l.especialidades || [])[0];
     if(!l.ciudad || !especialidadPrincipal) return '';
@@ -951,16 +1043,20 @@
 
   function destacadoSectionHTML(l){
     if(l.status !== 'approved') return '';
-    if(l.destacado){
+    if(window.IdoneoListings.isDestacadoActivo(l)){
       const views = l.views || 0;
       const clicks = l.contactClicks || 0;
       const conversion = views ? ((clicks / views) * 100).toFixed(1) : '0.0';
+      const impulsoActivo = !!l.destacadoHasta;
+      const horasRestantes = impulsoActivo ? Math.max(0, Math.ceil((new Date(l.destacadoHasta).getTime() - Date.now()) / 3600000)) : 0;
       return `
         <div class="destacado-status">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
           <div class="destacado-status-text">
-            <strong>Tu perfil es Destacado</strong>
-            <p>Apareces primero en el buscador, sin anuncios en tu perfil, y puedes registrar hasta 5 especialidades.</p>
+            <strong>${impulsoActivo ? 'Tu Impulso puntual está activo' : 'Tu perfil es Destacado'}</strong>
+            <p>${impulsoActivo
+              ? `Apareces primero en el buscador durante ${horasRestantes} hora${horasRestantes === 1 ? '' : 's'} más. Si te está funcionando, puedes pasarte a la suscripción mensual antes de que termine — escríbenos (pie de página).`
+              : 'Apareces primero en el buscador, sin anuncios en tu perfil, y puedes registrar hasta 5 especialidades.'}</p>
           </div>
         </div>
 
@@ -997,6 +1093,8 @@
           <div class="stats-histogram" data-role="statsHistogram"></div>
           ${categoriaBenchmarkHTML(l)}
         </div>
+
+        ${redReferidosHTML(l)}
 
         <div class="galeria-section">
           <div class="stats-head">
@@ -1266,6 +1364,15 @@
           <div class="field full">
             <label>Verificación del despacho</label>
             <div>${l.verificado ? '<span class="status-pill verified">Responsable con cédula verificada</span>' : '<span class="field-hint" style="margin:0;">Pendiente de verificar la cédula del responsable.</span>'} ${l.verificadoEmpresa ? '<span class="status-pill empresa">Persona moral verificada</span>' : ''}</div>
+            ${l.status === 'approved' && !l.verificadoEmpresa ? `
+            <div class="empresa-verif-cta">
+              <div class="empresa-verif-cta-text">
+                <strong>Verifica tu persona moral — $299 MXN, pago único</strong>
+                <p>Confirmamos tu acta constitutiva y RFC del despacho, y tu perfil se queda con la insignia "Persona moral verificada" para siempre — una señal extra de formalidad para clientes que van a firmar un contrato con ustedes, no solo a platicar con un abogado.</p>
+              </div>
+              <a class="empresa-verif-cta-btn" href="${EMPRESA_VERIF_MAILTO}" target="_self">Solicitar verificación</a>
+            </div>
+            ` : ''}
           </div>
           <div class="field">
             <label>Nombre del responsable legal<span class="req">*</span></label>
@@ -1283,9 +1390,9 @@
         </div>
 
         <div class="field full" style="margin-top:14px;">
-          <label>Especialidades (elige hasta ${l.destacado ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS})<span class="req">*</span></label>
-          <div class="especialidad-picker" data-role="especialidadPicker" data-max-esp="${l.destacado ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS}">${especialidadPickerHTML(l.especialidades)}</div>
-          <div class="esp-hint" data-role="espHint">Selecciona de 1 a ${l.destacado ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS} especialidades.${!l.destacado ? ' <a href="#destacado-cta" data-role="espUpsell" style="color:var(--brass); text-decoration:underline;">Destaca tu perfil</a> para tener hasta ' + MAX_ESPECIALIDADES_DESTACADO + '.' : ''}</div>
+          <label>Especialidades (elige hasta ${window.IdoneoListings.isDestacadoActivo(l) ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS})<span class="req">*</span></label>
+          <div class="especialidad-picker" data-role="especialidadPicker" data-max-esp="${window.IdoneoListings.isDestacadoActivo(l) ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS}">${especialidadPickerHTML(l.especialidades)}</div>
+          <div class="esp-hint" data-role="espHint">Selecciona de 1 a ${window.IdoneoListings.isDestacadoActivo(l) ? MAX_ESPECIALIDADES_DESTACADO : MAX_ESPECIALIDADES_GRATIS} especialidades.${!window.IdoneoListings.isDestacadoActivo(l) ? ' <a href="#destacado-cta" data-role="espUpsell" style="color:var(--brass); text-decoration:underline;">Destaca tu perfil</a> para tener hasta ' + MAX_ESPECIALIDADES_DESTACADO + '.' : ''}</div>
         </div>
         <div class="field-grid">
           <div class="field">
@@ -1396,6 +1503,8 @@
           </div>
         ` : ''}
 
+        ${l.status === 'approved' ? casosGanadosSectionHTML() : ''}
+
         <div class="reviews-mini-head">
           <h3>Tus reseñas</h3>
           <span class="reviews-mini-summary" data-role="reviews-summary">Cargando…</span>
@@ -1403,6 +1512,91 @@
         <div data-role="reviews-list"><p class="empty-note">Cargando reseñas…</p></div>
       </div>
     `;
+  }
+
+  // ---- Comisión por caso ganado (alternativa a la suscripción fija) ----
+  // Disponible para cualquier cuenta aprobada, no solo Destacado: en vez
+  // de comprometerse a $299/mes, reportas cada caso real que cerraste
+  // gracias a Idóneo y te facturamos por separado (ver
+  // INSTRUCCIONES-FIREBASE.md, sección "Comisión por caso ganado"). El
+  // registro es público hacia ti mismo -- una vez enviado no se puede
+  // editar ni borrar, para que sirva como bitácora confiable de lo que
+  // hay que cobrar.
+  function casosGanadosSectionHTML(){
+    return `
+      <div class="casos-ganados-section">
+        <div class="stats-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          <h3>Comisión por caso ganado</h3>
+          <span class="galeria-count" data-role="casosGanadosCount"></span>
+        </div>
+        <p class="field-hint" style="margin-top:-6px; margin-bottom:12px;">¿No quieres comprometerte a $299/mes? Repórtanos cada caso real que cerraste por Idóneo y te facturamos aparte, solo por resultados — sin arriesgar nada si un mes no te llega ningún caso.</p>
+        <div class="casos-ganados-list" data-role="casosGanadosList"></div>
+        <button type="button" class="servicio-add-btn" data-action="addCasoGanado">+ Reportar caso ganado</button>
+        <div class="caso-ganado-form" data-role="casoGanadoForm" style="display:none">
+          <textarea data-role="casoGanadoNota" maxlength="300" placeholder="Ej. Familiar — divorcio voluntario, el cliente contactó por WhatsApp el 3 de agosto."></textarea>
+          <div class="caso-ganado-form-actions">
+            <button type="button" class="servicio-add-btn" data-action="cancelCasoGanado">Cancelar</button>
+            <button type="button" class="submit-btn" data-action="saveCasoGanado" style="padding:9px 18px; font-size:0.78rem;">Enviar reporte</button>
+          </div>
+          <span class="caso-ganado-msg" data-role="casoGanadoMsg"></span>
+        </div>
+      </div>
+    `;
+  }
+
+  function casoGanadoRowHTML(c){
+    const fecha = c.createdAt && c.createdAt.seconds ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('es-MX', {day:'numeric', month:'short', year:'numeric'}) : '';
+    return `
+      <div class="caso-ganado-row">
+        <span class="caso-ganado-fecha">${escapeHtml(fecha)}</span>
+        <span class="caso-ganado-nota">${escapeHtml(c.nota || '(sin nota)')}</span>
+      </div>
+    `;
+  }
+
+  async function loadCasosGanados(card, l){
+    const listEl = card.querySelector('[data-role="casosGanadosList"]');
+    const countEl = card.querySelector('[data-role="casosGanadosCount"]');
+    if(!listEl) return;
+    try{
+      const casos = await window.IdoneoListings.getMisCasosGanados(l.id);
+      countEl.textContent = casos.length > 0 ? `${casos.length} reportado${casos.length === 1 ? '' : 's'}` : '';
+      listEl.innerHTML = casos.length > 0 ? casos.map(casoGanadoRowHTML).join('') : '';
+    } catch(err){
+      console.error('No se pudieron cargar los casos reportados.', err);
+    }
+  }
+
+  function wireCasosGanados(card, l){
+    const addBtn = card.querySelector('[data-action="addCasoGanado"]');
+    const form = card.querySelector('[data-role="casoGanadoForm"]');
+    if(!addBtn || !form) return;
+    addBtn.addEventListener('click', () => {
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+    form.querySelector('[data-action="cancelCasoGanado"]').addEventListener('click', () => {
+      form.style.display = 'none';
+      form.querySelector('[data-role="casoGanadoNota"]').value = '';
+    });
+    form.querySelector('[data-action="saveCasoGanado"]').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      const nota = form.querySelector('[data-role="casoGanadoNota"]').value;
+      const msgEl = form.querySelector('[data-role="casoGanadoMsg"]');
+      btn.disabled = true;
+      try{
+        await window.IdoneoListings.reportarCasoGanado(l.id, nota);
+        form.querySelector('[data-role="casoGanadoNota"]').value = '';
+        form.style.display = 'none';
+        msgEl.textContent = '';
+        await loadCasosGanados(card, l);
+      } catch(err){
+        console.error(err);
+        msgEl.textContent = 'Algo falló al enviar el reporte. Intenta de nuevo.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
   }
 
   function readConsultaDesde(card){
@@ -1858,7 +2052,7 @@
     wireRequiredFields(card);
     wireHorarioBuilder(card);
     wireListingPhoto(card, l);
-    wireEspecialidadPicker(card, !!l.destacado);
+    wireEspecialidadPicker(card, window.IdoneoListings.isDestacadoActivo(l));
     wireTipoToggle(card);
     wireEstadoCiudad(card);
     wirePrecios(card);
@@ -1905,6 +2099,10 @@
     wireGaleria(card, l);
     wireMiniReviewReplies(card, l);
     loadMiniReviews(card, l);
+    if(l.status === 'approved'){
+      wireCasosGanados(card, l);
+      loadCasosGanados(card, l);
+    }
   }
 
   function wireMiniReviewReplies(card, l){

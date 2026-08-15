@@ -104,6 +104,10 @@
   .ad-label{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(241,234,216,0.4); margin-bottom:8px;}
   .ad-slot-inner{min-height:100px; border:1px dashed rgba(241,234,216,0.25); border-radius:6px; display:flex; align-items:center; justify-content:center; background:rgba(241,234,216,0.03);}
   .ad-placeholder-text{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:rgba(241,234,216,0.45);}
+  .ad-slot-inner{padding:14px 18px;}
+  .ad-content-text, .ad-content-link{font-size:0.86rem; color:rgba(241,234,216,0.78); line-height:1.5; text-decoration:none;}
+  .ad-content-link{text-decoration:underline; text-underline-offset:3px;}
+  .ad-content-link:hover{color:var(--brass-light);}
   .destacado-badge{
     position:absolute; top:16px; right:16px; z-index:2; overflow:hidden;
     display:inline-flex; align-items:center; gap:6px;
@@ -372,6 +376,7 @@
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
         <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -429,6 +434,7 @@
       <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -656,10 +662,11 @@
     const socialHTML = socialButtonsHTML(ab);
     const hasBody = hasBio || hasDetails || !!socialHTML;
 
+    const destacadoActivo = window.IdoneoListings.isDestacadoActivo(ab);
     content.innerHTML = `
       ${galeriaCarouselHTML(ab)}
       <div class="profile-card${ab.tipo === 'despacho' ? ' is-despacho' : ''}">
-        ${ab.destacado ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
+        ${destacadoActivo ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
         <div class="profile-top">
           <div class="avatar-lg">${ab.fotoUrl ? `<img src="${escapeHtml(ab.fotoUrl)}" alt="">` : escapeHtml(initials(ab.nombre))}</div>
           <div>
@@ -674,7 +681,7 @@
           </div>
         </div>
 
-        <div class="profile-action${ab.destacado ? ' has-badge-above' : ''}">
+        <div class="profile-action${destacadoActivo ? ' has-badge-above' : ''}">
           ${activePromo(ab) ? `<div class="promo-banner"><span class="promo-banner-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6l-8 8a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8l8-8A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.8z"/><circle cx="15.5" cy="8.5" r="1.5"/></svg>Oferta</span><span class="promo-banner-text">${escapeHtml(activePromo(ab))}</span></div>` : ''}
           <div class="action-rating-price">
             <span><span class="stars">${starString(stats.average)}</span><span class="rating-count">(${stats.total} reseña${stats.total === 1 ? '' : 's'})</span></span>
@@ -730,11 +737,7 @@
 
       ${faqPersonalHTML(ab)}
 
-      ${!ab.destacado ? `
-      <div class="ad-slot">
-        <span class="ad-label">Publicidad</span>
-        <div class="ad-slot-inner"><span class="ad-placeholder-text">Espacio publicitario disponible</span></div>
-      </div>` : ''}
+      ${!destacadoActivo ? sponsorSlotHTML() : ''}
 
       <div class="reviews-head"><h2>Reseñas</h2></div>
       <div class="reviews-summary">
@@ -792,6 +795,36 @@
     wireFaqPersonalPublic();
     renderReviewForm();
     renderReviewsList();
+    if(!destacadoActivo) loadSponsorSlot(ab);
+  }
+
+  // El slot empieza con el texto genérico de siempre (visible de
+  // inmediato, sin esperar a Firestore) y se reemplaza por un aviso real
+  // si hay uno activo para la especialidad de este perfil — ver
+  // `getAvisoActivo` en listings.js e INSTRUCCIONES-FIREBASE.md, sección
+  // "Espacio publicitario vendible".
+  function sponsorSlotHTML(){
+    return `
+      <div class="ad-slot" id="adSlot">
+        <span class="ad-label">Publicidad</span>
+        <div class="ad-slot-inner"><span class="ad-placeholder-text">Espacio publicitario disponible</span></div>
+      </div>
+    `;
+  }
+
+  async function loadSponsorSlot(ab){
+    const slot = document.getElementById('adSlot');
+    if(!slot) return;
+    try{
+      const aviso = await window.IdoneoListings.getAvisoActivo(ab.especialidades || []);
+      if(!aviso) return;
+      const inner = slot.querySelector('.ad-slot-inner');
+      inner.innerHTML = aviso.linkUrl
+        ? `<a class="ad-content-link" href="${escapeHtml(normalizeUrl(aviso.linkUrl))}" target="_blank" rel="noopener sponsored">${escapeHtml(aviso.texto || '')}</a>`
+        : `<span class="ad-content-text">${escapeHtml(aviso.texto || '')}</span>`;
+    } catch(err){
+      console.error('No se pudo cargar el espacio publicitario.', err);
+    }
   }
 
   let stickyObserver = null;
@@ -901,7 +934,7 @@
 
   function galeriaCarouselHTML(ab){
     const galeria = ab.galeria || [];
-    if(!ab.destacado || galeria.length === 0) return '';
+    if(!window.IdoneoListings.isDestacadoActivo(ab) || galeria.length === 0) return '';
     return `
       <div class="galeria-carousel" id="galeriaCarousel">
         ${galeria.map((url, i) => `<div class="carousel-slide${i === 0 ? ' active' : ''}"><img src="${escapeHtml(url)}" alt="Foto ${i + 1} de ${escapeHtml(ab.nombre)}"></div>`).join('')}

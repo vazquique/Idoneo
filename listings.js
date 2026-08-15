@@ -47,6 +47,8 @@
   const COLLECTION = 'abogados_registrados';
   const HIDDEN_DEMOS_COLLECTION = 'demos_ocultos';
   const REVIEWS_COLLECTION = 'resenas';
+  const AVISOS_COLLECTION = 'avisos';
+  const CASOS_GANADOS_COLLECTION = 'casos_ganados';
 
   // Idiomas adicionales al español que un abogado puede ofrecer — se
   // muestran como insignia en su tarjeta/perfil y como filtro en el
@@ -229,7 +231,7 @@
       ab.status === 'approved' && ab.ciudad === ciudad && (ab.especialidades || []).includes(especialidad)
     );
     return {
-      destacados: enCategoria.filter(ab => ab.destacado).length,
+      destacados: enCategoria.filter(ab => isDestacadoActivo(ab)).length,
       total: enCategoria.length
     };
   }
@@ -316,6 +318,75 @@
     if(!l || !l.promoTexto) return null;
     if(l.promoHasta && l.promoHasta < new Date().toISOString().slice(0, 10)) return null;
     return l.promoTexto;
+  }
+
+  // ---- Destacado con vigencia opcional ("Impulso puntual") ----
+  // `destacado` sigue siendo el booleano de siempre (lo marca el admin al
+  // activar una suscripción normal). `destacadoHasta` es opcional — solo
+  // se usa para el Impulso puntual de 48-72 horas: el admin marca
+  // `destacado: true` Y pone una fecha/hora límite en `destacadoHasta`
+  // (ISO, ej. "2026-08-17T18:00:00"), y pasada esa fecha el perfil deja
+  // de contar como Destacado automáticamente en TODAS las páginas, sin
+  // que el admin tenga que acordarse de desmarcar la casilla. Una
+  // suscripción normal simplemente no le pone `destacadoHasta` (o lo dejas
+  // vacío) y dura hasta que se desmarque a mano. No es un campo editable
+  // por el dueño del perfil — solo el admin lo controla, igual que
+  // `destacado` mismo.
+  function isDestacadoActivo(l){
+    if(!l || !l.destacado) return false;
+    if(l.destacadoHasta && new Date(l.destacadoHasta).getTime() < Date.now()) return false;
+    return true;
+  }
+
+  // ---- Espacio publicitario vendible ----
+  // Llena el `.ad-slot` que ya existía en perfil.html (antes solo decía
+  // "Espacio publicitario disponible") con avisos reales, vendidos a
+  // negocios complementarios (peritos, traductores certificados,
+  // contadores, notarías) — no a otros abogados, para no competir
+  // directamente con quien no pagó Destacado. Se administran a mano
+  // desde la consola de Firestore (colección `avisos`) mientras no haya
+  // panel — ver INSTRUCCIONES-FIREBASE.md, sección "Espacio publicitario
+  // vendible". Un doc de `avisos`: {texto, linkUrl, especialidad
+  // (opcional — vacío significa "en cualquier especialidad"), activo}.
+  async function getAvisoActivo(especialidades){
+    try{
+      const snap = await requireDb().collection(AVISOS_COLLECTION).where('activo', '==', true).get();
+      const avisos = snap.docs.map(doc => Object.assign({id: doc.id}, doc.data()));
+      const props = especialidades || [];
+      const relevantes = avisos.filter(a => !a.especialidad || props.includes(a.especialidad));
+      const generales = avisos.filter(a => !a.especialidad);
+      const pool = relevantes.length > 0 ? relevantes : generales;
+      if(pool.length === 0) return null;
+      return pool[Math.floor(Math.random() * pool.length)];
+    } catch(err){
+      console.error('No se pudo cargar el espacio publicitario.', err);
+      return null;
+    }
+  }
+
+  // ---- Comisión por caso ganado (auto-reporte) ----
+  // Alternativa a la suscripción fija de Destacado: un despacho puede
+  // reportar que cerró un caso real conseguido por Idóneo, y tú le
+  // facturas por fuera (ver INSTRUCCIONES-FIREBASE.md, sección "Comisión
+  // por caso ganado"). Es un registro que el dueño crea una sola vez por
+  // caso y ya no puede editar ni borrar — sirve como bitácora confiable
+  // de lo que hay que cobrar, no como algo que se pueda inflar o
+  // manipular después.
+  async function reportarCasoGanado(abogadoId, nota){
+    const user = requireAuthUser();
+    await requireDb().collection(CASOS_GANADOS_COLLECTION).add({
+      abogadoId: String(abogadoId),
+      reportedByUid: user.uid,
+      nota: (nota || '').toString().trim().slice(0, 300),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  async function getMisCasosGanados(abogadoId){
+    requireAuthUser();
+    const snap = await requireDb().collection(CASOS_GANADOS_COLLECTION).where('abogadoId', '==', String(abogadoId)).get();
+    return snap.docs.map(doc => Object.assign({id: doc.id}, doc.data()))
+      .sort((a, b) => (b.createdAt ? b.createdAt.seconds : 0) - (a.createdAt ? a.createdAt.seconds : 0));
   }
 
   async function getMyListings(){
@@ -563,7 +634,8 @@
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
-    getMyReview, getMyReviewsAll, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick, activePromo,
+    getMyReview, getMyReviewsAll, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick, activePromo, isDestacadoActivo,
+    getAvisoActivo, reportarCasoGanado, getMisCasosGanados,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner, addToGaleria, removeFromGaleria,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };

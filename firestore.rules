@@ -43,6 +43,7 @@ service cloud.firestore {
                       && request.resource.data.verificado == resource.data.verificado
                       && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
                       && request.resource.data.get('destacado', false) == resource.data.get('destacado', false)
+                      && request.resource.data.get('destacadoHasta', null) == resource.data.get('destacadoHasta', null)
                       && request.resource.data.rating == resource.data.rating
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.get('views', 0) == resource.data.get('views', 0)
@@ -82,6 +83,33 @@ service cloud.firestore {
     match /demos_ocultos/{docId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Espacio publicitario vendible (perfil.html, tarjeta ".ad-slot" en
+    // perfiles que no son Destacado) -- ver INSTRUCCIONES-FIREBASE.md,
+    // seccion "Espacio publicitario vendible". Solo el admin crea/edita
+    // avisos (se hace a mano desde la consola de Firestore, no hay panel
+    // todavia), cualquiera los puede leer para que se muestren.
+    match /avisos/{avisoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Auto-reporte de "caso ganado" para el esquema de comision por
+    // exito -- ver INSTRUCCIONES-FIREBASE.md, seccion "Comision por caso
+    // ganado". Es un registro inmutable: el dueno del perfil lo crea una
+    // vez (no lo puede editar ni borrar despues, para que sirva como
+    // bitacora confiable de lo que hay que facturar), y solo el o el
+    // admin lo pueden leer.
+    match /casos_ganados/{casoId} {
+      allow read: if isAdmin() || (request.auth != null && ownerOf(resource.data.abogadoId) == request.auth.uid);
+      allow create: if request.auth != null
+                    && ownerOf(request.resource.data.abogadoId) == request.auth.uid
+                    && request.resource.data.reportedByUid == request.auth.uid
+                    && request.resource.data.abogadoId is string
+                    && request.resource.data.nota is string
+                    && request.resource.data.nota.size() <= 300;
+      allow update, delete: if false;
     }
 
     match /resenas/{reviewId} {

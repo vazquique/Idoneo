@@ -330,6 +330,7 @@
         <a href="cuestionario.html">¿Qué abogado necesito?</a>
         <a class="mega-primary" href="plazos.html">Radar de plazos</a>
         <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       </div>
@@ -602,6 +603,7 @@
       <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -743,7 +745,7 @@
       // Vitrina de destacados
       const destacadosSection = document.getElementById('destacadosSection');
       const destacadosGrid = document.getElementById('destacadosGrid');
-      const destacados = abogados.filter(ab => ab.destacado).slice(0, 6);
+      const destacados = abogados.filter(ab => window.IdoneoListings.isDestacadoActivo(ab)).slice(0, 6);
       if(destacados.length > 0){
         destacadosGrid.innerHTML = destacados.map((ab, i) => destacadoCardHTML(ab, stats[ab.id] || {average:0, total:0})).join('');
         [...destacadosGrid.children].forEach((el, i) => { el.style.animationDelay = Math.min(i * 0.08, 0.4) + 's'; });

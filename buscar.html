@@ -386,6 +386,7 @@
         <a href="index.html#como-funciona">Cómo funciona</a>
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
         <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -540,6 +541,7 @@
       <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -606,11 +608,12 @@
     count.textContent = list.length + (list.length === 1 ? ' resultado' : ' resultados');
     list.forEach((ab, i) => {
       const stats = reviewStats[ab.id] || {average: 0, total: 0};
+      const activa = window.IdoneoListings.isDestacadoActivo(ab);
       const card = document.createElement('div');
-      card.className = 'lawyer-card' + (ab.tipo === 'despacho' ? ' is-despacho' : '') + (ab.destacado ? ' is-destacado' : '');
+      card.className = 'lawyer-card' + (ab.tipo === 'despacho' ? ' is-despacho' : '') + (activa ? ' is-destacado' : '');
       card.style.animationDelay = Math.min(i * 0.05, 0.4) + 's';
       card.innerHTML = `
-        ${ab.destacado ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
+        ${activa ? `<div class="destacado-badge">${SPARKLE_ICON}Destacado</div>` : ''}
         <button class="fav-toggle${window.IdoneoFavorites && window.IdoneoFavorites.isFavorite(ab.id) ? ' is-active' : ''}" data-fav-id="${escapeHtml(ab.id)}" type="button" aria-label="Guardar perfil" aria-pressed="${window.IdoneoFavorites && window.IdoneoFavorites.isFavorite(ab.id) ? 'true' : 'false'}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
         </button>
@@ -620,7 +623,7 @@
             <div class="lawyer-name">${escapeHtml(ab.nombre)}</div>
             <div class="lawyer-city">${escapeHtml(ab.ciudad)}</div>
             ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
-            ${ab.destacado && ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
+            ${activa && ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
             ${ab.urgente24h ? `<div class="urgente24h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Urgente 24/7</div>` : ''}
           </div>
         </div>
@@ -667,8 +670,8 @@
     // reales (disponibilidad, calificación, qué tan completo está el
     // perfil) para que quien de verdad se esfuerza compita mejor que
     // quien solo pagó y dejó el perfil a medias.
-    const destacados = filtered.filter(ab => ab.destacado).sort((a, b) => destacadoScore(b) - destacadoScore(a));
-    const normales = filtered.filter(ab => !ab.destacado);
+    const destacados = filtered.filter(ab => window.IdoneoListings.isDestacadoActivo(ab)).sort((a, b) => destacadoScore(b) - destacadoScore(a));
+    const normales = filtered.filter(ab => !window.IdoneoListings.isDestacadoActivo(ab));
     renderCards(destacados.concat(normales));
   }
 
@@ -714,7 +717,7 @@
       {label:'Precio', get: ab => priceDisplay(ab)},
       {label:'Calificación', get: ab => { const s = reviewStats[ab.id] || {average:0,total:0}; return `${starString(s.average)} <span class="rating-count">(${s.total})</span>`; }},
       {label:'Cédula verificada', get: ab => ab.verificado ? 'Sí' : 'No confirmada aún'},
-      {label:'Idóneo Destacado', get: ab => ab.destacado ? `${SPARKLE_ICON} Sí` : 'No'},
+      {label:'Idóneo Destacado', get: ab => window.IdoneoListings.isDestacadoActivo(ab) ? `${SPARKLE_ICON} Sí` : 'No'},
       {label:'', get: ab => `<a class="cell-btn" href="perfil.html?id=${encodeURIComponent(ab.id)}">Ver perfil completo</a>`}
     ];
     let html = '<thead><tr><th class="row-label"></th>' + selected.map(ab => `<th class="compare-col-name">${escapeHtml(ab.nombre)}</th>`).join('') + '</tr></thead><tbody>';

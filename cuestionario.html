@@ -192,6 +192,7 @@
         <a class="mega-primary" href="cuestionario.html">¿Qué abogado necesito?</a>
         <a href="plazos.html">Radar de plazos</a>
         <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
         <a href="index.html#como-funciona">Cómo funciona</a>
       </div>
       <div class="mega-col">
@@ -253,6 +254,7 @@
       <a href="cuestionario.html">¿Qué abogado necesito?</a>
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
       <a href="terminos.html">Términos y condiciones</a>
     </div>
@@ -411,7 +413,7 @@
   function scoreListing(ab, stats){
     let score = 0;
     // El match de especialidad es obligatorio -- se filtra antes de llegar aquí.
-    if(ab.destacado) score += 50; // el mayor peso: es la ventaja principal de Destacado
+    if(window.IdoneoListings.isDestacadoActivo(ab)) score += 50; // el mayor peso: es la ventaja principal de Destacado
     if(answers.urgencia === 'urgente' && ab.disponible) score += 25;
     if(answers.presupuesto === 'economico' && typeof ab.consultaDesde === 'number' && ab.consultaDesde <= 500) score += 15;
     if(answers.presupuesto === 'premium' && ab.verificado) score += 8;
@@ -426,7 +428,7 @@
 
   function matchReasonHTML(ab){
     const reasons = [];
-    if(ab.destacado) reasons.push('Perfil Destacado');
+    if(window.IdoneoListings.isDestacadoActivo(ab)) reasons.push('Perfil Destacado');
     if(answers.urgencia === 'urgente' && ab.disponible) reasons.push('disponible ahora');
     if(answers.presupuesto === 'economico' && typeof ab.consultaDesde === 'number' && ab.consultaDesde <= 500) reasons.push('precio accesible');
     if(answers.estado && (ab.ciudad || '').includes(answers.estado)) reasons.push(`en ${answers.estado}`);
@@ -444,7 +446,7 @@
         <div class="match-body">
           <div class="match-name-row">
             <span class="match-name">${escapeHtml(ab.nombre)}</span>
-            ${ab.destacado ? `<span class="match-destacado-badge">${SPARKLE_ICON}Destacado</span>` : ''}
+            ${window.IdoneoListings.isDestacadoActivo(ab) ? `<span class="match-destacado-badge">${SPARKLE_ICON}Destacado</span>` : ''}
           </div>
           <div class="match-city">${escapeHtml(ab.ciudad || '')}</div>
           ${s.total ? `<div class="match-stars">${starString(s.average)}<span>(${s.total} reseña${s.total === 1 ? '' : 's'})</span></div>` : ''}
