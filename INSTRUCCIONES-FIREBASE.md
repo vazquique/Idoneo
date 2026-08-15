@@ -641,9 +641,17 @@ mensual/anual), el espacio publicitario en `plazos.html` (un despacho
 Destacado recomendado según la especialidad del plazo que acaba de
 calcular el visitante — el momento de mayor intención de todo el
 sitio), el Cuestionario de Match (`cuestionario.html`), la insignia
-"Urgente 24/7" (gratis, en `buscar.html` y `perfil.html`), y las
+"Urgente 24/7" (gratis, en `buscar.html` y `perfil.html`), las
 Preguntas frecuentes personalizadas por perfil (exclusivas de
-Destacado, se editan en "Mi cuenta" y se ven en el perfil público).
+Destacado, se editan en "Mi cuenta" y se ven en el perfil público), y
+**Equipo del despacho** (exclusiva de Destacado, solo para cuentas tipo
+despacho): cada integrante del equipo aparece con su nombre,
+especialidad, bio breve y un botón de WhatsApp directo (a su propio
+número si lo puso, o al número general del despacho si no) — para que
+el cliente elija con quién quiere hablar en vez de escribirle a un
+número genérico sin saber quién le va a contestar. Se edita en "Mi
+cuenta" (campo `equipo`, hasta 8 integrantes) y se ve como directorio
+en `perfil.html`.
 Estas son ideas adicionales, pensadas pero no construidas del todo,
 para cuando quieras seguir creciendo el negocio:
 

@@ -198,6 +198,7 @@
       promoHasta: '',
       faqPersonal: [],
       urgente24h: false,
+      equipo: [],
       reseñas: [],
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -211,8 +212,9 @@
   // rating, reviews, ownerUid y nombre quedan fuera — esos los controla el
   // admin (o, en el caso de nombre, requieren contactar al admin para evitar
   // que alguien cambie de identidad después de ser verificado).
-  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible', 'idiomas', 'promoTexto', 'promoHasta', 'faqPersonal', 'urgente24h'];
+  const OWNER_EDITABLE_FIELDS = ['nombre', 'tipo', 'numAbogados', 'anioFundacion', 'responsableNombre', 'responsableCedula', 'rfcPersonaMoral', 'especialidades', 'ciudad', 'telefono', 'precio', 'consultaDesde', 'serviciosPrecio', 'experiencia', 'bio', 'direccion', 'sitioWeb', 'facebook', 'instagram', 'linkedin', 'horario', 'fotoUrl', 'disponible', 'idiomas', 'promoTexto', 'promoHasta', 'faqPersonal', 'urgente24h', 'equipo'];
   const MAX_FAQ_PERSONAL = 5;
+  const MAX_EQUIPO_MIEMBROS = 8;
 
   function pickOwnerEditableFields(edits){
     const clean = {};
@@ -270,6 +272,21 @@
         .filter(f => f.pregunta && f.respuesta);
     }
     if(Object.prototype.hasOwnProperty.call(clean, 'urgente24h')) clean.urgente24h = !!clean.urgente24h;
+    // Equipo del despacho -- "Comunidad" de Destacado para cuentas tipo
+    // despacho. Igual que con especialidades y FAQ, el límite real lo
+    // aplica la interfaz (no se muestra el editor si no es despacho
+    // Destacado); aquí sanitizamos por si acaso.
+    if(Array.isArray(clean.equipo)){
+      clean.equipo = clean.equipo
+        .slice(0, MAX_EQUIPO_MIEMBROS)
+        .map(m => ({
+          nombre: (m && m.nombre || '').toString().trim().slice(0, 80),
+          rol: (m && m.rol || '').toString().trim().slice(0, 60),
+          bio: (m && m.bio || '').toString().trim().slice(0, 200),
+          telefono: (m && m.telefono || '').toString().replace(/\D/g, '').slice(0, 15)
+        }))
+        .filter(m => m.nombre);
+    }
     return clean;
   }
 
@@ -515,7 +532,7 @@
   }
 
   global.IdoneoListings = {
-    DEMO_ABOGADOS, MEXICO_ESTADOS, IDIOMAS_OPTS, MAX_FAQ_PERSONAL,
+    DEMO_ABOGADOS, MEXICO_ESTADOS, IDIOMAS_OPTS, MAX_FAQ_PERSONAL, MAX_EQUIPO_MIEMBROS,
     getApproved, getPending, getAllListings,
     submitRegistration, approveRegistration, rejectRegistration,
     updateApproved, removeApproved, isDemo,

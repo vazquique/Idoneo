@@ -185,6 +185,19 @@
   .faq-personal-remove{background:none; border:1px solid #c9bd9c; color:#8a8069; border-radius:3px; padding:5px 10px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; cursor:pointer; transition:border-color 0.15s ease, color 0.15s ease;}
   .faq-personal-remove:hover{border-color:#b23b3b; color:#b23b3b;}
 
+  .equipo-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
+  .equipo-list{display:flex; flex-direction:column; gap:10px; margin-bottom:10px;}
+  .equipo-row{background:#fff; border:1px solid #ece3cd; border-radius:4px; padding:12px; display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .equipo-row input, .equipo-row textarea{width:100%; padding:8px 10px; border:1px solid #c9bd9c; border-radius:2px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.86rem; color:var(--ink);}
+  .equipo-row .equipo-telefono, .equipo-row textarea{grid-column:1 / -1;}
+  .equipo-row textarea{resize:vertical;}
+  .equipo-row-foot{grid-column:1 / -1; display:flex; justify-content:flex-end;}
+  .equipo-remove{background:none; border:1px solid #c9bd9c; color:#8a8069; border-radius:3px; padding:5px 10px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; cursor:pointer; transition:border-color 0.15s ease, color 0.15s ease;}
+  .equipo-remove:hover{border-color:#b23b3b; color:#b23b3b;}
+  @media (max-width:520px){
+    .equipo-row{grid-template-columns:1fr;}
+  }
+
   .consulta-price-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   .consulta-price-row input[type="number"]{width:160px; flex:none;}
   .consulta-gratis-check{display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:500; color:var(--ink-2); white-space:nowrap; cursor:pointer; flex-shrink:0;}
@@ -552,6 +565,25 @@
   }
   function faqPersonalRowsHTML(list){
     return (Array.isArray(list) ? list : []).map(faqPersonalRowHTML).join('');
+  }
+  const MAX_EQUIPO_MIEMBROS = (typeof IdoneoListings !== 'undefined' && IdoneoListings.MAX_EQUIPO_MIEMBROS) || 8;
+  function equipoRowHTML(item){
+    const nombre = escapeHtml((item && item.nombre) || '');
+    const rol = escapeHtml((item && item.rol) || '');
+    const telefono = escapeHtml((item && item.telefono) || '');
+    const bio = escapeHtml((item && item.bio) || '');
+    return `
+      <div class="equipo-row">
+        <input type="text" class="equipo-nombre" maxlength="80" placeholder="Nombre del integrante" value="${nombre}">
+        <input type="text" class="equipo-rol" maxlength="60" placeholder="Ej. Especialista en Familiar" value="${rol}">
+        <input type="tel" class="equipo-telefono" placeholder="WhatsApp directo (opcional)" value="${telefono}">
+        <textarea class="equipo-bio" rows="2" maxlength="200" placeholder="Bio breve (opcional)">${bio}</textarea>
+        <div class="equipo-row-foot"><button type="button" class="equipo-remove" aria-label="Quitar integrante">Quitar</button></div>
+      </div>
+    `;
+  }
+  function equipoRowsHTML(list){
+    return (Array.isArray(list) ? list : []).map(equipoRowHTML).join('');
   }
   const MEXICO_ESTADOS = (typeof IdoneoListings !== 'undefined' && IdoneoListings.MEXICO_ESTADOS) || {};
   const IDIOMAS_OPTS = (typeof IdoneoListings !== 'undefined' && IdoneoListings.IDIOMAS_OPTS) || ['Inglés', 'Francés', 'Portugués', 'Alemán', 'Italiano', 'Chino mandarín'];
@@ -940,6 +972,19 @@
           <div class="faq-personal-list" data-role="faqPersonalList">${faqPersonalRowsHTML(l.faqPersonal)}</div>
           <button type="button" class="servicio-add-btn" data-action="addFaqPersonal">+ Agregar pregunta</button>
         </div>
+
+        ${l.tipo === 'despacho' ? `
+        <div class="equipo-section">
+          <div class="stats-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h3>Equipo del despacho</h3>
+            <span class="galeria-count">${(l.equipo || []).length}/${MAX_EQUIPO_MIEMBROS}</span>
+          </div>
+          <p class="field-hint" style="margin-top:-6px; margin-bottom:12px;">Deja que el cliente elija a quién de tu equipo quiere contactar, en vez de escribirle a un número genérico sin saber quién va a contestar. Se muestra como un directorio en tu perfil público.</p>
+          <div class="equipo-list" data-role="equipoList">${equipoRowsHTML(l.equipo)}</div>
+          <button type="button" class="servicio-add-btn" data-action="addEquipoMiembro">+ Agregar integrante</button>
+        </div>
+        ` : ''}
       `;
     }
     if(isDestacadoDismissed(l.id)){
@@ -1317,6 +1362,18 @@
       .slice(0, MAX_FAQ_PERSONAL);
   }
 
+  function readEquipo(card){
+    return [...card.querySelectorAll('.equipo-row')]
+      .map(row => ({
+        nombre: row.querySelector('.equipo-nombre').value.trim(),
+        rol: row.querySelector('.equipo-rol').value.trim(),
+        telefono: row.querySelector('.equipo-telefono').value.replace(/\D/g, ''),
+        bio: row.querySelector('.equipo-bio').value.trim()
+      }))
+      .filter(m => m.nombre)
+      .slice(0, MAX_EQUIPO_MIEMBROS);
+  }
+
   const MAX_SERVICIOS_PRECIO = 8;
   function wirePrecios(card){
     const list = card.querySelector('[data-role="serviciosPrecioList"]');
@@ -1377,6 +1434,34 @@
     refreshAddBtn();
   }
 
+  function wireEquipo(card){
+    const list = card.querySelector('[data-role="equipoList"]');
+    const addBtn = card.querySelector('[data-action="addEquipoMiembro"]');
+    if(!list || !addBtn) return; // solo existe si es despacho Destacado
+    const counter = card.querySelector('.equipo-section .galeria-count');
+
+    function refreshAddBtn(){
+      const count = list.querySelectorAll('.equipo-row').length;
+      addBtn.disabled = count >= MAX_EQUIPO_MIEMBROS;
+      addBtn.textContent = count >= MAX_EQUIPO_MIEMBROS ? `Máximo ${MAX_EQUIPO_MIEMBROS} integrantes` : '+ Agregar integrante';
+      if(counter) counter.textContent = `${count}/${MAX_EQUIPO_MIEMBROS}`;
+    }
+
+    addBtn.addEventListener('click', () => {
+      if(list.querySelectorAll('.equipo-row').length >= MAX_EQUIPO_MIEMBROS) return;
+      list.insertAdjacentHTML('beforeend', equipoRowHTML(null));
+      refreshAddBtn();
+      list.lastElementChild.querySelector('.equipo-nombre').focus();
+    });
+    list.addEventListener('click', e => {
+      const btn = e.target.closest('.equipo-remove');
+      if(!btn) return;
+      btn.closest('.equipo-row').remove();
+      refreshAddBtn();
+    });
+    refreshAddBtn();
+  }
+
   function wireDisponibleToggle(card, l){
     const check = card.querySelector('[data-role="disponibleCheck"]');
     if(!check) return;
@@ -1422,6 +1507,7 @@
       consultaDesde: readConsultaDesde(card),
       serviciosPrecio: readServiciosPrecio(card),
       faqPersonal: readFaqPersonal(card),
+      equipo: readEquipo(card),
       idiomas: [...card.querySelectorAll('[data-role="idiomasPicker"] input:checked')].map(cb => cb.value),
       promoTexto: card.querySelector('[data-field="promoTexto"]').value.trim(),
       promoHasta: card.querySelector('[data-field="promoHasta"]').value,
@@ -1707,6 +1793,7 @@
     wireEstadoCiudad(card);
     wirePrecios(card);
     wireFaqPersonal(card);
+    wireEquipo(card);
     wireDisponibleToggle(card, l);
     wireDestacadoShowcase(card, l);
 
