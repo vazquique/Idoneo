@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#182644">
 <title>Buscar abogado — Idóneo Abogados</title>
 <meta name="description" content="Filtra abogados y despachos por ciudad, especialidad y precio. Compara reseñas reales y contacta directo por WhatsApp en el directorio legal de Idóneo.">
@@ -162,6 +163,8 @@
   @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(92,184,92,0.5);} 70%{box-shadow:0 0 0 6px rgba(92,184,92,0);} 100%{box-shadow:0 0 0 0 rgba(92,184,92,0);}}
   .urgente24h-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:#d9534f; margin-top:4px;}
   .urgente24h-tag svg{width:11px; height:11px; flex-shrink:0;}
+  .alto-desempeno-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:#3d7a3d; margin-top:4px; cursor:help;}
+  .alto-desempeno-tag svg{width:11px; height:11px; flex-shrink:0;}
   @keyframes card-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   .lawyer-top{display:flex; gap:12px; align-items:flex-start;}
   .avatar{
@@ -388,6 +391,7 @@
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
         <a href="guias.html">Guías legales</a>
         <a href="documentos.html">Kit de documentos</a>
+        <a href="foro.html">Foro de preguntas</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -544,6 +548,7 @@
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="documentos.html">Kit de documentos</a>
+      <a href="foro.html">Foro de preguntas</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -601,6 +606,7 @@
     const noResults = document.getElementById('noResults');
     const count = document.getElementById('resultsCount');
     grid.innerHTML = '';
+    updateStructuredData(list);
     if(list.length === 0){
       noResults.classList.add('show');
       count.textContent = '0 resultados';
@@ -611,6 +617,8 @@
     list.forEach((ab, i) => {
       const stats = reviewStats[ab.id] || {average: 0, total: 0};
       const activa = window.IdoneoListings.isDestacadoActivo(ab);
+      const idoneoScore = window.IdoneoListings.computeIdoneoScore(ab, stats, 0);
+      const altoDesempeno = !activa && idoneoScore >= window.IdoneoListings.IDONEO_SCORE_ALTO_DESEMPENO;
       const card = document.createElement('div');
       card.className = 'lawyer-card' + (ab.tipo === 'despacho' ? ' is-despacho' : '') + (activa ? ' is-destacado' : '');
       card.style.animationDelay = Math.min(i * 0.05, 0.4) + 's';
@@ -627,6 +635,7 @@
             ${ab.verificado ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</div>` : ''}
             ${activa && ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
             ${ab.urgente24h ? `<div class="urgente24h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Urgente 24/7</div>` : ''}
+            ${altoDesempeno ? `<div class="alto-desempeno-tag" title="Insignia gratuita por mérito — calificación, perfil completo y disponibilidad, no por pago"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Alto desempeño</div>` : ''}
           </div>
         </div>
         ${activePromo(ab) ? `<div class="promo-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6l-8 8a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8l8-8A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.8z"/><circle cx="15.5" cy="8.5" r="1.5"/></svg>${escapeHtml(activePromo(ab))}</div>` : ''}
@@ -653,6 +662,7 @@
   }
 
   function applyFilters(){
+    updateSEOForFilters();
     const nombre = normalize(document.getElementById('fNombre').value.trim());
     const ciudad = document.getElementById('fCiudad').value;
     const especialidad = document.getElementById('fEspecialidad').value;
@@ -827,7 +837,11 @@
   }
 
   // Permite llegar aquí desde el home con un filtro ya aplicado, p.ej.
-  // buscar.html?especialidad=Familiar (usado por el asistente de la portada).
+  // buscar.html?especialidad=Familiar (usado por el asistente de la portada)
+  // o buscar.html?ciudad=Guadalajara%2C+Jalisco. También sirve para que un
+  // link a una combinación específica (ciudad+especialidad) resuelva en
+  // una página con título y meta description propios de esa combinación,
+  // en vez de generar cientos de páginas casi-duplicadas a mano.
   function applyQueryParams(){
     const params = new URLSearchParams(location.search);
     const esp = params.get('especialidad');
@@ -835,6 +849,70 @@
       const sel = document.getElementById('fEspecialidad');
       if([...sel.options].some(o => o.value === esp)) sel.value = esp;
     }
+    const ciudad = params.get('ciudad');
+    if(ciudad){
+      const sel = document.getElementById('fCiudad');
+      if([...sel.options].some(o => o.value === ciudad)) sel.value = ciudad;
+    }
+  }
+
+  // Título y meta description reflejan el filtro activo -- así cada
+  // combinación de ciudad+especialidad que alguien comparta o que Google
+  // indexe (buscar.html?especialidad=X&ciudad=Y) tiene su propio título
+  // real en vez de que todas las combinaciones se vean idénticas.
+  function updateSEOForFilters(){
+    const esp = document.getElementById('fEspecialidad').value;
+    const ciudad = document.getElementById('fCiudad').value;
+    let titulo = 'Buscar abogado — Idóneo Abogados';
+    let desc = 'Filtra abogados y despachos por ciudad, especialidad y precio. Compara reseñas reales y contacta directo por WhatsApp en el directorio legal de Idóneo.';
+    if(esp && ciudad){
+      titulo = `Abogados de ${esp} en ${ciudad} — Idóneo`;
+      desc = `Directorio de abogados y despachos de ${esp} verificados en ${ciudad}. Cédula confirmada, reseñas reales, contacto directo por WhatsApp.`;
+    } else if(esp){
+      titulo = `Abogados de ${esp} en México — Idóneo`;
+      desc = `Directorio de abogados y despachos de ${esp} verificados en México. Cédula confirmada, reseñas reales, contacto directo por WhatsApp.`;
+    } else if(ciudad){
+      titulo = `Abogados en ${ciudad} — Idóneo`;
+      desc = `Directorio de abogados y despachos verificados en ${ciudad}. Cédula confirmada, reseñas reales, contacto directo por WhatsApp.`;
+    }
+    document.title = titulo;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if(metaDesc) metaDesc.setAttribute('content', desc);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if(ogTitle) ogTitle.setAttribute('content', titulo);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if(ogDesc) ogDesc.setAttribute('content', desc);
+  }
+
+  // Datos estructurados (JSON-LD) de los resultados que de verdad se ven
+  // en pantalla -- se regenera en cada `renderCards`, nunca describe algo
+  // que el visitante no pueda ver también. Ayuda a que Google entienda
+  // que esto es un directorio de despachos/abogados reales, no solo texto.
+  function updateStructuredData(list){
+    let script = document.getElementById('resultsJsonLd');
+    if(!script){
+      script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'resultsJsonLd';
+      document.head.appendChild(script);
+    }
+    const items = list.slice(0, 20).map((ab, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': ab.tipo === 'despacho' ? 'LegalService' : 'Attorney',
+        name: ab.nombre,
+        url: `perfil.html?id=${encodeURIComponent(ab.id)}`,
+        address: {'@type': 'PostalAddress', addressLocality: ab.ciudad || undefined},
+        areaServed: ab.ciudad || undefined,
+        knowsAbout: ab.especialidades || undefined
+      }
+    }));
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      itemListElement: items
+    });
   }
 
   async function init(){
@@ -863,5 +941,6 @@
   });
 </script>
 
+<script src="pwa-register.js"></script>
 </body>
 </html>

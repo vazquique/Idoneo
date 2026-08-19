@@ -1044,6 +1044,191 @@ el negocio:
   viable sin backend adicional — pero es un cambio de flujo de cuentas
   más grande que el resto de lo de esta lista, por eso quedó pendiente.
 
+## Segunda ronda de innovación (a partir del documento "Ideas de innovación")
+
+Esta sección documenta lo que se construyó a partir de un documento de
+ideación de 36 propuestas, y — con la misma honestidad de siempre — lo
+que NO se construyó y por qué. Nada de esto reemplaza ni le quita nada
+a las funciones gratuitas que ya existían.
+
+### Idóneo Score
+
+Puntaje de mérito de 0 a 100, gratuito, calculado con datos que ya
+existían en el sitio: calificación promedio (hasta 30 pts), número de
+reseñas (hasta 15), qué tan completo está el perfil (hasta 20),
+verificación de cédula/persona moral (hasta 15), señales de
+disponibilidad real — "Disponible ahora" y "Urgente 24/7" (hasta 10), y
+casos ganados reportados (hasta 10). La fórmula vive en
+`computeIdoneoScore()` en `listings.js` — si quieres cambiar los pesos,
+es ahí.
+
+A partir de 78 puntos (constante `IDONEO_SCORE_ALTO_DESEMPENO` en
+`listings.js`), un perfil califica para la insignia gratuita "Alto
+desempeño" (visible en `buscar.html` y `perfil.html`, pero solo para
+cuentas que NO son Destacado — si ya eres Destacado no la necesitas, ya
+tienes la insignia dorada) y para acceso a la Red de referidos aunque
+no pagues. El panel completo con la barra de progreso vive en "Mi
+cuenta" para cualquier cuenta aprobada.
+
+No mide "tiempo de respuesta" a propósito — el sitio no tiene
+mensajería interna, así que no hay forma honesta de medir eso todavía
+sin inventar el dato.
+
+### Foro de preguntas públicas (`foro.html` / `pregunta.html`)
+
+Cualquiera con sesión puede publicar una pregunta gratis; solo cuentas
+dueñas de un perfil **aprobado** pueden responder — esto lo hacen
+cumplir `firestore.rules` (función `esDuenoAprobado()`), no la
+interfaz, así que no se puede saltar manipulando la petición. Es el
+mismo mecanismo con el que Avvo construyó buena parte de su tráfico en
+Estados Unidos: preguntas indexables por buscadores, respuestas de
+abogados reales, cada respuesta enlaza al perfil de quien la escribió.
+
+Dos colecciones nuevas en Firestore: `preguntas` (lectura pública,
+creación con sesión) y `respuestas_foro` (lectura pública, creación
+solo si el `abogadoId` que mandas es tuyo y está aprobado). Ninguna de
+las dos tiene `allow update` — una vez publicada, una pregunta o
+respuesta no se edita, solo se borra (por su autor o por ti como
+admin). No hay panel de moderación todavía: si necesitas borrar
+contenido inapropiado, hazlo directamente desde la consola de
+Firestore por ahora.
+
+### Reseñas con contexto de caso
+
+Campo opcional `tramite` en cada reseña (ej. "Divorcio voluntario"),
+autoreportado por quien escribe — **no es una verificación real**, es
+contexto que el cliente añade voluntariamente, y así se lo dice la
+propia interfaz (nunca prometas más certeza de la que el dato
+realmente tiene).
+
+### Red de referidos abierta por mérito
+
+Antes era exclusiva de Destacado. Ahora cualquier cuenta aprobada con
+Idóneo Score ≥ 78 también entra, sin pagar — `redReferidosHTML()` en
+`mi-cuenta.html` ahora recibe un segundo parámetro (`viaScore`) que
+solo cambia el texto explicativo, la lógica de candidatos (a quién
+puedes referir) sigue siendo cuentas Destacado, porque calcular el
+Score de cada candidato en tiempo real sería demasiadas lecturas de
+Firestore para una lista — el beneficio de pagar sigue siendo real
+(apareces como destino de referidos), pero el de ganártelo con mérito
+también.
+
+### Programa de referidos de dos lados
+
+Cada perfil aprobado tiene un link propio (`registro.html?ref=<id>`,
+generado en "Mi cuenta", con botón de copiar). El nuevo registro que
+llega por ese link guarda `referidoPor` una sola vez al crearse —
+`firestore.rules` bloquea cambiarlo después, para que nadie reclame un
+referido después del hecho. Solo cuentan los referidos que llegan a
+`approved` (los `pending` no son visibles para quien refirió, por las
+mismas reglas de lectura de siempre) — "Mi cuenta" muestra cuántos
+referidos aprobados trajiste.
+
+**El premio se aplica a mano, tú decides cuál** — un mes gratis de
+Destacado, un descuento en el Kit de documentos, lo que tenga sentido
+para tu negocio. Revisa periódicamente quién trajo referidos
+aprobados (Firestore → `abogados_registrados` → filtra por
+`referidoPor` no vacío) y aplícalo directamente en el panel de admin.
+
+> **Nota técnica:** la consulta `getMisReferidosAprobados()` filtra por
+> dos campos (`referidoPor` + `status`) — la primera vez que se
+> ejecute, Firestore probablemente te muestre en la consola un enlace
+> para crear el índice compuesto que necesita (es automático, un clic).
+> Si no lo creas, esa consulta específica falla hasta que lo hagas.
+
+### SEO estructurado en `buscar.html`
+
+Dos cosas, ninguna genera páginas nuevas (evita el riesgo de "doorway
+pages" casi-duplicadas que castiga Google): el `<title>` y la meta
+description cambian dinámicamente según los filtros activos
+(`buscar.html?especialidad=Familiar&ciudad=Guadalajara...` ahora tiene
+su propio título real), y cada búsqueda genera datos estructurados
+JSON-LD (`ItemList` de `Attorney`/`LegalService`) que reflejan
+exactamente los resultados visibles — nunca describen algo que el
+visitante no vea también.
+
+### Sitio instalable (PWA)
+
+`manifest.json` + `sw.js` (service worker mínimo, cachea el shell del
+sitio para que algo cargue sin conexión, nunca cachea nada de Firebase)
++ `pwa-register.js` (registra el service worker, incluido en las 23
+páginas del sitio). En Android/Chrome/Edge esto ya es suficiente para
+que aparezca el ícono de "Instalar" — en iOS/Safari, Apple no sigue el
+estándar `manifest.json` y el soporte de íconos SVG en
+`apple-touch-icon` es inconsistente entre versiones, así que **el
+ícono en pantalla de inicio de iPhone puede no verse bien** hasta que
+generes un ícono PNG real (192×192 y 512×512 son los tamaños típicos) y
+agregues `<link rel="apple-touch-icon" href="icon-192.png">` a cada
+página — no se hizo aquí porque requiere generar archivos de imagen
+binarios, no solo código.
+
+No hay notificaciones push — eso necesita Firebase Cloud Messaging más
+una forma de disparar la notificación desde algún lado (típicamente una
+Cloud Function), la misma pieza de servidor que falta para la IA real
+(ver más abajo).
+
+## Lo que NO se construyó, y por qué
+
+El documento de ideación traía 36 propuestas. Lo de arriba son las que
+se podían construir de verdad, hoy, sin backend propio ni que abrieras
+cuentas de pago externas. El resto se agrupa así:
+
+**Necesitan un modelo de lenguaje real (backend + API key + billing
+tuyos)** — asistente legal conversacional, brief automático para el
+abogado, Radar de Plazos con lectura de documentos, redacción asistida
+de perfil, revisor de contratos con IA, buscador semántico. Ya está
+documentado paso a paso cómo conectar esto en la sección "Cómo
+conectar un modelo de lenguaje real" (busca `cuestionario.html` más
+arriba) — la única pieza que falta es que tú actives Firebase Blaze y
+abras una cuenta con el proveedor de IA que elijas, porque eso implica
+tu propio método de pago.
+
+**Necesitan manejar dinero de terceros (custodia/escrow)** — consulta
+pagada en garantía, comisión automática "Idóneo Pay". Esto es
+deliberado, no un descuido: un sitio estático sin backend no puede
+retener y liberar el dinero de un cliente de forma seria y segura
+mientras confirma que la consulta ocurrió, y construir una versión a
+medias de algo que promete "tu dinero está protegido" sin la
+infraestructura real detrás sería peor que no ofrecerlo — sería una
+promesa que no se puede cumplir. Si más adelante quieres esto de
+verdad, es un proyecto de fintech con su propio backend, posiblemente
+con implicaciones regulatorias (transmisión de dinero) que hay que
+revisar con un abogado especializado en la materia — no algo para
+agregar de pasada.
+
+**Necesitan integración con sistemas de gobierno que no controlas** —
+verificación viva de cédula (revisión periódica automática contra el
+registro de la SEP) y onboarding con e.firma del SAT. Ninguno de los
+dos tiene una API pública documentada para terceros hasta donde se
+investigó — construir esto probablemente implicaría scraping de un
+portal de gobierno (frágil, se rompe sin aviso cada vez que cambian el
+sitio, y en una zona gris de términos de uso) en vez de una integración
+real. Quedó fuera por esa razón, no por dificultad técnica pura.
+
+**Necesitan datos reales acumulados, que hoy no existen** — reportes de
+inteligencia de mercado y el reporte anual "Estado del acceso a la
+justicia" solo tienen sentido con meses o años de uso real del sitio.
+Construir el reporte hoy, sin datos, sería inventar contenido.
+
+**Son decisiones de negocio, no tareas de código** — API de
+verificación como servicio, licenciamiento a colegios de abogados,
+expansión a notarios y otros profesionistas, Idóneo LatAm, mediación en
+línea, radar de tiempos de juzgados, y el Fondo de acceso a la
+justicia (destinar % del ingreso de Destacado a subsidiar consultas
+gratuitas). Todas requieren que tú negocies alianzas, definas términos,
+o decidas cuánto donar — nada de eso se puede decidir en automático en
+tu nombre.
+
+**Quedaron fuera por alcance esta vez (buildables, pero no se llegó)**
+— mensajería interna, videoconsulta agendable, línea de tiempo del
+caso, modo urgente en vivo, comunidad privada de despachos, un
+leaderboard público del Idóneo Score, segunda opinión exprés, e Idóneo
+Protección (membresía mensual tipo LegalShield). Ninguna necesita
+backend nuevo — todas son extensiones del mismo patrón que ya usa el
+resto del sitio (una colección nueva en Firestore + reglas + una
+página o sección). Son el siguiente lote natural si quieres seguir por
+aquí.
+
 ## Notas
 
 - El archivo `firebase-config.js` no es secreto — el `apiKey` de Firebase

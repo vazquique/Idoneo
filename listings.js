@@ -49,6 +49,8 @@
   const REVIEWS_COLLECTION = 'resenas';
   const AVISOS_COLLECTION = 'avisos';
   const CASOS_GANADOS_COLLECTION = 'casos_ganados';
+  const PREGUNTAS_COLLECTION = 'preguntas';
+  const RESPUESTAS_FORO_COLLECTION = 'respuestas_foro';
 
   // Idiomas adicionales al español que un abogado puede ofrecer — se
   // muestran como insignia en su tarjeta/perfil y como filtro en el
@@ -203,10 +205,30 @@
       equipo: [],
       reseñas: [],
       status: 'pending',
+      // Programa de referidos de dos lados -- ver "Programa de referidos"
+      // en INSTRUCCIONES-FIREBASE.md. Se guarda una sola vez al crear el
+      // registro (viene de ?ref= en registro.html) y las reglas de
+      // Firestore bloquean cambiarlo después, para que nadie reclame un
+      // referido después del hecho.
+      referidoPor: (data.referidoPor || '').toString().trim().slice(0, 200) || null,
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     const ref = await requireDb().collection(COLLECTION).add(entry);
     return ref.id;
+  }
+
+  // Cuenta cuántos referidos de un perfil ya fueron aprobados -- lo único
+  // que de verdad cuenta para el premio (un registro que nunca se aprueba
+  // no demuestra que el referido era real). No cuenta los que siguen
+  // "pending": las reglas de Firestore solo dejan leer perfiles aprobados,
+  // propios, o si eres admin -- un pendiente de alguien más no es
+  // visible para el que refirió, a propósito, mismo principio que el
+  // resto del sitio. El premio se aplica a mano por ahora, ver
+  // INSTRUCCIONES-FIREBASE.md, sección "Programa de referidos".
+  async function getMisReferidosAprobados(abogadoId){
+    requireAuthUser();
+    const snap = await requireDb().collection(COLLECTION).where('referidoPor', '==', String(abogadoId)).where('status', '==', 'approved').get();
+    return snap.docs.map(doc => Object.assign({id: doc.id}, doc.data()));
   }
 
   // ---- Panel del abogado/despacho (dueño de un registro) ----
@@ -389,6 +411,90 @@
       .sort((a, b) => (b.createdAt ? b.createdAt.seconds : 0) - (a.createdAt ? a.createdAt.seconds : 0));
   }
 
+  // ---- Foro de preguntas públicas ----
+  // Cualquiera con sesión puede preguntar; solo cuentas dueñas de un
+  // perfil aprobado pueden responder (lo hace cumplir firestore.rules
+  // consultando el perfil real, no la interfaz) — así el foro no se
+  // llena de respuestas anónimas o de quien no es abogado de verdad.
+  // Ver INSTRUCCIONES-FIREBASE.md, sección "Foro de preguntas públicas".
+  async function submitPregunta({titulo, cuerpo, especialidad}){
+    const user = requireAuthUser();
+    const tituloLimpio = (titulo || '').toString().trim().slice(0, 120);
+    const cuerpoLimpio = (cuerpo || '').toString().trim().slice(0, 1000);
+    if(!tituloLimpio) throw new Error('Escribe un título para tu pregunta.');
+    const ref = await requireDb().collection(PREGUNTAS_COLLECTION).add({
+      autorUid: user.uid,
+      autorNombre: user.displayName || 'Usuario de Idóneo',
+      titulo: tituloLimpio,
+      cuerpo: cuerpoLimpio,
+      especialidad: (especialidad || '').toString().trim().slice(0, 40),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    return ref.id;
+  }
+
+  async function getPreguntas(){
+    const snap = await requireDb().collection(PREGUNTAS_COLLECTION).orderBy('createdAt', 'desc').limit(150).get();
+    return snap.docs.map(doc => Object.assign({id: doc.id}, doc.data()));
+  }
+
+  async function getPregunta(preguntaId){
+    const doc = await requireDb().collection(PREGUNTAS_COLLECTION).doc(String(preguntaId)).get();
+    return doc.exists ? Object.assign({id: doc.id}, doc.data()) : null;
+  }
+
+  async function deletePregunta(preguntaId){
+    requireAuthUser();
+    await requireDb().collection(PREGUNTAS_COLLECTION).doc(String(preguntaId)).delete();
+  }
+
+  // Todas las respuestas de una sola vez, agrupadas por pregunta -- mismo
+  // patrón que `getAllReviewsGrouped`, para mostrar "N respuestas" en la
+  // lista del foro sin una consulta por pregunta.
+  async function getAllRespuestasForoGrouped(){
+    const snap = await requireDb().collection(RESPUESTAS_FORO_COLLECTION).get();
+    const grouped = {};
+    snap.docs.forEach(doc => {
+      const data = doc.data();
+      const key = String(data.preguntaId);
+      if(!grouped[key]) grouped[key] = [];
+      grouped[key].push(Object.assign({id: doc.id}, data));
+    });
+    return grouped;
+  }
+
+  async function getRespuestasForPregunta(preguntaId){
+    const snap = await requireDb().collection(RESPUESTAS_FORO_COLLECTION).where('preguntaId', '==', String(preguntaId)).get();
+    return snap.docs.map(doc => Object.assign({id: doc.id}, doc.data()))
+      .sort((a, b) => (a.createdAt ? a.createdAt.seconds : 0) - (b.createdAt ? b.createdAt.seconds : 0));
+  }
+
+  async function submitRespuestaForo({preguntaId, abogadoId, texto}){
+    const user = requireAuthUser();
+    const textoLimpio = (texto || '').toString().trim().slice(0, 1500);
+    if(!textoLimpio) throw new Error('Escribe tu respuesta.');
+    const abogadoDoc = await requireDb().collection(COLLECTION).doc(String(abogadoId)).get();
+    if(!abogadoDoc.exists) throw new Error('No encontramos tu perfil.');
+    const abogado = abogadoDoc.data();
+    if(abogado.ownerUid !== user.uid) throw new Error('Ese perfil no es tuyo.');
+    if(abogado.status !== 'approved') throw new Error('Tu perfil todavía no está aprobado -- solo cuentas aprobadas pueden responder en el foro.');
+    const ref = await requireDb().collection(RESPUESTAS_FORO_COLLECTION).add({
+      preguntaId: String(preguntaId),
+      autorUid: user.uid,
+      abogadoId: String(abogadoId),
+      abogadoNombre: abogado.nombre || 'Abogado de Idóneo',
+      abogadoEspecialidades: abogado.especialidades || [],
+      texto: textoLimpio,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    return ref.id;
+  }
+
+  async function deleteRespuestaForo(respuestaId){
+    requireAuthUser();
+    await requireDb().collection(RESPUESTAS_FORO_COLLECTION).doc(String(respuestaId)).delete();
+  }
+
   async function getMyListings(){
     const user = requireAuthUser();
     const snap = await requireDb().collection(COLLECTION).where('ownerUid', '==', user.uid).get();
@@ -519,6 +625,39 @@
     return { total, average: total ? sum / total : 0, histogram };
   }
 
+  // ---- Idóneo Score ----
+  // Puntaje de mérito (0-100), gratuito, calculado solo con datos que ya
+  // existen — no es una insignia que se compre. Es lo que decide, además
+  // de Destacado, quién entra a la Red de referidos y qué cuentas
+  // gratuitas se distinguen en el buscador con "Alto desempeño". No mide
+  // "tiempo de respuesta" porque el sitio no tiene mensajería interna
+  // todavía (no hay forma honesta de medir eso sin inventar el dato).
+  const IDONEO_SCORE_ALTO_DESEMPENO = 78;
+
+  function computeProfileCompletenessScore(ab){
+    const checks = [
+      !!ab.fotoUrl, !!(ab.bio && ab.bio.trim()), !!(ab.experiencia && ab.experiencia.trim()),
+      !!(ab.horario && ab.horario.trim()), !!(ab.direccion && ab.direccion.trim()),
+      !!(ab.sitioWeb || ab.facebook || ab.instagram || ab.linkedin),
+      typeof ab.consultaDesde === 'number',
+      Array.isArray(ab.serviciosPrecio) && ab.serviciosPrecio.length > 0
+    ];
+    const done = checks.filter(Boolean).length;
+    return done / checks.length; // 0..1
+  }
+
+  function computeIdoneoScore(ab, stats, casosGanadosCount){
+    const s = stats || {average: 0, total: 0};
+    const calificacion = s.total > 0 ? (s.average / 5) * 30 : 0;
+    const participacion = Math.min(s.total, 15) * 1;
+    const completitud = computeProfileCompletenessScore(ab) * 20;
+    const verificacion = (ab.verificado ? 10 : 0) + (ab.verificadoEmpresa ? 5 : 0);
+    const disponibilidad = (ab.disponible ? 5 : 0) + (ab.urgente24h ? 5 : 0);
+    const casos = Math.min(casosGanadosCount || 0, 5) * 2;
+    const total = calificacion + participacion + completitud + verificacion + disponibilidad + casos;
+    return Math.round(Math.min(100, total));
+  }
+
   async function getMyReview(abogadoId){
     const user = typeof auth !== 'undefined' ? auth.currentUser : null;
     if(!user) return null;
@@ -555,6 +694,12 @@
     // (ver "Equipo del despacho" en mi-cuenta.html) en vez de que la
     // reseña quede genérica sobre todo el despacho.
     const miembroNombre = (data.miembroNombre || '').toString().trim().slice(0, 80);
+    // tramite es opcional y autoreportado por quien reseña -- no es una
+    // "reseña verificada" (nadie confirma que el trámite ocurrió), es
+    // contexto que el propio cliente añade para que la reseña sea más
+    // útil ("Divorcio voluntario" en vez de un elogio genérico). Que
+    // quede claro esto también en la interfaz, no solo aquí.
+    const tramite = (data.tramite || '').toString().trim().slice(0, 60);
     // merge:true — así una edición del autor no borra la respuesta que el
     // despacho ya haya publicado en ese mismo documento de reseña.
     await requireDb().collection(REVIEWS_COLLECTION).doc(reviewDocId(abogadoId, user.uid)).set({
@@ -564,6 +709,7 @@
       estrellas,
       texto,
       miembroNombre,
+      tramite,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge: true});
   }
@@ -634,8 +780,12 @@
     updateApproved, removeApproved, isDemo,
     getHiddenDemoIds, hideDemo, unhideDemo, getVisibleDemos,
     getReviews, getAllReviewsGrouped, getStatsForListings, computeReviewStats,
+    IDONEO_SCORE_ALTO_DESEMPENO, computeIdoneoScore, computeProfileCompletenessScore,
     getMyReview, getMyReviewsAll, submitReview, deleteMyReview, submitReviewReply, incrementProfileView, incrementContactClick, activePromo, isDestacadoActivo,
     getAvisoActivo, reportarCasoGanado, getMisCasosGanados,
+    getMisReferidosAprobados,
+    submitPregunta, getPreguntas, getPregunta, deletePregunta,
+    getAllRespuestasForoGrouped, getRespuestasForPregunta, submitRespuestaForo, deleteRespuestaForo,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner, addToGaleria, removeFromGaleria,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };

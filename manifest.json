@@ -1,0 +1,20 @@
+{
+  "name": "Idóneo — Directorio Legal",
+  "short_name": "Idóneo",
+  "description": "Directorio de abogados y despachos verificados en México. Cédula verificada, reseñas reales, contacto directo por WhatsApp.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#182644",
+  "theme_color": "#182644",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

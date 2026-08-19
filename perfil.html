@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#182644">
 <title>Perfil — Idóneo Abogados</title>
 <meta name="description" content="Perfil verificado de abogado o despacho en Idóneo — especialidad, reseñas reales y contacto directo por WhatsApp.">
@@ -267,6 +268,9 @@
   .review-miembro-label{display:block; font-size:0.82rem; font-weight:600; color:rgba(241,234,216,0.8); margin-bottom:6px;}
   .review-miembro-select{width:100%; padding:10px 12px; border-radius:3px; border:1px solid var(--line-strong); background:var(--ink-2); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; font-size:0.88rem; margin-bottom:14px;}
   .review-miembro-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--despacho-light); border:1px solid var(--despacho); border-radius:20px; padding:3px 9px; margin-left:8px;}
+  .review-tramite-tag{display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:none; letter-spacing:0.01em; color:var(--brass-light); border:1px solid var(--brass); border-radius:20px; padding:3px 9px; margin-left:8px; cursor:help;}
+  .review-tramite-input{width:100%; padding:10px 12px; border-radius:3px; border:1px solid var(--line-strong); background:var(--ink-2); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; font-size:0.88rem; margin-bottom:4px;}
+  .review-tramite-hint{font-size:0.76rem; color:rgba(241,234,216,0.5);}
   @keyframes star-pop{0%{transform:scale(0.7);} 55%{transform:scale(1.25);} 100%{transform:scale(1);}}
   .review-form-card textarea{width:100%; padding:11px 12px; border-radius:3px; border:1px solid var(--line-strong); background:rgba(241,234,216,0.06); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; font-size:0.9rem; resize:vertical; margin-bottom:12px;}
   .review-form-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
@@ -378,6 +382,7 @@
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
         <a href="guias.html">Guías legales</a>
         <a href="documentos.html">Kit de documentos</a>
+        <a href="foro.html">Foro de preguntas</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -437,6 +442,7 @@
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="documentos.html">Kit de documentos</a>
+      <a href="foro.html">Foro de preguntas</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -665,6 +671,8 @@
     const hasBody = hasBio || hasDetails || !!socialHTML;
 
     const destacadoActivo = window.IdoneoListings.isDestacadoActivo(ab);
+    const idoneoScore = window.IdoneoListings.computeIdoneoScore(ab, stats, 0);
+    const altoDesempeno = !destacadoActivo && idoneoScore >= window.IdoneoListings.IDONEO_SCORE_ALTO_DESEMPENO;
     content.innerHTML = `
       ${galeriaCarouselHTML(ab)}
       <div class="profile-card${ab.tipo === 'despacho' ? ' is-despacho' : ''}">
@@ -679,6 +687,7 @@
               ${ab.tipo === 'despacho' && ab.verificadoEmpresa ? `<div class="verified-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Persona moral verificada</div>` : ''}
               ${ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
               ${ab.urgente24h ? `<div class="urgente24h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Acepta casos urgentes 24/7</div>` : ''}
+              ${altoDesempeno ? `<div class="verified-tag" title="Insignia gratuita por mérito — calificación, perfil completo y disponibilidad, no por pago"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Alto desempeño</div>` : ''}
             </div>
           </div>
         </div>
@@ -1093,7 +1102,7 @@
       return `
       <div class="review-card" style="animation-delay:${delay}s">
         <div class="review-top">
-          <span class="review-author">${escapeHtml(r.autorNombre)}${isMine ? '<span class="review-own-badge">Tu reseña</span>' : ''}${isDespacho ? '<span class="review-lawyer-badge" title="Esta cuenta también tiene un despacho publicado en Idóneo">Cuenta de despacho registrado</span>' : ''}${r.miembroNombre ? `<span class="review-miembro-tag">Sobre ${escapeHtml(r.miembroNombre)}</span>` : ''}</span>
+          <span class="review-author">${escapeHtml(r.autorNombre)}${isMine ? '<span class="review-own-badge">Tu reseña</span>' : ''}${isDespacho ? '<span class="review-lawyer-badge" title="Esta cuenta también tiene un despacho publicado en Idóneo">Cuenta de despacho registrado</span>' : ''}${r.miembroNombre ? `<span class="review-miembro-tag">Sobre ${escapeHtml(r.miembroNombre)}</span>` : ''}${r.tramite ? `<span class="review-tramite-tag" title="Contexto que agregó quien escribió la reseña — no lo verificamos">${escapeHtml(r.tramite)}</span>` : ''}</span>
           <span class="stars">${starString(r.estrellas)}</span>
           <span class="review-date">${escapeHtml(formatReviewDate(r))}</span>
         </div>
@@ -1164,6 +1173,9 @@
           ${equipoNombres.map(n => `<option value="${escapeHtml(n)}" ${myReview && myReview.miembroNombre === n ? 'selected' : ''}>${escapeHtml(n)}</option>`).join('')}
         </select>
         ` : ''}
+        <label class="review-miembro-label" for="reviewTramite">Tipo de trámite (opcional)</label>
+        <input type="text" id="reviewTramite" class="review-tramite-input" maxlength="60" placeholder="Ej. Divorcio voluntario, despido injustificado…" value="${myReview && myReview.tramite ? escapeHtml(myReview.tramite) : ''}">
+        <p class="review-tramite-hint" style="margin:2px 0 12px;">Le da contexto a tu reseña — no lo verificamos, es lo que tú nos cuentas.</p>
         <textarea id="reviewText" rows="3" placeholder="¿Cómo fue tu experiencia con ${escapeHtml(currentAbogado.nombre)}?">${myReview ? escapeHtml(myReview.texto) : ''}</textarea>
         <div class="review-form-actions">
           <button class="review-submit-btn" type="button" id="reviewSubmitBtn">${myReview ? 'Actualizar reseña' : 'Publicar reseña'}</button>
@@ -1202,7 +1214,8 @@
       try{
         const miembroSelect = document.getElementById('reviewMiembroSelect');
         const miembroNombre = miembroSelect ? miembroSelect.value : '';
-        await window.IdoneoListings.submitReview(currentAbogado.id, {estrellas: selectedStars, texto, miembroNombre});
+        const tramite = document.getElementById('reviewTramite').value.trim();
+        await window.IdoneoListings.submitReview(currentAbogado.id, {estrellas: selectedStars, texto, miembroNombre, tramite});
         currentReviews = await window.IdoneoListings.getReviews(currentAbogado.id);
         renderProfile();
       } catch(err){
@@ -1241,5 +1254,6 @@
   init();
 </script>
 
+<script src="pwa-register.js"></script>
 </body>
 </html>

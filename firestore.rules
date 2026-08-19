@@ -44,6 +44,7 @@ service cloud.firestore {
                       && request.resource.data.get('verificadoEmpresa', false) == resource.data.get('verificadoEmpresa', false)
                       && request.resource.data.get('destacado', false) == resource.data.get('destacado', false)
                       && request.resource.data.get('destacadoHasta', null) == resource.data.get('destacadoHasta', null)
+                      && request.resource.data.get('referidoPor', null) == resource.data.get('referidoPor', null)
                       && request.resource.data.rating == resource.data.rating
                       && request.resource.data.reviews == resource.data.reviews
                       && request.resource.data.get('views', 0) == resource.data.get('views', 0)
@@ -110,6 +111,43 @@ service cloud.firestore {
                     && request.resource.data.nota is string
                     && request.resource.data.nota.size() <= 300;
       allow update, delete: if false;
+    }
+
+    // Foro de preguntas publicas -- ver INSTRUCCIONES-FIREBASE.md,
+    // seccion "Foro de preguntas publicas". Cualquiera con sesion puede
+    // preguntar; solo quien es dueno de un perfil APROBADO puede
+    // responder -- se verifica leyendo ese perfil real, no confiando en
+    // la interfaz.
+    function esDuenoAprobado(abogadoId, uid) {
+      let perfil = get(/databases/$(database)/documents/abogados_registrados/$(abogadoId)).data;
+      return perfil.ownerUid == uid && perfil.status == 'approved';
+    }
+
+    match /preguntas/{preguntaId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.autorUid == request.auth.uid
+                    && request.resource.data.titulo is string
+                    && request.resource.data.titulo.size() > 0
+                    && request.resource.data.titulo.size() <= 120
+                    && request.resource.data.cuerpo is string
+                    && request.resource.data.cuerpo.size() <= 1000;
+      allow update: if false;
+      allow delete: if request.auth != null && (resource.data.autorUid == request.auth.uid || isAdmin());
+    }
+
+    match /respuestas_foro/{respuestaId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.autorUid == request.auth.uid
+                    && request.resource.data.preguntaId is string
+                    && request.resource.data.abogadoId is string
+                    && esDuenoAprobado(request.resource.data.abogadoId, request.auth.uid)
+                    && request.resource.data.texto is string
+                    && request.resource.data.texto.size() > 0
+                    && request.resource.data.texto.size() <= 1500;
+      allow update: if false;
+      allow delete: if request.auth != null && (resource.data.autorUid == request.auth.uid || isAdmin());
     }
 
     match /resenas/{reviewId} {

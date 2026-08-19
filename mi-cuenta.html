@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#182644">
 <title>Mi cuenta — Idóneo Abogados</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,6 +113,27 @@
   .completeness-hint{font-size:0.78rem; color:#8a8069; margin-top:8px;}
   .completeness-hint.is-done{color:#4d8c4d; font-weight:600;}
 
+  .idoneo-score-box{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:14px 18px; margin-bottom:20px;}
+  .idoneo-score-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .idoneo-score-label{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-2);}
+  .idoneo-score-value{font-family:'Newsreader', serif; font-weight:600; font-size:1.15rem; color:var(--ink);}
+  .idoneo-score-track{height:7px; border-radius:4px; background:#ece3cd; overflow:hidden;}
+  .idoneo-score-fill{height:100%; background:linear-gradient(90deg, #6a9c6a, #4d8c4d); border-radius:4px; transition:width 0.4s ease;}
+  .idoneo-score-hint{font-size:0.78rem; color:#8a8069; margin-top:8px;}
+  .idoneo-score-box.is-alto .idoneo-score-value{color:#3d7a3d;}
+  .idoneo-score-box.is-alto .idoneo-score-hint{color:#3d7a3d; font-weight:600;}
+  .idoneo-score-box.is-alto{border-color:#a8c9a8;}
+
+  .referral-box{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:14px 18px; margin-bottom:20px;}
+  .referral-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; flex-wrap:wrap; gap:6px;}
+  .referral-label{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-2);}
+  .referral-count{font-size:0.8rem; color:#8a8069; font-weight:600;}
+  .referral-hint{font-size:0.78rem; color:#8a8069; margin-bottom:10px;}
+  .referral-link-row{display:flex; gap:8px;}
+  .referral-link-input{flex:1; min-width:0; padding:9px 11px; border:1px solid #c9bd9c; border-radius:3px; background:#fff; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--ink-2);}
+  .referral-copy-btn{flex-shrink:0; background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:9px 16px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; transition:background 0.15s ease;}
+  .referral-copy-btn:hover{background:var(--ink-2);}
+
   .idiomas-picker{display:flex; flex-wrap:wrap; gap:12px;}
   .idioma-check{display:flex; align-items:center; gap:6px; font-size:0.86rem; color:var(--ink-2); cursor:pointer;}
   .idioma-check input{width:auto;}
@@ -217,6 +239,8 @@
   .referido-meta{font-size:0.76rem; color:#8a8069;}
   .referido-btn{flex-shrink:0; display:inline-block; background:var(--ink); color:var(--parchment); text-decoration:none; padding:8px 16px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; transition:background 0.15s ease;}
   .referido-btn:hover{background:var(--ink-2);}
+  .red-referidos-section.is-via-score{border-color:#a8c9a8;}
+  .red-referidos-via-score-tag{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.04em; color:#3d7a3d; border:1px solid #a8c9a8; border-radius:20px; padding:2px 9px; flex-shrink:0;}
 
   .equipo-section{background:#fbf8f0; border:1px solid #ddd2b0; border-radius:6px; padding:18px 20px; margin-bottom:20px;}
   .equipo-list{display:flex; flex-direction:column; gap:10px; margin-bottom:10px;}
@@ -474,6 +498,7 @@
         <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
         <a href="guias.html">Guías legales</a>
         <a href="documentos.html">Kit de documentos</a>
+        <a href="foro.html">Foro de preguntas</a>
       </div>
       <div class="mega-col">
         <span class="mega-col-title">Legal</span>
@@ -526,6 +551,7 @@
       <a href="plazos.html">Radar de plazos</a>
       <a href="guias.html">Guías legales</a>
       <a href="documentos.html">Kit de documentos</a>
+      <a href="foro.html">Foro de preguntas</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
       <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
@@ -974,17 +1000,21 @@
   // dejarlos ir o mandarlos con alguien que no verificaste. Prioriza
   // especialidades distintas a la tuya (lo más útil para referir) y tu
   // misma ciudad (lo más práctico para el cliente).
-  function redReferidosHTML(l){
+  function redReferidosHTML(l, viaScore){
     const misEspecialidades = new Set(l.especialidades || []);
     const candidatos = approvedListingsCache.filter(ab =>
       ab.id !== l.id && window.IdoneoListings.isDestacadoActivo(ab)
     );
+    const introTexto = viaScore
+      ? `Te ganaste el acceso por tu Idóneo Score — no hace falta ser Destacado. Cuando te llegue un caso fuera de tu especialidad, refiérelo a un colega verificado de la red en vez de dejarlo ir.`
+      : `Beneficio de Destacado (también se gana con un Idóneo Score alto): cuando te llegue un caso fuera de tu especialidad, refiérelo a un colega verificado de la red en vez de dejarlo ir.`;
     if(candidatos.length === 0){
       return `
-        <div class="red-referidos-section">
+        <div class="red-referidos-section${viaScore ? ' is-via-score' : ''}">
           <div class="stats-head">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <h3>Red de referidos</h3>
+            ${viaScore ? '<span class="red-referidos-via-score-tag">Por tu Idóneo Score</span>' : ''}
           </div>
           <p class="field-hint" style="margin:0;">Todavía no hay otras cuentas Destacado con quién armar red en tu zona — en cuanto se destaque alguien más, aparece aquí para que le puedas referir casos fuera de tu especialidad.</p>
         </div>
@@ -999,12 +1029,13 @@
     }).sort((a, b) => b.score - a.score).slice(0, 8);
 
     return `
-      <div class="red-referidos-section">
+      <div class="red-referidos-section${viaScore ? ' is-via-score' : ''}">
         <div class="stats-head">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <h3>Red de referidos</h3>
+          ${viaScore ? '<span class="red-referidos-via-score-tag">Por tu Idóneo Score</span>' : ''}
         </div>
-        <p class="field-hint" style="margin-top:-6px; margin-bottom:12px;">Beneficio exclusivo de Destacado: cuando te llegue un caso fuera de tu especialidad, refiérelo a un colega verificado de la red en vez de dejarlo ir.</p>
+        <p class="field-hint" style="margin-top:-6px; margin-bottom:12px;">${introTexto}</p>
         <div class="red-referidos-list">
           ${puntuado.map(({ab}) => `
             <div class="referido-row">
@@ -1303,6 +1334,104 @@
     `;
   }
 
+  // Puntaje de mérito gratuito (0-100) — calculado con datos que ya
+  // existen (calificación, reseñas, qué tan completo está el perfil,
+  // verificación, disponibilidad, casos ganados reportados). No es algo
+  // que se compre: es lo que abre la Red de referidos a cuentas
+  // gratuitas y lo que distingue "Alto desempeño" en el buscador.
+  // Empieza como placeholder porque reseñas y casos ganados se cargan
+  // aparte, de forma asíncrona — ver `loadIdoneoScore`.
+  function idoneoScoreBoxHTML(l){
+    return `
+      <div class="idoneo-score-box" data-role="idoneoScoreBox">
+        <div class="idoneo-score-head">
+          <span class="idoneo-score-label">Idóneo Score</span>
+          <span class="idoneo-score-value" data-role="idoneoScoreValue">—</span>
+        </div>
+        <div class="idoneo-score-track"><div class="idoneo-score-fill" data-role="idoneoScoreFill" style="width:0%"></div></div>
+        <p class="idoneo-score-hint" data-role="idoneoScoreHint">Calculando…</p>
+      </div>
+    `;
+  }
+
+  async function loadIdoneoScore(card, l){
+    const box = card.querySelector('[data-role="idoneoScoreBox"]');
+    if(!box) return;
+    try{
+      const [reviews, casos] = await Promise.all([
+        window.IdoneoListings.getReviews(l.id).catch(() => []),
+        window.IdoneoListings.getMisCasosGanados(l.id).catch(() => [])
+      ]);
+      const stats = window.IdoneoListings.computeReviewStats(reviews);
+      const score = window.IdoneoListings.computeIdoneoScore(l, stats, casos.length);
+      const alto = score >= window.IdoneoListings.IDONEO_SCORE_ALTO_DESEMPENO;
+      box.querySelector('[data-role="idoneoScoreValue"]').textContent = score;
+      box.querySelector('[data-role="idoneoScoreFill"]').style.width = score + '%';
+      box.classList.toggle('is-alto', alto);
+      box.querySelector('[data-role="idoneoScoreHint"]').textContent = alto
+        ? 'Alto desempeño — tu perfil ya califica para la insignia gratuita "Alto desempeño" en el buscador y para la Red de referidos.'
+        : 'Sube tu calificación, completa tu perfil y activa "Disponible ahora" para subir tu Score — a partir de ' + window.IdoneoListings.IDONEO_SCORE_ALTO_DESEMPENO + ' califica para la insignia "Alto desempeño", gratis.';
+
+      const meritoSlot = card.querySelector('[data-role="meritoReferidosSlot"]');
+      if(meritoSlot && alto){
+        meritoSlot.innerHTML = redReferidosHTML(l, true);
+      }
+    } catch(err){
+      console.error('No se pudo calcular el Idóneo Score.', err);
+    }
+  }
+
+  // Programa de referidos de dos lados: cada perfil aprobado tiene un
+  // link propio (registro.html?ref=<id>) que queda guardado en cualquier
+  // registro nuevo que llegue por ahí (una sola vez, ver
+  // `pickOwnerEditableFields` / firestore.rules -- no se puede reclamar
+  // un referido después del hecho). El premio (mes gratis de Destacado,
+  // descuento en el Kit de documentos, lo que decidas) se aplica a mano
+  // por ahora -- ver INSTRUCCIONES-FIREBASE.md, sección "Programa de
+  // referidos".
+  function referralBoxHTML(l){
+    const link = `${window.location.origin}${window.location.pathname.replace(/mi-cuenta\.html$/, '')}registro.html?ref=${encodeURIComponent(l.id)}`;
+    return `
+      <div class="referral-box">
+        <div class="referral-head">
+          <span class="referral-label">Invita a otro abogado</span>
+          <span class="referral-count" data-role="referralCount">—</span>
+        </div>
+        <p class="referral-hint">Comparte tu link — cuando alguien se registra y su perfil queda aprobado, cuenta como tu referido.</p>
+        <div class="referral-link-row">
+          <input type="text" class="referral-link-input" data-role="referralLinkInput" value="${escapeHtml(link)}" readonly>
+          <button type="button" class="referral-copy-btn" data-role="referralCopyBtn">Copiar</button>
+        </div>
+      </div>
+    `;
+  }
+
+  async function loadReferralBox(card, l){
+    const box = card.querySelector('[data-role="referralCount"]');
+    if(!box) return;
+    try{
+      const aprobados = await window.IdoneoListings.getMisReferidosAprobados(l.id);
+      box.textContent = aprobados.length === 0 ? 'Sin referidos todavía' : `${aprobados.length} referido${aprobados.length === 1 ? '' : 's'} aprobado${aprobados.length === 1 ? '' : 's'}`;
+    } catch(err){
+      console.error('No se pudieron cargar tus referidos.', err);
+      box.textContent = '';
+    }
+    const copyBtn = card.querySelector('[data-role="referralCopyBtn"]');
+    const input = card.querySelector('[data-role="referralLinkInput"]');
+    if(copyBtn && input){
+      copyBtn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(input.value);
+          const original = copyBtn.textContent;
+          copyBtn.textContent = '¡Copiado!';
+          setTimeout(() => { copyBtn.textContent = original; }, 1800);
+        } catch(err){
+          input.select();
+        }
+      });
+    }
+  }
+
   function listingCardHTML(l){
     return `
       <div class="listing-card${l.status === 'approved' ? ' is-approved' : ''}${l.tipo === 'despacho' ? ' is-despacho' : ''}" data-id="${l.id}">
@@ -1321,6 +1450,12 @@
         </div>
 
         ${completenessBoxHTML(l)}
+
+        ${l.status === 'approved' ? idoneoScoreBoxHTML(l) : ''}
+
+        ${l.status === 'approved' ? referralBoxHTML(l) : ''}
+
+        ${l.status === 'approved' && !window.IdoneoListings.isDestacadoActivo(l) ? '<div data-role="meritoReferidosSlot"></div>' : ''}
 
         ${destacadoSectionHTML(l)}
 
@@ -2105,6 +2240,8 @@
     if(l.status === 'approved'){
       wireCasosGanados(card, l);
       loadCasosGanados(card, l);
+      loadIdoneoScore(card, l);
+      loadReferralBox(card, l);
     }
   }
 
@@ -2233,5 +2370,6 @@
   }
 </script>
 
+<script src="pwa-register.js"></script>
 </body>
 </html>
