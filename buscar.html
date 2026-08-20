@@ -234,6 +234,8 @@
   .compare-col-name{font-family:'Fraunces', serif; font-weight:600; font-size:1.02rem;}
   .compare-table .cell-chips{display:flex; gap:5px; flex-wrap:wrap;}
   .compare-table .cell-btn{display:inline-block; margin-top:2px; background:var(--ink); color:var(--parchment); text-decoration:none; padding:8px 14px; border-radius:0; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;}
+  .compare-star{display:inline-flex; align-items:center; gap:4px;}
+  .compare-star svg{width:13px; height:13px; flex-shrink:0; color:var(--brass);}
 
   .skip-link{position:absolute; left:12px; top:-60px; background:var(--stamp); color:var(--parchment); padding:10px 16px; border-radius:0; font-family:'Courier Prime', monospace; font-size:0.8rem; text-decoration:none; z-index:100; transition:top 0.2s ease;}
   .skip-link:focus{top:12px;}
@@ -705,7 +707,7 @@
       {label:'Precio', get: ab => priceDisplay(ab)},
       {label:'Calificación', get: ab => { const s = reviewStats[ab.id] || {average:0,total:0}; return `${starString(s.average)} <span class="rating-count">(${s.total})</span>`; }},
       {label:'Cédula verificada', get: ab => ab.verificado ? 'Sí' : 'No confirmada aún'},
-      {label:'Idóneo Destacado', get: ab => window.IdoneoListings.isDestacadoActivo(ab) ? `${SPARKLE_ICON} Sí` : 'No'},
+      {label:'Idóneo Destacado', get: ab => window.IdoneoListings.isDestacadoActivo(ab) ? `<span class="compare-star">${SPARKLE_ICON} Sí</span>` : 'No'},
       {label:'', get: ab => `<a class="cell-btn" href="perfil.html?id=${encodeURIComponent(ab.id)}">Ver perfil completo</a>`}
     ];
     let html = '<thead><tr><th class="row-label"></th>' + selected.map(ab => `<th class="compare-col-name">${escapeHtml(ab.nombre)}</th>`).join('') + '</tr></thead><tbody>';
