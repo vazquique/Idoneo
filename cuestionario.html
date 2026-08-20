@@ -105,6 +105,7 @@
 
   /* ---------- Resumen / ajuste ---------- */
   .resumen-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); padding:26px 28px; margin-bottom:20px;}
+  .resumen-ia-texto{font-size:0.92rem; color:var(--ink-dim); margin-top:8px; max-width:60ch;}
   .resumen-chips{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 16px;}
   .resumen-chip{font-family:'Courier Prime', monospace; font-size:0.74rem; background:rgba(163,43,31,0.08); border:1px solid var(--stamp); color:var(--ink); padding:6px 13px; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;}
   .resumen-chip.is-empty{background:none; border-style:dashed; border-color:var(--rule-strong); color:var(--ink-faint); font-weight:400; text-transform:none;}
@@ -413,7 +414,7 @@
   }
 
   // ---------- Estado y flujo ----------
-  const answers = {situacion: null, urgencia: null, presupuesto: null, estado: ''};
+  const answers = {situacion: null, urgencia: null, presupuesto: null, estado: '', resumenIA: ''};
   const resumenSlot = document.getElementById('resumenSlot');
   const resultsSlot = document.getElementById('resultsSlot');
 
@@ -460,6 +461,7 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
   async function procesarConsulta({texto, especialidadManual}){
   const textoNorm = normalize(texto || '');
   let confianza = 0;
+  answers.resumenIA = '';
   if(especialidadManual){
     answers.situacion = especialidadManual;
     confianza = 99;
@@ -476,6 +478,7 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
       if(data.urgencia) answers.urgencia = data.urgencia;
       if(data.presupuesto) answers.presupuesto = data.presupuesto;
       if(data.estado) answers.estado = data.estado;
+      answers.resumenIA = data.resumen || '';
       confianza = 99;
     } catch(err){
       console.error('El asistente con IA no respondió, usando el clasificador local.', err);
@@ -499,6 +502,7 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
     resumenSlot.innerHTML = `
       <div class="resumen-card">
         <span class="quiz-step-label">${bajaConfianza ? 'No estoy seguro de tu especialidad' : 'Esto entendí de tu situación'}</span>
+        ${answers.resumenIA ? `<p class="resumen-ia-texto">${escapeHtml(answers.resumenIA)}</p>` : ''}
         <div class="resumen-chips">
           <span class="resumen-chip">${escapeHtml(ESPECIALIDAD_LABELS[answers.situacion] || answers.situacion)}</span>
           ${answers.urgencia ? `<span class="resumen-chip">${escapeHtml(URGENCIA_LABELS[answers.urgencia])}</span>` : ''}
