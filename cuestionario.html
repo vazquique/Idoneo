@@ -109,6 +109,10 @@
   .resumen-ia-box svg{flex-shrink:0; width:18px; height:18px; color:var(--stamp); margin-top:2px;}
   .resumen-ia-label{display:block; font-family:'Courier Prime', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--stamp); margin-bottom:4px;}
   .resumen-ia-texto{font-family:'Fraunces', serif; font-style:italic; font-size:1.02rem; color:var(--ink); line-height:1.45;}
+  .resumen-pregunta-box{background:#fbf8f0; border:1px dashed var(--rule-strong); padding:14px 16px; margin:12px 0 4px; max-width:64ch;}
+  .resumen-pregunta-texto{font-family:'Public Sans', sans-serif; font-size:0.92rem; color:var(--ink); margin-bottom:10px;}
+  .resumen-pregunta-form{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .resumen-pregunta-input{flex:1; min-width:180px; padding:9px 11px; border:1px solid var(--rule-strong); background:#fff; font-family:'Public Sans', sans-serif; font-size:0.9rem; color:var(--ink);}
   .resumen-chips{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 16px;}
   .resumen-chip{font-family:'Courier Prime', monospace; font-size:0.74rem; background:rgba(163,43,31,0.08); border:1px solid var(--stamp); color:var(--ink); padding:6px 13px; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;}
   .resumen-chip.is-empty{background:none; border-style:dashed; border-color:var(--rule-strong); color:var(--ink-faint); font-weight:400; text-transform:none;}
@@ -417,7 +421,7 @@
   }
 
   // ---------- Estado y flujo ----------
-  const answers = {situacion: null, urgencia: null, presupuesto: null, estado: '', resumenIA: ''};
+  const answers = {situacion: null, urgencia: null, presupuesto: null, estado: '', resumenIA: '', preguntaIA: '', textoOriginal: ''};
   const resumenSlot = document.getElementById('resumenSlot');
   const resultsSlot = document.getElementById('resultsSlot');
 
@@ -465,6 +469,8 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
   const textoNorm = normalize(texto || '');
   let confianza = 0;
   answers.resumenIA = '';
+  answers.preguntaIA = '';
+  if(texto) answers.textoOriginal = texto;
   if(especialidadManual){
     answers.situacion = especialidadManual;
     confianza = 99;
@@ -482,6 +488,7 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
       if(data.presupuesto) answers.presupuesto = data.presupuesto;
       if(data.estado) answers.estado = data.estado;
       answers.resumenIA = data.resumen || '';
+      answers.preguntaIA = data.pregunta || '';
       confianza = 99;
     } catch(err){
       console.error('El asistente con IA no respondió, usando el clasificador local.', err);
@@ -509,6 +516,13 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>
           <div><span class="resumen-ia-label">Esto entendió el asistente</span><p class="resumen-ia-texto">${escapeHtml(answers.resumenIA)}</p></div>
         </div>` : ''}
+        ${answers.preguntaIA ? `<div class="resumen-pregunta-box">
+          <p class="resumen-pregunta-texto">${escapeHtml(answers.preguntaIA)}</p>
+          <div class="resumen-pregunta-form">
+            <input type="text" id="preguntaRespuesta" class="resumen-pregunta-input" placeholder="Tu respuesta…">
+            <button type="button" class="quiz-skip" id="preguntaRespuestaBtn">Responder →</button>
+          </div>
+        </div>` : ''}
         <div class="resumen-chips">
           <span class="resumen-chip">${escapeHtml(ESPECIALIDAD_LABELS[answers.situacion] || answers.situacion)}</span>
           ${answers.urgencia ? `<span class="resumen-chip">${escapeHtml(URGENCIA_LABELS[answers.urgencia])}</span>` : ''}
@@ -525,6 +539,23 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
       wrap.style.display = abierto ? 'none' : 'block';
       if(!abierto) renderAjustar(wrap);
     });
+    const preguntaBtn = document.getElementById('preguntaRespuestaBtn');
+    if(preguntaBtn){
+      preguntaBtn.addEventListener('click', async () => {
+        const input = document.getElementById('preguntaRespuesta');
+        const respuesta = input.value.trim();
+        if(!respuesta){ input.focus(); return; }
+        const original = preguntaBtn.textContent;
+        preguntaBtn.disabled = true;
+        preguntaBtn.textContent = 'Pensando…';
+        try{
+          await procesarConsulta({texto: `${answers.textoOriginal}. ${respuesta}`});
+        } finally {
+          preguntaBtn.disabled = false;
+          preguntaBtn.textContent = original;
+        }
+      });
+    }
   }
 
   function renderAjustar(wrap){
