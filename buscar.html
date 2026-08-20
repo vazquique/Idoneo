@@ -304,6 +304,12 @@
   .emergency-link svg{width:16px; height:16px; color:var(--stamp); flex-shrink:0;}
   .emergency-close{position:absolute; top:10px; right:10px; width:24px; height:24px; border:none; background:none; color:var(--ink-faint); cursor:pointer; font-size:1.1rem; line-height:1;}
   @media (max-width:480px){ .emergency-btn .btn-label{display:none;} .emergency-btn{padding:14px;} }
+
+  /* ---------- Botón flotante del asistente IA (misma lógica de bottom:88px que emergency-btn, para no chocar con .compare-bar) ---------- */
+  .assistant-fab{position:fixed; bottom:88px; left:22px; z-index:71; display:inline-flex; align-items:center; gap:8px; background:var(--brass-light); color:var(--ink); border:none; padding:14px 18px; font-family:'Courier Prime', monospace; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; text-decoration:none; box-shadow:3px 3px 0 rgba(33,28,21,0.35); transition:background 0.15s ease;}
+  .assistant-fab:hover{background:var(--brass);}
+  .assistant-fab svg{width:17px; height:17px; flex-shrink:0;}
+  @media (max-width:480px){ .assistant-fab .btn-label{display:none;} .assistant-fab{padding:14px;} }
 </style>
 </head>
 <body>
@@ -939,6 +945,11 @@
   <a class="emergency-link" href="buscar.html?especialidad=Laboral&urgente=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Me despidieron hoy</a>
   <a class="emergency-link" href="cuestionario.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4M12 17h.01"/></svg>No sé qué necesito</a>
 </div>
+
+<a class="assistant-fab" href="cuestionario.html">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>
+  <span class="btn-label">Pregúntale al asistente</span>
+</a>
 <script>
   (function(){
     const btn = document.getElementById('emergencyBtn');
