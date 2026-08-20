@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#211C15">
+<title>Blog legal — Notas cortas sobre plazos y trámites — Idóneo</title>
+<meta name="description" content="Notas breves y prácticas sobre plazos, amparo, prescripción y trámites del SAT en México — ligadas al Radar de Plazos de Idóneo. No es un feed en vivo, son artículos de referencia con fecha.">
+<link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/blog.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Idóneo">
+<meta property="og:title" content="Blog legal — Notas cortas sobre plazos y trámites">
+<meta property="og:description" content="Notas breves y prácticas sobre plazos, amparo, prescripción y trámites del SAT en México — ligadas al Radar de Plazos de Idóneo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Courier+Prime:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#211C15; --ink-2:#332B1E;
+    --brass:#8A5A1E; --brass-light:#C99A3E;
+    --parchment:#F5EFDD; --parchment-dim:#EAE0C5;
+    --line: rgba(245,239,221,0.14); --line-strong: rgba(245,239,221,0.32);
+    --stamp:#A32B1F; --stamp-dark:#7A1E15;
+    --pen:#2B3A55;
+    --rule: rgba(33,28,21,0.14); --rule-strong: rgba(33,28,21,0.26);
+    --ink-dim: rgba(33,28,21,0.68); --ink-faint: rgba(33,28,21,0.5);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--parchment); color:var(--ink); font-family:'Public Sans', sans-serif; line-height:1.6; overflow-x:hidden;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--ink); border-bottom:1px solid var(--line-strong);}
+  .header-inner{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px 28px; column-gap:14px;}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none; justify-self:center;}
+  .brand-mark{width:33px; height:20px; flex-shrink:0; color:var(--brass-light); transition:transform 0.2s ease;}
+  .brand:hover .brand-mark{transform:rotate(-8deg);}
+  .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
+  .brand-name{font-family:'Fraunces', serif; font-size:1.32rem; font-weight:600; font-style:italic; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.13em; color:var(--stamp); background:var(--parchment); padding:2px 8px; align-self:flex-start;}
+  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease, color 0.15s ease;}
+  .auth-slot{justify-self:end;}
+  .nav-toggle:hover{border-color:var(--brass-light);}
+  .nav-toggle.is-open{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
+
+  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 20px 40px rgba(20,16,10,0.35); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s; max-height:calc(100vh - 70px); overflow-y:auto;}
+  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;}
+  .mega-menu-inner{display:grid; grid-template-columns:repeat(4, 1fr); gap:36px; padding:36px 28px;}
+  .mega-col-title{display:block; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:8px;}
+  .mega-col a{display:block; padding:7px 0; color:rgba(245,239,221,0.8); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
+  .mega-col a:hover{color:var(--parchment); transform:translateX(3px);}
+  .mega-col a.mega-primary{color:var(--stamp); font-weight:700;}
+  @media (max-width:860px){ .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;} }
+  @media (max-width:680px){
+    .mega-menu-inner{grid-template-columns:1fr; gap:2px; padding:18px 24px;}
+    .mega-col{padding-bottom:12px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+    .mega-col:last-child{border-bottom:none;}
+  }
+
+  /* ---------- Encabezado del blog ---------- */
+  main{padding:64px 0 90px; scroll-margin-top:90px;}
+  .doc-head{max-width:680px; margin-bottom:12px;}
+  .kicker{font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); display:block; margin-bottom:14px;}
+  h1{font-family:'Fraunces', serif; font-size:clamp(1.9rem,3.6vw,2.6rem); font-weight:500; line-height:1.2; letter-spacing:-0.01em; max-width:22ch;}
+  .doc-sub{margin-top:16px; max-width:62ch; font-size:1.02rem; color:var(--ink-dim); line-height:1.7;}
+  .doc-sub strong{color:var(--ink); font-weight:600;}
+
+  .tab-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); transition:border-color 0.15s ease;}
+  .card-tab{position:absolute; top:-12px; left:16px; background:var(--ink); color:var(--parchment); font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:5px 11px;}
+
+  /* ---------- Índice del blog (filas tipo .recurso-guia) ---------- */
+  .blog-index{margin-top:44px; max-width:820px;}
+  .blog-index-label{display:block; font-family:'Courier Prime', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); margin-bottom:6px;}
+  .blog-list{display:flex; flex-direction:column; border-top:1px solid var(--rule-strong);}
+  .blog-row{display:flex; align-items:baseline; gap:26px; padding:22px 6px; border-bottom:1px solid var(--rule); text-decoration:none; color:var(--ink); border-left:3px solid transparent; transition:border-color 0.15s ease, background 0.15s ease;}
+  .blog-row:hover{border-left-color:var(--stamp); background:var(--parchment-dim);}
+  .blog-row-date{flex-shrink:0; width:180px; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--stamp);}
+  .blog-row-body{flex:1; min-width:0;}
+  .blog-row-body strong{display:block; font-family:'Fraunces', serif; font-size:1.14rem; font-weight:600; line-height:1.35; margin-bottom:5px;}
+  .blog-row-body span{display:block; font-size:0.9rem; color:var(--ink-dim); max-width:62ch;}
+  @media (max-width:640px){
+    .blog-row{flex-direction:column; gap:6px;}
+    .blog-row-date{width:auto;}
+  }
+
+  /* ---------- Artículos individuales ---------- */
+  .blog-posts{margin-top:64px; padding-top:44px; border-top:1px dashed var(--rule-strong); max-width:820px; display:flex; flex-direction:column; gap:56px;}
+  .blog-post{padding:44px; scroll-margin-top:90px;}
+  .blog-post-meta{font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--stamp); margin-bottom:10px;}
+  .blog-post h2{font-family:'Fraunces', serif; font-size:1.5rem; font-weight:600; line-height:1.25; margin-bottom:16px; max-width:26ch;}
+  .blog-post h3{font-family:'Fraunces', serif; font-size:1.1rem; font-weight:600; color:var(--ink); margin:22px 0 10px;}
+  .blog-post p{font-size:1rem; color:var(--ink-dim); line-height:1.75; margin-bottom:14px; max-width:66ch;}
+  .blog-post ul, .blog-post ol{margin:0 0 16px 22px; max-width:64ch;}
+  .blog-post li{font-size:0.98rem; line-height:1.7; color:var(--ink-dim); margin-bottom:8px;}
+  .blog-post strong{color:var(--ink); font-weight:600;}
+  .blog-post a{color:var(--brass); text-decoration:underline; text-underline-offset:2px;}
+  .blog-post a:hover{color:var(--stamp);}
+  .blog-post-foot{margin-top:20px; padding-top:16px; border-top:1px dashed var(--rule-strong); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  .blog-post-back{font-family:'Courier Prime', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); text-decoration:none;}
+  .blog-post-back:hover{color:var(--stamp);}
+
+  .callout{position:relative; background:var(--parchment); border:1px dashed var(--pen); border-left:3px solid var(--pen); padding:16px 20px; margin:0 0 20px; max-width:64ch;}
+  .callout p{margin-bottom:0; color:var(--ink-dim);}
+  .callout.warn{border-color:var(--stamp); border-left-color:var(--stamp); background:rgba(163,43,31,0.05);}
+  .callout.warn p{color:var(--ink-dim);}
+
+  .cta-primary{
+    display:inline-flex; align-items:center; gap:9px; background:var(--stamp); color:var(--parchment); text-decoration:none !important;
+    padding:15px 28px; font-family:'Courier Prime', monospace; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em;
+    transition:background 0.15s ease, transform 0.1s ease; box-shadow:3px 3px 0 var(--rule-strong);
+  }
+  .cta-primary:hover{background:var(--stamp-dark); color:var(--parchment);}
+  .cta-primary:active{transform:translate(3px,3px); box-shadow:0 0 0 var(--rule-strong);}
+
+  .blog-cta-box{margin-top:56px; max-width:820px; background:var(--ink); color:var(--parchment); padding:34px 38px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; border:1px solid var(--line-strong);}
+  .blog-cta-box h2{font-family:'Fraunces', serif; font-size:1.3rem; font-weight:600; margin-bottom:8px; color:var(--parchment);}
+  .blog-cta-box p{color:rgba(245,239,221,0.82); margin:0; max-width:44ch;}
+  .blog-cta-box .cta-primary{box-shadow:3px 3px 0 rgba(245,239,221,0.22);}
+  .blog-cta-box .cta-primary:active{box-shadow:0 0 0 rgba(245,239,221,0.22);}
+
+  footer{padding:56px 0 28px; background:var(--ink); color:var(--parchment); border-top:4px solid var(--stamp);}
+  .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
+  .footer-brand .brand{justify-self:start; margin-bottom:12px;}
+  .footer-tagline{font-size:0.86rem; color:rgba(245,239,221,0.6); max-width:34ch; line-height:1.55;}
+  .footer-col{display:flex; flex-direction:column; gap:9px;}
+  .footer-col-title{font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
+  .footer-col a{font-size:0.86rem; color:rgba(245,239,221,0.7); text-decoration:none; transition:color 0.15s ease;}
+  .footer-col a:hover{color:var(--parchment);}
+  .footer-bottom{padding-top:22px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  footer .mono{font-size:0.72rem; color:rgba(245,239,221,0.5); font-family:'Courier Prime', monospace;}
+  footer a.mono{text-decoration:none;}
+  footer a.mono:hover{color:rgba(245,239,221,0.82);}
+  @media (max-width:860px){ .footer-grid{grid-template-columns:1fr 1fr; gap:28px;} .footer-brand{grid-column:1 / -1;} }
+  @media (max-width:520px){ .footer-grid{grid-template-columns:1fr;} }
+
+  @media (max-width: 680px){
+    .blog-post{padding:26px;}
+    .blog-cta-box{flex-direction:column; align-items:flex-start;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="megaMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">Idóneo</span>
+        <span class="brand-niche">Abogados</span>
+      </span>
+    </a>
+    <div class="auth-slot" id="navAuth"></div>
+  </div>
+  <nav class="mega-menu" id="megaMenu" aria-label="Menú principal">
+    <div class="wrap mega-menu-inner">
+      <div class="mega-col">
+        <span class="mega-col-title">Buscar</span>
+        <a class="mega-primary" href="buscar.html">Todos los abogados</a>
+        <a href="buscar.html?especialidad=Familiar">Familiar</a>
+        <a href="buscar.html?especialidad=Penal">Penal</a>
+        <a href="buscar.html?especialidad=Laboral">Laboral</a>
+        <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+        <a href="buscar.html?especialidad=Corporativo">Corporativo</a>
+        <a href="buscar.html?especialidad=Migratorio">Migratorio</a>
+        <a href="buscar.html?especialidad=Bienes%20ra%C3%ADces">Bienes raíces</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Para abogados</span>
+        <a class="mega-primary" href="registro.html">Regístrate gratis</a>
+        <a href="mi-cuenta.html">Mi cuenta</a>
+        <a href="destacado.html">Idóneo Destacado</a>
+        <a href="precios.html">Precios</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
+        <a class="mega-primary" href="plazos.html">Radar de plazos</a>
+        <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
+        <a href="foro.html">Foro de preguntas</a>
+        <a href="ideas-innovacion.html">Ideas de innovación</a>
+        <a href="index.html#como-funciona">Cómo funciona</a>
+        <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Legal</span>
+        <a href="aviso-privacidad.html">Aviso de privacidad</a>
+        <a href="terminos.html">Términos y condiciones</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap" id="top">
+  <div class="doc-head">
+    <span class="kicker"><a href="guias.html" style="color:inherit; text-decoration:none;">Recursos</a> · Blog legal</span>
+    <h1>Notas cortas sobre plazos y trámites</h1>
+    <p class="doc-sub">El <a href="plazos.html">Radar de Plazos</a> ya sabe qué cuenta como día hábil y qué trámites tienen fecha límite. Aquí escribimos, de vez en cuando, notas breves sobre errores comunes al calcular esos plazos y cambios que conviene tener presentes. <strong>Esto no es un feed en vivo</strong> — son artículos con fecha de publicación, pensados para seguir siendo útiles aunque los leas meses después.</p>
+  </div>
+
+  <div class="blog-index">
+    <span class="blog-index-label">Notas publicadas</span>
+    <div class="blog-list">
+      <a class="blog-row" href="#post-dia-inhabil">
+        <span class="blog-row-date">14 ago 2026 · Plazos</span>
+        <span class="blog-row-body">
+          <strong>Cómo revisar si un plazo vence en día inhábil antes de que sea tarde</strong>
+          <span>Contar "días" a secas es el error más común y el más caro. Así se distingue un día hábil de uno que no cuenta.</span>
+        </span>
+      </a>
+      <a class="blog-row" href="#post-errores-amparo">
+        <span class="blog-row-date">30 jul 2026 · Amparo</span>
+        <span class="blog-row-body">
+          <strong>Los errores más comunes al calcular un plazo de amparo</strong>
+          <span>Desde qué fecha empieza a correr y por qué confundir amparo directo con indirecto te puede costar el caso.</span>
+        </span>
+      </a>
+      <a class="blog-row" href="#post-sat-puente">
+        <span class="blog-row-date">18 jul 2026 · Fiscal</span>
+        <span class="blog-row-body">
+          <strong>Qué hacer si te notifican un requerimiento del SAT durante un puente</strong>
+          <span>El SAT no se rige por el mismo calendario que los juzgados. Qué sí y qué no pausa tu plazo fiscal.</span>
+        </span>
+      </a>
+      <a class="blog-row" href="#post-prescripcion-razon">
+        <span class="blog-row-date">3 jul 2026 · Prescripción</span>
+        <span class="blog-row-body">
+          <strong>"Tengo razón" y "todavía tengo derecho a reclamarlo" no son lo mismo</strong>
+          <span>Por qué la prescripción no discute quién tenía razón — discute si ya se te acabó el tiempo para decirlo.</span>
+        </span>
+      </a>
+      <a class="blog-row" href="#post-despido-negociacion">
+        <span class="blog-row-date">19 jun 2026 · Laboral</span>
+        <span class="blog-row-body">
+          <strong>Despido injustificado: el reloj corre aunque sigas negociando</strong>
+          <span>Esperar una oferta de finiquito antes de actuar es la forma más común de perder el plazo de dos meses.</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <div class="blog-posts">
+
+    <article class="blog-post tab-card" id="post-dia-inhabil">
+      <span class="card-tab">14 ago 2026</span>
+      <div class="blog-post-meta">Plazos</div>
+      <h2>Cómo revisar si un plazo vence en día inhábil antes de que sea tarde</h2>
+      <p>Cuando alguien te dice "tienes 15 días", lo primero que hay que preguntar es: ¿15 días de qué tipo? En la mayoría de los trámites legales en México — laborales, de amparo, mercantiles, fiscales — el plazo corre en <strong>días hábiles</strong>, no en días naturales. Eso significa que sábados, domingos y los días declarados inhábiles por ley (además de los periodos vacacionales de tribunales) simplemente no cuentan.</p>
+      <p>El error típico es abrir el calendario del teléfono, contar 15 casillas hacia adelante sin pensarlo más, y quedarse tranquilo con esa fecha. El problema es que esa fecha casi siempre cae antes de la fecha real — es decir, calculas mal a tu favor y terminas actuando después de que el plazo ya venció, sin saberlo.</p>
+      <h3>Qué revisar antes de confiarte</h3>
+      <ul>
+        <li>¿El plazo es en días hábiles o naturales? Revisa la ley o resolución que lo establece.</li>
+        <li>¿Hay algún día inhábil oficial dentro del rango? (1 de enero, 5 de febrero, 21 de marzo, 1 y 5 de mayo, 16 de septiembre, 20 de noviembre, 25 de diciembre, entre otros).</li>
+        <li>¿La autoridad o el juzgado tiene un periodo vacacional que se cruce con tu plazo?</li>
+      </ul>
+      <div class="callout"><p>El <a href="plazos.html">Radar de Plazos</a> ya aplica estas reglas automáticamente: eliges el trámite y la fecha de inicio, y calcula la fecha límite real con días hábiles de México, no una aproximación a ojo.</p></div>
+      <div class="blog-post-foot">
+        <a class="blog-post-back" href="#top">↑ Volver al índice</a>
+        <a class="cta-primary" href="plazos.html">Calcula tu plazo exacto</a>
+      </div>
+    </article>
+
+    <article class="blog-post tab-card" id="post-errores-amparo">
+      <span class="card-tab">30 jul 2026</span>
+      <div class="blog-post-meta">Amparo</div>
+      <h2>Los errores más comunes al calcular un plazo de amparo</h2>
+      <p>El amparo tiene fama de ser el recurso de "última esperanza" — y también fama de perderse por errores de cálculo que nada tienen que ver con el fondo del caso. Estos son los que más se repiten.</p>
+      <h3>Contar desde la fecha equivocada</h3>
+      <p>El plazo no siempre empieza el día del acto de autoridad. En muchos casos empieza cuando la persona <strong>tuvo conocimiento</strong> del acto, o cuando quedó legalmente notificada — y esas tres fechas no siempre coinciden. Contar desde la fecha incorrecta adelanta o atrasa tu cálculo sin que te des cuenta.</p>
+      <h3>Confundir amparo directo con indirecto</h3>
+      <p>No son el mismo trámite ni corren igual. El <a href="guia-que-es-amparo.html">amparo indirecto</a> se presenta ante un Juez de Distrito contra actos de autoridad en general; el amparo directo se presenta contra sentencias definitivas, ante el tribunal colegiado correspondiente. Cada uno tiene su propio plazo y su propia vía de presentación — tratarlos como intercambiables es de los errores más costosos.</p>
+      <h3>Olvidar que los días corren hábiles, no naturales</h3>
+      <p>Igual que con cualquier plazo legal, un fin de semana o un día inhábil de por medio cambia la fecha límite real.</p>
+      <div class="callout warn"><p>Si tu caso involucra actos que amenazan tu libertad personal, las reglas de plazo cambian — ahí no aplica el conteo estándar. Consulta a un abogado de inmediato en vez de calcular por tu cuenta.</p></div>
+      <div class="blog-post-foot">
+        <a class="blog-post-back" href="#top">↑ Volver al índice</a>
+        <a class="cta-primary" href="plazos.html">Calcula tu plazo exacto</a>
+      </div>
+    </article>
+
+    <article class="blog-post tab-card" id="post-sat-puente">
+      <span class="card-tab">18 jul 2026</span>
+      <div class="blog-post-meta">Fiscal</div>
+      <h2>Qué hacer si te notifican un requerimiento del SAT durante un puente</h2>
+      <p>Un error frecuente es asumir que, como los juzgados suspenden labores en ciertos periodos, el SAT hace lo mismo. No es así: el Servicio de Administración Tributaria tiene su propio calendario de días hábiles, y no coincide automáticamente con el de los tribunales ni con los días festivos "de oficina" de todas las empresas.</p>
+      <p>Si te notifican un requerimiento — por ejemplo, para presentar un recurso de revocación contra una resolución — durante un fin de semana largo o un periodo vacacional informal, lo primero es confirmar la fecha exacta de notificación legal, no la fecha en que tú lo leíste. A partir de ahí corre el plazo, típicamente de <strong>30 días hábiles</strong> según el tipo de resolución.</p>
+      <h3>Tres cosas que sí puedes hacer de inmediato</h3>
+      <ul>
+        <li>Guarda o fotografía la notificación completa, con fecha y folio visibles.</li>
+        <li>Calcula la fecha límite real usando días hábiles fiscales, no naturales.</li>
+        <li>Si el monto o la complejidad lo justifican, agenda una consulta con un abogado fiscalista antes de que se acabe el plazo, no cuando ya casi se acabe.</li>
+      </ul>
+      <div class="callout"><p>El trámite "Recurso de revocación ante el SAT" ya está precargado en el <a href="plazos.html">Radar de Plazos</a> con su referencia general de días hábiles.</p></div>
+      <div class="blog-post-foot">
+        <a class="blog-post-back" href="#top">↑ Volver al índice</a>
+        <a class="cta-primary" href="plazos.html">Calcula tu plazo exacto</a>
+      </div>
+    </article>
+
+    <article class="blog-post tab-card" id="post-prescripcion-razon">
+      <span class="card-tab">3 jul 2026</span>
+      <div class="blog-post-meta">Prescripción</div>
+      <h2>"Tengo razón" y "todavía tengo derecho a reclamarlo" no son lo mismo</h2>
+      <p>Es una de las confusiones más comunes que llegan a un despacho: alguien está convencido de que su caso es sólido — tiene los mensajes, los recibos, los testigos — y se sorprende cuando un abogado le dice que ya no puede hacer nada. No es que haya perdido el argumento. Es que <strong>prescribió</strong> el derecho a presentarlo.</p>
+      <p>La prescripción no evalúa si tenías razón. Evalúa si actuaste dentro del tiempo que la ley te dio para reclamarlo. Y ese tiempo, salvo excepciones, no se detiene porque estés reuniendo pruebas, ahorrando para el abogado o esperando calmarte.</p>
+      <h3>Un matiz importante: la interrupción</h3>
+      <p>En algunos casos, presentar una demanda o una gestión formal dentro del plazo <strong>interrumpe</strong> la prescripción — es decir, el reloj se reinicia. Pero eso requiere una acción formal y documentada, no una llamada informal ni un mensaje de WhatsApp al otro lado.</p>
+      <p>Si sospechas que tu situación tiene un plazo corriendo, revisa nuestra guía completa sobre <a href="guia-prescripcion.html">prescripción</a> — ahí explicamos ejemplos de referencia por tipo de caso y qué hacer si no estás seguro de cuánto tiempo te queda.</p>
+      <div class="blog-post-foot">
+        <a class="blog-post-back" href="#top">↑ Volver al índice</a>
+        <a class="cta-primary" href="plazos.html">Calcula tu plazo exacto</a>
+      </div>
+    </article>
+
+    <article class="blog-post tab-card" id="post-despido-negociacion">
+      <span class="card-tab">19 jun 2026</span>
+      <div class="blog-post-meta">Laboral</div>
+      <h2>Despido injustificado: el reloj corre aunque sigas negociando</h2>
+      <p>Después de un despido, es normal que la primera reacción no sea "voy a demandar" sino "a ver si me ofrecen un buen finiquito". Esperar esa oferta unos días, incluso unas semanas, parece razonable — y es exactamente ahí donde mucha gente deja correr un plazo que no se detiene solo porque hay una conversación abierta con el patrón.</p>
+      <p>En México, el plazo de referencia general para demandar un despido injustificado es de <strong>2 meses</strong> contados a partir del día siguiente al despido. Ese conteo no se pausa porque estés negociando de palabra, porque el patrón te pida tiempo, o porque decidas "darle una oportunidad" antes de tomar acción legal.</p>
+      <h3>Negociar y proteger tu plazo no son excluyentes</h3>
+      <p>Iniciar el trámite correspondiente ante el Centro de Conciliación Laboral — paso previo obligatorio antes de demandar — no cierra la puerta a llegar a un acuerdo. De hecho, la conciliación existe precisamente para eso. Lo que sí hace es dejar constancia de que actuaste dentro del plazo, en vez de confiar en que la negociación informal seguirá abierta indefinidamente.</p>
+      <div class="callout"><p>Calcula tu fecha límite real para demandar un despido en el <a href="plazos.html">Radar de Plazos</a>, y si necesitas orientación, <a href="buscar.html?especialidad=Laboral">busca un abogado laboral verificado</a> cerca de ti.</p></div>
+      <div class="blog-post-foot">
+        <a class="blog-post-back" href="#top">↑ Volver al índice</a>
+        <a class="cta-primary" href="plazos.html">Calcula tu plazo exacto</a>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="blog-cta-box">
+    <div>
+      <h2>No dejes que el tiempo decida por ti.</h2>
+      <p>El Radar de Plazos calcula tu fecha límite exacta, con días hábiles reales de México, en segundos.</p>
+    </div>
+    <a class="cta-primary" href="plazos.html">Calcula tu plazo exacto</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">Idóneo</span>
+          <span class="brand-niche">Abogados</span>
+        </span>
+      </a>
+      <p class="footer-tagline">Directorio legal en México. Cédula verificada, reseñas reales, contacto directo por WhatsApp — sin intermediarios.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Buscar</span>
+      <a href="buscar.html">Todos los abogados</a>
+      <a href="buscar.html?especialidad=Familiar">Familiar</a>
+      <a href="buscar.html?especialidad=Penal">Penal</a>
+      <a href="buscar.html?especialidad=Laboral">Laboral</a>
+      <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Para abogados</span>
+      <a href="registro.html">Regístrate gratis</a>
+      <a href="mi-cuenta.html">Mi cuenta</a>
+      <a href="destacado.html">Idóneo Destacado</a>
+      <a href="precios.html">Precios</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
+      <a href="plazos.html">Radar de plazos</a>
+      <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
+      <a href="foro.html">Foro de preguntas</a>
+      <a href="ideas-innovacion.html">Ideas de innovación</a>
+      <a href="index.html#como-funciona">Cómo funciona</a>
+      <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
+      <a href="aviso-privacidad.html">Aviso de privacidad</a>
+      <a href="terminos.html">Términos y condiciones</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html">TÉRMINOS</a></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="listings.js"></script>
+<script src="auth.js"></script>
+
+<script src="pwa-register.js"></script>
+</body>
+</html>

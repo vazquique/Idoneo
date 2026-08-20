@@ -185,6 +185,9 @@
   .impulso-card-text h3{font-family:'Fraunces', serif; font-size:1.1rem; font-weight:600; margin-bottom:8px;}
   .impulso-card-text p{font-size:0.86rem; color:var(--ink-dim); line-height:1.55;}
   .impulso-cta{flex-shrink:0; display:inline-block; background:none; color:var(--stamp); border:1px solid var(--stamp); text-decoration:none; padding:12px 20px; font-family:'Courier Prime', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; transition:background 0.15s ease, color 0.15s ease;}
+  .impulso-tiers{display:flex; gap:6px; margin-bottom:12px;}
+  .impulso-tier{background:none; border:1px solid var(--rule-strong); color:var(--ink-dim); padding:6px 12px; font-family:'Courier Prime', monospace; font-size:0.72rem; cursor:pointer; transition:border-color 0.15s ease, color 0.15s ease;}
+  .impulso-tier.active{border-color:var(--stamp); color:var(--stamp); font-weight:700;}
   .impulso-cta:hover{background:var(--stamp); color:var(--parchment);}
   @media (max-width:640px){ .impulso-card{flex-direction:column; align-items:stretch; text-align:center;} }
 
@@ -495,8 +498,13 @@
     <div class="impulso-card">
       <div class="impulso-card-text">
         <span class="kicker" style="margin-bottom:6px;">¿No estás listo para comprometerte?</span>
-        <h3>Impulso puntual — $99 MXN por 72 horas</h3>
-        <p>Todas las ventajas de Destacado (prioridad, insignia, "Disponible ahora") durante 3 días, sin suscripción. Ideal para probar si funciona, o para un pico de necesidad puntual — una campaña, una temporada alta, un caso urgente que quieres que se note ya.</p>
+        <div class="impulso-tiers" id="impulsoTiers">
+          <button type="button" class="impulso-tier" data-hours="24" data-price="39">24h · $39</button>
+          <button type="button" class="impulso-tier" data-hours="48" data-price="69">48h · $69</button>
+          <button type="button" class="impulso-tier active" data-hours="72" data-price="99">72h · $99</button>
+        </div>
+        <h3 id="impulsoTitle">Impulso puntual — $99 MXN por 72 horas</h3>
+        <p>Todas las ventajas de Destacado (prioridad, insignia, "Disponible ahora") por el tiempo que elijas, sin suscripción. Ideal para probar si funciona, o para un pico de necesidad puntual — una campaña, una temporada alta, un caso urgente que quieres que se note ya, o anticipar una reforma o desastre natural en tu región.</p>
       </div>
       <a class="impulso-cta" href="#" id="impulsoCtaBtn" target="_self">Activar mi Impulso de 72h</a>
     </div>
@@ -618,9 +626,26 @@
   // correo mientras no automatizamos que el propio pago dispare la
   // activación con vigencia de 72 horas (`destacadoHasta`) -- ver
   // INSTRUCCIONES-FIREBASE.md, sección "Impulso puntual".
-  const IMPULSO_MAILTO = `mailto:${CONTACTO_ANUAL_EMAIL}?subject=${encodeURIComponent('Quiero un Impulso puntual de 72 horas')}&body=${encodeURIComponent('Hola, quiero activar el Impulso puntual de Idóneo Destacado ($99 MXN por 72 horas). Este es el correo de mi cuenta:')}`;
+  function impulsoMailto(hours, price){
+    return `mailto:${CONTACTO_ANUAL_EMAIL}?subject=${encodeURIComponent(`Quiero un Impulso puntual de ${hours} horas`)}&body=${encodeURIComponent(`Hola, quiero activar el Impulso puntual de Idóneo Destacado ($${price} MXN por ${hours} horas). Este es el correo de mi cuenta:`)}`;
+  }
   const impulsoCtaBtn = document.getElementById('impulsoCtaBtn');
-  if(impulsoCtaBtn) impulsoCtaBtn.href = IMPULSO_MAILTO;
+  const impulsoTitle = document.getElementById('impulsoTitle');
+  const impulsoTiers = document.getElementById('impulsoTiers');
+  function setImpulsoTier(hours, price){
+    if(impulsoCtaBtn) impulsoCtaBtn.href = impulsoMailto(hours, price);
+    if(impulsoCtaBtn) impulsoCtaBtn.textContent = `Activar mi Impulso de ${hours}h`;
+    if(impulsoTitle) impulsoTitle.textContent = `Impulso puntual — $${price} MXN por ${hours} horas`;
+  }
+  if(impulsoTiers){
+    impulsoTiers.addEventListener('click', (e) => {
+      const btn = e.target.closest('.impulso-tier');
+      if(!btn) return;
+      impulsoTiers.querySelectorAll('.impulso-tier').forEach(b => b.classList.toggle('active', b === btn));
+      setImpulsoTier(btn.dataset.hours, btn.dataset.price);
+    });
+  }
+  setImpulsoTier('72', '99');
 
   const pricingCtaBtn = document.getElementById('pricingCtaBtn');
   const pricingAmount = document.getElementById('pricingAmount');

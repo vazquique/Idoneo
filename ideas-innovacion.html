@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#211C15">
+<meta name="robots" content="noindex, nofollow">
+<title>Ideas de innovación — Idóneo</title>
+<meta name="description" content="Documento interno de ideación: 65 ideas para Idóneo en once frentes, con hoja de ruta de tres horizontes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Courier+Prime:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#211C15; --ink-2:#332B1E;
+    --brass:#8A5A1E; --brass-light:#C99A3E;
+    --parchment:#F5EFDD; --parchment-dim:#EAE0C5;
+    --line: rgba(245,239,221,0.14); --line-strong: rgba(245,239,221,0.32);
+    --stamp:#A32B1F; --stamp-dark:#7A1E15;
+    --pen:#2B3A55;
+    --rule: rgba(33,28,21,0.14); --rule-strong: rgba(33,28,21,0.26);
+    --ink-dim: rgba(33,28,21,0.68); --ink-faint: rgba(33,28,21,0.5);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--parchment); color:var(--ink); font-family:'Public Sans', sans-serif; line-height:1.6; overflow-x:hidden;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--ink); border-bottom:1px solid var(--line-strong);}
+  .header-inner{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px 28px; column-gap:14px;}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none; justify-self:center;}
+  .brand-mark{width:33px; height:20px; flex-shrink:0; color:var(--brass-light); transition:transform 0.2s ease;}
+  .brand:hover .brand-mark{transform:rotate(-8deg);}
+  .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
+  .brand-name{font-family:'Fraunces', serif; font-size:1.32rem; font-weight:600; font-style:italic; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.13em; color:var(--stamp); background:var(--parchment); padding:2px 8px; align-self:flex-start;}
+  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease, color 0.15s ease;}
+  .auth-slot{justify-self:end;}
+  .nav-toggle:hover{border-color:var(--brass-light);}
+  .nav-toggle.is-open{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
+
+  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 20px 40px rgba(20,16,10,0.35); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s; max-height:calc(100vh - 70px); overflow-y:auto;}
+  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;}
+  .mega-menu-inner{display:grid; grid-template-columns:repeat(4, 1fr); gap:36px; padding:36px 28px;}
+  .mega-col-title{display:block; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:8px;}
+  .mega-col a{display:block; padding:7px 0; color:rgba(245,239,221,0.8); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
+  .mega-col a:hover{color:var(--parchment); transform:translateX(3px);}
+  .mega-col a.mega-primary{color:var(--stamp); font-weight:700;}
+  @media (max-width:860px){ .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;} }
+  @media (max-width:680px){
+    .mega-menu-inner{grid-template-columns:1fr; gap:2px; padding:18px 24px;}
+    .mega-col{padding-bottom:12px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+    .mega-col:last-child{border-bottom:none;}
+  }
+
+  /* ---------- Doc hero ---------- */
+  .doc-hero{padding:64px 0 40px; border-bottom:1px solid var(--rule-strong);}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); margin-bottom:20px; border:1px dashed var(--stamp); padding:6px 12px;}
+  .doc-hero h1{font-family:'Fraunces', serif; font-size:clamp(2rem,4vw,2.9rem); font-weight:500; line-height:1.14; max-width:24ch; letter-spacing:-0.01em;}
+  .doc-hero .lede{margin-top:18px; max-width:70ch; font-size:1.03rem; color:var(--ink-dim);}
+  .ficha{display:flex; flex-wrap:wrap; margin-top:34px; border-top:1px dashed var(--rule-strong);}
+  .ficha-item{padding:16px 26px 0 0; margin-right:26px; border-right:1px dashed var(--rule-strong);}
+  .ficha-item:last-child{border-right:none; margin-right:0;}
+  .ficha-value{display:block; font-family:'Fraunces', serif; font-size:1.6rem; font-weight:600; color:var(--stamp); line-height:1;}
+  .ficha-label{display:block; margin-top:4px; font-family:'Courier Prime', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-faint);}
+
+  /* ---------- Shell: sidebar TOC + main ---------- */
+  .doc-shell{max-width:1120px; margin:0 auto; display:grid; grid-template-columns:240px 1fr; gap:48px; padding:0 28px;}
+  nav.doc-toc{position:sticky; top:20px; align-self:start; max-height:calc(100vh - 40px); overflow-y:auto; padding:40px 0;}
+  nav.doc-toc .toc-title{font-family:'Courier Prime', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-faint); margin-bottom:12px; padding-bottom:8px; border-bottom:1px dashed var(--rule-strong);}
+  nav.doc-toc ol{list-style:none; counter-reset:toc;}
+  nav.doc-toc li{counter-increment:toc; margin-bottom:1px;}
+  nav.doc-toc a{display:flex; gap:9px; font-size:0.84rem; color:var(--ink-dim); padding:6px 8px; text-decoration:none; transition:color 0.12s ease, background 0.12s ease;}
+  nav.doc-toc a::before{content:counter(toc, decimal-leading-zero); font-family:'Courier Prime', monospace; font-size:0.7rem; color:var(--stamp); flex-shrink:0; padding-top:1px;}
+  nav.doc-toc a:hover{color:var(--ink); background:var(--parchment-dim);}
+  @media (max-width:900px){
+    .doc-shell{grid-template-columns:1fr;}
+    nav.doc-toc{position:static; max-height:none; padding:24px 0; border-bottom:1px solid var(--rule-strong);}
+  }
+
+  main.doc-main{padding:44px 0 100px; min-width:0;}
+  section.chapter{padding-top:6px; margin-bottom:64px; scroll-margin-top:20px;}
+  .chapter-num{font-family:'Courier Prime', monospace; font-size:0.76rem; color:var(--stamp); letter-spacing:0.06em; font-weight:700;}
+  .chapter h2{font-family:'Fraunces', serif; font-size:1.55rem; font-weight:600; margin:8px 0 8px; max-width:32ch;}
+  .chapter > .dek{color:var(--ink-dim); font-size:0.98rem; max-width:68ch; margin:0 0 24px;}
+  .chapter h3{font-family:'Fraunces', serif; font-size:1.08rem; font-weight:600; margin:26px 0 10px;}
+  .chapter p{margin:0 0 14px; max-width:70ch; font-size:0.98rem; color:var(--ink-dim); line-height:1.75;}
+  .chapter p strong, .callout strong{color:var(--ink); font-weight:600;}
+  .chapter code{font-family:'Courier Prime', monospace; font-size:0.86em; background:var(--parchment-dim); padding:1px 5px; color:var(--stamp);}
+
+  /* ---------- Idea cards ---------- */
+  .idea-grid{display:grid; gap:16px; margin:18px 0 8px;}
+  .idea-grid.cols-2{grid-template-columns:1fr 1fr;}
+  .idea-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  @media (max-width:760px){ .idea-grid.cols-2, .idea-grid.cols-3{grid-template-columns:1fr;} }
+  .idea-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); padding:22px 20px 18px; transition:border-color 0.15s ease;}
+  .idea-card:hover{border-color:var(--stamp);}
+  .idea-tab{position:absolute; top:-12px; left:16px; background:var(--ink); color:var(--parchment); font-family:'Courier Prime', monospace; font-size:0.58rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:5px 10px;}
+  .idea-tab.moonshot{background:var(--stamp);}
+  .idea-card h4{font-family:'Fraunces', serif; font-size:1.02rem; font-weight:600; margin:8px 0 8px; color:var(--ink);}
+  .idea-card p{font-size:0.87rem; color:var(--ink-dim); margin:0; max-width:none; line-height:1.6;}
+
+  /* ---------- Callout ---------- */
+  .callout{position:relative; background:var(--parchment); border:1px dashed var(--pen); border-left:3px solid var(--pen); padding:16px 20px; margin:16px 0 26px; font-size:0.92rem; color:var(--ink-dim); max-width:78ch;}
+  .callout a{color:var(--brass); text-decoration:underline; text-underline-offset:2px;}
+  .callout a:hover{color:var(--stamp);}
+
+  /* ---------- Flow ---------- */
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:18px 0 26px;}
+  .flow-step{background:var(--parchment); border:1px solid var(--rule-strong); padding:11px 15px; font-family:'Courier Prime', monospace; font-size:0.78rem; flex:1 1 140px; text-align:center;}
+  .flow-arrow{color:var(--stamp); font-size:1.1rem; flex:0 0 auto;}
+
+  /* ---------- Def list (horizontes) ---------- */
+  .deflist{border-top:1px dashed var(--rule-strong); margin:14px 0 24px; max-width:78ch;}
+  .defrow{display:grid; grid-template-columns:150px 1fr; gap:18px; padding:14px 0; border-bottom:1px dashed var(--rule-strong); align-items:baseline;}
+  .defrow .field-name{font-family:'Courier Prime', monospace; font-size:0.8rem; color:var(--stamp); font-weight:700; text-transform:uppercase; letter-spacing:0.03em;}
+  .defrow .field-desc{font-size:0.9rem; color:var(--ink-dim);}
+  @media (max-width:600px){ .defrow{grid-template-columns:1fr; gap:4px;} }
+
+  /* ---------- Horizon summary cards ---------- */
+  .horizon-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:18px 0 34px;}
+  @media (max-width:760px){ .horizon-grid{grid-template-columns:1fr;} }
+  .horizon-card{background:var(--parchment-dim); border:1px solid var(--rule-strong); padding:22px 20px;}
+  .horizon-card .idea-tab{position:static; display:inline-block; margin-bottom:12px;}
+  .horizon-card h4{font-family:'Fraunces', serif; font-size:1.15rem; font-weight:600; margin-bottom:8px;}
+  .horizon-card p{font-size:0.88rem; color:var(--ink-dim); margin:0;}
+
+  /* ---------- Page map / priority table ---------- */
+  .pagemap{overflow-x:auto; margin:18px 0 30px; border:1px solid var(--rule-strong);}
+  table.pagemaptable{width:100%; border-collapse:collapse; font-size:0.85rem; min-width:680px;}
+  table.pagemaptable th{text-align:left; font-family:'Courier Prime', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--stamp); background:var(--parchment-dim); padding:9px 14px; border-bottom:1px solid var(--rule-strong);}
+  table.pagemaptable td{padding:9px 14px; border-top:1px solid var(--rule); color:var(--ink-dim);}
+  table.pagemaptable tr:hover td{background:var(--parchment-dim);}
+  table.pagemaptable td strong{color:var(--stamp); font-weight:700;}
+  table.pagemaptable td:first-child{color:var(--ink); font-weight:500;}
+
+  footer{padding:56px 0 28px; background:var(--ink); color:var(--parchment); border-top:4px solid var(--stamp);}
+  .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
+  .footer-brand .brand{justify-self:start; margin-bottom:12px;}
+  .footer-tagline{font-size:0.86rem; color:rgba(245,239,221,0.6); max-width:34ch; line-height:1.55;}
+  .footer-col{display:flex; flex-direction:column; gap:9px;}
+  .footer-col-title{font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
+  .footer-col a{font-size:0.86rem; color:rgba(245,239,221,0.7); text-decoration:none; transition:color 0.15s ease;}
+  .footer-col a:hover{color:var(--parchment);}
+  .footer-bottom{padding-top:22px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  footer .mono{font-size:0.72rem; color:rgba(245,239,221,0.5); font-family:'Courier Prime', monospace;}
+  footer a.mono{text-decoration:none;}
+  footer a.mono:hover{color:rgba(245,239,221,0.82);}
+  @media (max-width:860px){ .footer-grid{grid-template-columns:1fr 1fr; gap:28px;} .footer-brand{grid-column:1 / -1;} }
+  @media (max-width:520px){ .footer-grid{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="megaMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">Idóneo</span>
+        <span class="brand-niche">Abogados</span>
+      </span>
+    </a>
+    <div class="auth-slot" id="navAuth"></div>
+  </div>
+  <nav class="mega-menu" id="megaMenu" aria-label="Menú principal">
+    <div class="wrap mega-menu-inner">
+      <div class="mega-col">
+        <span class="mega-col-title">Buscar</span>
+        <a class="mega-primary" href="buscar.html">Todos los abogados</a>
+        <a href="buscar.html?especialidad=Familiar">Familiar</a>
+        <a href="buscar.html?especialidad=Penal">Penal</a>
+        <a href="buscar.html?especialidad=Laboral">Laboral</a>
+        <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+        <a href="buscar.html?especialidad=Corporativo">Corporativo</a>
+        <a href="buscar.html?especialidad=Migratorio">Migratorio</a>
+        <a href="buscar.html?especialidad=Bienes%20ra%C3%ADces">Bienes raíces</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Para abogados</span>
+        <a class="mega-primary" href="registro.html">Regístrate gratis</a>
+        <a href="mi-cuenta.html">Mi cuenta</a>
+        <a href="destacado.html">Idóneo Destacado</a>
+        <a href="precios.html">Precios</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
+        <a class="mega-primary" href="plazos.html">Radar de plazos</a>
+        <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
+        <a href="foro.html">Foro de preguntas</a>
+        <a href="index.html#como-funciona">Cómo funciona</a>
+        <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Legal</span>
+        <a href="aviso-privacidad.html">Aviso de privacidad</a>
+        <a href="terminos.html">Términos y condiciones</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="doc-hero">
+  <div class="wrap">
+    <span class="eyebrow">Documento de ideación · dos rondas</span>
+    <h1>Idóneo — ideas para innovar y crecer</h1>
+    <p class="lede">Dos rondas de ideación deliberadamente ambiciosas a partir del documento de referencia del sitio: 65 ideas en once frentes — desde IA real hasta pago en efectivo y apuestas moonshot — con una hoja de ruta de tres horizontes al final para decidir por dónde empezar sin perder lo que ya funciona: cero backend propio, freemium honesto, verificación real.</p>
+    <div class="ficha">
+      <div class="ficha-item"><span class="ficha-value">65</span><span class="ficha-label">Ideas nuevas</span></div>
+      <div class="ficha-item"><span class="ficha-value">11</span><span class="ficha-label">Frentes de trabajo</span></div>
+      <div class="ficha-item"><span class="ficha-value">5</span><span class="ficha-label">Apuestas moonshot</span></div>
+      <div class="ficha-item"><span class="ficha-value">3</span><span class="ficha-label">Horizontes de ejecución</span></div>
+      <div class="ficha-item"><span class="ficha-value">2</span><span class="ficha-label">Rondas de ideación</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="doc-shell">
+  <nav class="doc-toc" aria-label="Contenido del documento">
+    <div class="toc-title">Contenido</div>
+    <ol>
+      <li><a href="#vision">De directorio a infraestructura</a></li>
+      <li><a href="#ia">IA real</a></li>
+      <li><a href="#confianza">Confianza de siguiente generación</a></li>
+      <li><a href="#monetizacion">Nuevas líneas de ingreso</a></li>
+      <li><a href="#producto">Producto y experiencia</a></li>
+      <li><a href="#crecimiento">Contenido y crecimiento</a></li>
+      <li><a href="#comunidad">Comunidad y efectos de red</a></li>
+      <li><a href="#moonshots">Ideas moonshot</a></li>
+      <li><a href="#mexico">Pensado para México</a></li>
+      <li><a href="#despachos">Facilitadores para despachos</a></li>
+      <li><a href="#cobrar-mas">Más formas de cobrar</a></li>
+      <li><a href="#sueltas">Ideas sueltas</a></li>
+      <li><a href="#priorizar">Cómo priorizar</a></li>
+      <li><a href="#hoja-de-ruta">Hoja de ruta sugerida</a></li>
+    </ol>
+  </nav>
+
+  <main class="doc-main">
+
+    <section class="chapter" id="vision">
+      <span class="chapter-num">01</span>
+      <h2>De directorio confiable a infraestructura legal de México</h2>
+      <p class="dek">Idóneo ya ganó la primera batalla: verificación real y contacto directo sin intermediarios. La oportunidad más grande no es agregar una función más — es decidir en qué capa del mercado legal mexicano quiere vivir.</p>
+
+      <p>Hoy Idóneo hace muy bien una cosa: conectar a alguien que necesita un abogado con uno verificado, sin revender el caso ni cobrar por aparecer. Es un directorio honesto en un mercado donde "honesto" no es la norma. Pero un directorio, por bueno que sea, compite por atención de búsqueda. Una infraestructura — algo de lo que dependen otros negocios, no solo quien llega a buscar — compite por dependencia. Ese es el salto que proponen las ideas de este documento.</p>
+
+      <p>El patrón no es nuevo: Mercado Libre dejó de ser solo un marketplace de anuncios cuando construyó Mercado Pago — la capa de confianza y liquidación se volvió más valiosa que el catálogo. OpenTable dejó de ser un directorio de restaurantes cuando se volvió el sistema de reservas del que dependían los propios restaurantes. Idóneo ya construyó, para uso interno, dos activos con ese mismo potencial: un motor de verificación de identidad profesional y un motor de días hábiles mexicanos (<code>plazos.js</code>). Ambos hoy alimentan solo al propio sitio. Podrían alimentar a otros.</p>
+
+      <div class="callout"><strong>El hilo conductor de este documento:</strong> la mayoría de estas ideas no piden reconstruir Idóneo — piden dejar de tratar la verificación, los datos de uso y el motor de plazos como subproductos internos, y empezar a tratarlos como el producto.</div>
+    </section>
+
+    <section class="chapter" id="ia">
+      <span class="chapter-num">02</span>
+      <h2>IA real: el salto pendiente más grande</h2>
+      <p class="dek"><code>cuestionario.html</code> hoy es honesto sobre sus límites — puro cruce de palabras clave, sin IA real. Es también, por lo mismo, la mayor oportunidad sin explotar del sitio.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Asistente legal conversacional</h4>
+          <p>Sustituye el clasificador de palabras clave por una conversación guiada real: hace preguntas de seguimiento, explica en lenguaje llano qué significa cada especialidad y termina con una recomendación justificada — sin dejar de avisar, como hoy, que no sustituye una consulta real.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Brief automático para el abogado</h4>
+          <p>La conversación del asistente se convierte en un resumen de cinco líneas que llega junto con el primer mensaje de WhatsApp: quién es, qué pasó, desde cuándo y con qué urgencia. El abogado llega a la primera llamada ya informado.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Radar de Plazos con lectura de documentos</h4>
+          <p>Hoy <code>plazos.html</code> pide que el usuario sepa qué trámite tiene y desde qué fecha corre. En vez de eso, que suba una foto de la notificación: un modelo de visión extrae el tipo de trámite y la fecha y llena la calculadora solo.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Redacción asistida de perfil</h4>
+          <p>El mayor cuello de botella de calidad en un directorio freemium no es la demanda, es la oferta descuidada: perfiles con dos líneas genéricas. Con tres o cuatro respuestas cortas, generar una bio editable sube el estándar mínimo de todo perfil nuevo.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Revisor de contratos con IA</h4>
+          <p>Ligado a <code>documentos.html</code>: el cliente sube un contrato y la IA resalta cláusulas de riesgo en lenguaje simple, con disclaimer explícito y un botón directo a "hablar con un abogado sobre esto". El kit gratis deja de ser un destino final.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Buscador semántico</h4>
+          <p>Además de los filtros exactos de <code>buscar.html</code>, usar embeddings para relacionar la descripción libre de un problema con bios, especialidades y reseñas reales — capturando abogados relevantes que un filtro de checkboxes no encontraría.</p>
+        </div>
+      </div>
+
+      <div class="callout">Las seis ideas de este capítulo comparten una dependencia: una llamada a un modelo de lenguaje que no puede vivir en el navegador del cliente sin exponer la llave de API. Es, con diferencia, la razón más fuerte para agregar la primera función de servidor (una Cloud Function delgada) sin renunciar al resto del sitio estático.</div>
+    </section>
+
+    <section class="chapter" id="confianza">
+      <span class="chapter-num">03</span>
+      <h2>Confianza de siguiente generación</h2>
+      <p class="dek">Todo lo que ya hace única a Idóneo — verificación real, reseñas que no se pueden falsificar, reglas del lado del servidor — llevado un nivel más allá.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Verificación viva de cédula</h4>
+          <p>Hoy la cédula se verifica una vez, al aprobar el registro. Una revisión periódica automática contra el Registro Nacional de Profesionistas de la SEP detectaría cédulas suspendidas después del alta y retiraría el sello si el estatus cambia.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Onboarding con e.firma</h4>
+          <p>En vez de que un administrador revise cédulas a mano, dejar que el abogado se identifique con su e.firma del SAT acortaría la aprobación de cuentas en <code>status</code> <code>pending</code> de días a minutos.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Consulta pagada en garantía</h4>
+          <p>El cliente paga la primera consulta dentro de Idóneo; el dinero se libera al abogado cuando ambos confirman que ocurrió. Reduce el "no llegó" de los dos lados y es el primer paso hacia cobrar comisión de forma automática.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Segunda opinión exprés</h4>
+          <p>Por una tarifa fija baja, un segundo abogado del directorio da una mini-opinión sobre un caso o documento antes de que el cliente contrate. Suma confianza, un ingreso nuevo y visibilidad para abogados sin reseñas todavía.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Reseñas con evidencia</h4>
+          <p>Sobre la reseña ya verificada por cuenta (el id compuesto <code>abogadoId_uid</code> impide duplicados), permitir adjuntar de forma opcional un dato mínimo del trámite para una insignia de "reseña verificada con caso real".</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Idóneo Score</h4>
+          <p>Un puntaje compuesto con datos que ya existen — tiempo de respuesta, consistencia de reseñas, casos ganados reportados — visible primero como panel de mejora, y después como sello público más honesto que "cuánto pagó".</p>
+        </div>
+      </div>
+
+      <div class="callout">Ninguna de estas seis ideas reemplaza la verificación gratuita de cédula — todas la hacen más fuerte o construyen sobre ella. Es la misma regla que ya sigue el resto del sitio (nada de pago sustituye lo básico), aplicada a confianza y no solo a monetización.</div>
+    </section>
+
+    <section class="chapter" id="monetizacion">
+      <span class="chapter-num">04</span>
+      <h2>Nuevas líneas de ingreso</h2>
+      <p class="dek">Seis ideas más para sumar a los seis esquemas que ya existen, con el mismo criterio de siempre: ninguna reemplaza lo gratuito, todas alinean el ingreso con el valor real entregado.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Comisión Idóneo Pay</h4>
+          <p>Una comisión pequeña (5–8%) sobre cada consulta cobrada dentro del flujo de garantía del capítulo anterior. A diferencia de Destacado, este ingreso crece exactamente cuando el sitio genera valor real, no solo visibilidad.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Red de referidos abierta por mérito</h4>
+          <p>Hoy la red de referidos entre despachos es exclusiva de Destacado. Abrirla a cualquier cuenta con buen Idóneo Score, cobrando solo una comisión por caso turnado con éxito, multiplica cuántos despachos participan.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 3</span>
+          <h4>API de verificación como servicio</h4>
+          <p>El motor que verifica cédula e identidad ya está construido y pagado — para uso propio. Venderlo como API a inmobiliarias, bancos y áreas de RH que necesitan verificar profesionistas es casi puro margen sobre un activo que hoy solo mira hacia adentro.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 3</span>
+          <h4>Idóneo Protección</h4>
+          <p>Un plan mensual prepagado para pymes — inspirado en el modelo de membresía legal que popularizó LegalShield en Estados Unidos — con acceso a un número fijo de consultas y revisiones de contrato al año.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Reportes de inteligencia de mercado</h4>
+          <p>Los datos que el sitio ya genera — precios por especialidad y ciudad, tiempos de respuesta, demanda por trámite — agregados y anonimizados en un reporte trimestral vendido a despachos grandes y aseguradoras.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Academia Idóneo</h4>
+          <p>Cursos cortos, de pago o patrocinados, sobre lo que a un despacho pequeño le cuesta más resolver solo: marketing digital básico, cómo sacarle provecho a un perfil de Idóneo, actualizaciones legales por especialidad.</p>
+        </div>
+      </div>
+
+      <div class="callout"><code>precios.html</code> ya demostró algo importante: juntar esquemas de cobro dispersos en un solo lugar los hace más fáciles de encontrar. Vale la pena aplicar el mismo criterio aquí — ninguno de estos seis esquemas debería vivir escondido en un rincón distinto del sitio.</div>
+    </section>
+
+    <section class="chapter" id="producto">
+      <span class="chapter-num">05</span>
+      <h2>Producto y experiencia</h2>
+      <p class="dek">Lo que un cliente y un abogado sentirían distinto en su primer y quinto uso del sitio.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Mensajería interna</h4>
+          <p>Como alternativa — no reemplazo — al botón de WhatsApp: mantener el primer contacto dentro de Idóneo permite medir conversión real de principio a fin y ofrecer traducción automática.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Videoconsulta agendable</h4>
+          <p>El abogado define horarios disponibles en su perfil; el cliente reserva y, si aplica, paga desde ahí. Útil sobre todo para clientes en otra ciudad o en el extranjero — el filtro "solo atienden en inglés" ya insinúa que ese público existe.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Línea de tiempo del caso</h4>
+          <p>El abogado marca hitos simples — recibido, en trámite, audiencia programada, resuelto — visibles para el cliente desde <code>mi-cuenta.html</code>. Ningún despacho pequeño ofrece hoy algo parecido a "rastrear un paquete" para un caso legal.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>App instalable con notificaciones</h4>
+          <p>Una PWA, sin construir apps nativas separadas, para avisos de plazos próximos, mensajes nuevos y reseñas recibidas. Sube la retención de ambos lados del marketplace.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Modo urgente en vivo</h4>
+          <p>Hoy "urgente 24/7" es un filtro pasivo. Convertirlo en un tablero activo: un caso urgente se transmite en tiempo real a los abogados con el toggle activado en esa ciudad, y el primero en responder dentro de una ventana corta se lo queda.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="crecimiento">
+      <span class="chapter-num">06</span>
+      <h2>Contenido y crecimiento</h2>
+      <p class="dek">Cómo llegar a más gente sin depender solo de pauta — aprovechando activos que el sitio ya construyó para otro propósito.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>SEO programático por ciudad y especialidad</h4>
+          <p>32 estados por 8 especialidades son cientos de combinaciones de búsqueda muy específica ("abogados de divorcio en Guadalajara") que hoy <code>buscar.html</code> resuelve solo después de que alguien llega y filtra. Páginas curadas capturan esa intención desde el buscador de Google.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Foro de preguntas públicas</h4>
+          <p>Preguntas reales respondidas de forma breve y gratuita por abogados verificados, indexable por buscadores. Es, casi al pie de la letra, el mecanismo con el que Avvo construyó buena parte de su tráfico en Estados Unidos antes de venderse a Internet Brands en 2018 — y sigue siendo la forma más barata de dar visibilidad a un abogado nuevo sin reseñas todavía.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Blog legal vivo</h4>
+          <p><code>plazos.js</code> ya sabe qué cuenta como día hábil y qué plazos importan. Un blog corto de "qué cambió esta semana" ligado a esos mismos trámites convierte una utilidad que ya existe en contenido recurrente.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Reporte anual "Estado del acceso a la justicia"</h4>
+          <p>Una pieza de relaciones públicas ambiciosa con datos agregados propios — tiempos de respuesta, precios, demanda por región — publicada gratis una vez al año. Genera prensa y posiciona a Idóneo como autoridad de la categoría.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Referidos de dos lados</h4>
+          <p>Descuento en el kit de documentos o en la segunda opinión exprés para el cliente que invita a alguien; un mes gratis de Destacado para el abogado que refiere a un colega.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="comunidad">
+      <span class="chapter-num">07</span>
+      <h2>Comunidad y efectos de red</h2>
+      <p class="dek">El valor de una red no está solo en cuántos hay, sino en qué tan bien se tratan entre sí los que ya están dentro.</p>
+
+      <div class="idea-grid cols-3">
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Comunidad privada de despachos</h4>
+          <p>Un espacio estructurado — no necesariamente una red social nueva — donde las cuentas Destacado comparten prácticas y casos de referido con el equipo de Idóneo. Refuerza justo la cuenta que más vale retener.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Gamificación seria</h4>
+          <p>Insignias que reflejan comportamiento real y verificable — tiempo de respuesta, resolución de reseñas negativas, casos cerrados — no solo pago. Un leaderboard opcional por ciudad y especialidad.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Fondo de acceso a la justicia</h4>
+          <p>La guía "No tengo dinero para un abogado" ya reconoce el problema. Destinar un porcentaje del ingreso de Destacado a subsidiar consultas gratuitas, en alianza con una defensoría pública, es una historia de marca difícil de copiar.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="moonshots">
+      <span class="chapter-num">08</span>
+      <h2>Ideas moonshot</h2>
+      <p class="dek">Ideas que piden alianzas, tiempo o una apuesta real — y que, si funcionan, son mucho más difíciles de copiar que una función más en el perfil.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab moonshot">Moonshot</span>
+          <h4>Radar de tiempos de juzgados</h4>
+          <p>Cada estado tiene su propio portal — el Tribunal Virtual de Chihuahua, el SICOR de la Ciudad de México, el sistema federal del Poder Judicial de la Federación — pero ninguno le dice a una persona común cuánto tarda su trámite en su juzgado. Consolidar ese dato, con reporte comunitario validado, sería un activo que ningún competidor podría replicar rápido.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Moonshot</span>
+          <h4>Licenciamiento a colegios de abogados</h4>
+          <p>Una versión white-label del directorio verificado para que cada colegio de abogados estatal lo ofrezca a sus agremiados con su propia marca al frente. Distribución sin pelear por cada usuario uno por uno.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Moonshot</span>
+          <h4>Expansión a notarios y otros profesionistas</h4>
+          <p>La guía "Abogado vs. Notario" ya reconoce que el cliente confunde a los dos. El mismo motor de verificación de cédula sirve para notarios, contadores públicos y corredores públicos — de directorio legal a directorio de profesionistas regulados de México.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Moonshot</span>
+          <h4>Idóneo LatAm</h4>
+          <p>El patrón completo — verificación de cédula contra un registro público, freemium honesto, Destacado por mérito — es replicable país por país donde exista un registro profesional público similar. Un sitio sin servidor propio es, precisamente, barato de clonar.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Moonshot</span>
+          <h4>Mediación en línea</h4>
+          <p>Un canal más rápido y barato que litigar para montos pequeños o conflictos simples, con escalamiento a un abogado de la red si no se resuelve. Idóneo como primera parada antes del litigio, no solo el directorio al que se llega con el problema ya crecido.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="mexico">
+      <span class="chapter-num">09</span>
+      <h2>Pensado para la comunidad mexicana</h2>
+      <p class="dek">Segunda ronda de ideación, con la mirada puesta en México: Idóneo no compite solo con otros directorios — compite con la desconfianza, el costo de los datos móviles y la sensación de que la justicia es para quien puede pagarla. Estas ideas atacan eso directamente, dentro del sitio.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Pago en efectivo vía OXXO Pay</h4>
+          <p>Generar una referencia de pago para cualquier cobro del sitio — Destacado, Impulso, kit de documentos, segunda opinión — y pagarla en efectivo en cualquier tienda OXXO. Una parte importante de México no tiene tarjeta o prefiere no usarla en línea; cobrar solo con tarjeta deja fuera a ese público en ambos lados del marketplace.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>CoDi como cobro sin comisión</h4>
+          <p>El sistema de pagos con código QR del Banco de México mueve dinero entre bancos sin comisión por transacción. Ofrecerlo junto a Stripe reduce el costo de cada cobro pequeño — como la segunda opinión exprés o el Impulso puntual — donde la comisión de tarjeta pesa más.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Registro y contacto solo con WhatsApp</h4>
+          <p>Para mucha gente en México, el número de WhatsApp es su identidad digital real, más que un correo electrónico. Permitir guardar favoritos o escribir una reseña verificándose con ese número, sin pedir correo, baja una barrera invisible para quien ya está acostumbrado a usarlo.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Horizonte 3</span>
+          <h4>Filtro y guías en lenguas indígenas</h4>
+          <p>El mismo patrón del filtro "solo atienden en inglés", pero para náhuatl, maya y las lenguas indígenas con más hablantes según el INEGI. Ninguna guía legal del país está pensada para alguien que piensa en su lengua materna, no en español. Ser el primero aquí vale casi tanto como ser el mejor.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Modo de solo-audio para las guías</h4>
+          <p>Un botón de "escuchar" en cada guía legal, para quien prefiere oír antes que leer un texto largo. No es un lujo de accesibilidad — es la diferencia entre que alguien realmente entienda si necesita un abogado o cierre la pestaña a la mitad.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Versión ultra ligera del sitio</h4>
+          <p>Menos imágenes y peso mínimo de datos para quien navega con un paquete prepago limitado — muy común fuera de las zonas urbanas. El Radar de Plazos y las guías, pensadas para traer gente nueva, son justo lo que más debería cargar rápido con poca señal.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Alertas de estafas legales comunes</h4>
+          <p>Una sección corta y siempre visible de "lo que un abogado real nunca te pediría" — pago completo por adelantado sin contrato, presión para decidir en el momento, cobro en efectivo sin recibo. Idóneo ya tiene la credibilidad de la verificación para educar contra el fraude, el miedo número uno de quien nunca ha contratado a un abogado.</p>
+        </div>
+      </div>
+
+      <div class="callout">Ninguna de estas siete ideas es exótica por separado — OXXO Pay y CoDi ya los usan miles de negocios mexicanos todos los días. Lo distinto es aplicarlos a un directorio legal, donde la fricción de pagar con tarjeta o de leer un texto largo en español formal es, muchas veces, la razón silenciosa por la que alguien nunca llega a contratar a un abogado.</div>
+    </section>
+
+    <section class="chapter" id="despachos">
+      <span class="chapter-num">10</span>
+      <h2>Facilitadores para despachos y abogados</h2>
+      <p class="dek">Lo que convierte a Idóneo de "donde consigo clientes" a la herramienta que se usa todos los días para llevar el despacho, incluso los días en que no llega un cliente nuevo.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Mini-CRM de leads</h4>
+          <p>Un tablero simple en <code>mi-cuenta.html</code> — nuevo contacto, contactado, en consulta, cliente, cerrado — para que ningún mensaje de WhatsApp se pierda entre la vida diaria del despacho. Es la diferencia entre un directorio que genera contactos y una herramienta que ayuda a convertirlos.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Recordatorio de seguimiento</h4>
+          <p>Un aviso de "este contacto de hace 3 días sigue sin respuesta" es, probablemente, la función más simple y más rentable de esta lista: la razón número uno por la que se pierde un lead en cualquier marketplace de servicios no es el precio, es que nadie contestó a tiempo.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Calendario de vencimientos del despacho</h4>
+          <p><code>plazos.js</code> hoy calcula un trámite a la vez, para un visitante anónimo. Puesto a trabajar puertas adentro — cada caso activo del despacho con su propio plazo — se convierte en la razón para abrir Idóneo todos los días, no solo cuando se buscan clientes nuevos.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Plantillas de respuesta rápida</h4>
+          <p>Mensajes prearmados y editables ("Gracias por escribirme, cuéntame más sobre tu caso...") a un clic desde <code>mi-cuenta.html</code>. Responder rápido ya sube el ranking en el buscador — esto hace más fácil ganarse ese lugar.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Reporte automático de actividad</h4>
+          <p>Un resumen mensual por WhatsApp o correo: cuántas vistas, cuántos contactos, cuántas reseñas nuevas. Mantiene enganchado al despacho que no entra todos los días a revisar su panel.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Horizonte 3</span>
+          <h4>Firma electrónica para la carta de patrocinio</h4>
+          <p>Formalizar la relación abogado-cliente con una firma electrónica simple integrada, en vez de un mensaje de WhatsApp que dice "sí, adelante". Reduce fricción para ambos lados y dificulta el clásico "nunca quedamos así" de las disputas de honorarios.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Ayuda para facturar (CFDI)</h4>
+          <p>Muchos abogados independientes facturan sus honorarios como persona física, un trámite del SAT que a un despacho pequeño le quita tiempo o le exige pagar un contador solo para eso. Generar el recibo de honorarios (CFDI) automáticamente al cobrar una consulta vía Idóneo Pay resuelve un dolor real de cumplimiento, no solo de marketing.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Horizonte 3</span>
+          <h4>Directorio interno de peritos y apoyo</h4>
+          <p>Traductores certificados, peritos valuadores, contadores forenses — recomendados entre los propios abogados de la red. Una segunda capa de red de referidos, esta vez para insumos del caso, no solo para casos completos.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Cuentas de colaborador</h4>
+          <p>Un despacho rara vez es una sola persona. Cuentas secundarias ligadas a la cuenta principal — un pasante o asociado puede responder mensajes y actualizar el estatus de un caso, sin poder tocar precios ni datos de verificación — reflejan cómo trabaja de verdad un despacho con más de un abogado.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="cobrar-mas">
+      <span class="chapter-num">11</span>
+      <h2>Más formas de cobrar</h2>
+      <p class="dek">Seis ideas más, sumadas a las doce que ya viven entre el documento de referencia y la primera ronda, con el mismo límite de siempre: nada de esto reemplaza lo gratuito.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Cobro por lead calificado</h4>
+          <p>Una alternativa a la mensualidad fija de Destacado: pagar una tarifa pequeña solo cuando llega un contacto real que cumple ciertos criterios de calidad, validados por el asistente de IA. Una puerta de entrada de menor riesgo para quien no quiere comprometerse todavía a una suscripción.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Comisión de conexión rápida</h4>
+          <p>Sobre el "modo urgente en vivo" de la primera ronda: el abogado que gana un caso urgente paga una comisión mayor a la normal, porque la velocidad de respuesta vale, en ese momento, más que en una búsqueda cualquiera.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Idóneo Data Pack</h4>
+          <p>Un escalón intermedio antes de Destacado completo: acceso de solo lectura a la analítica agregada de demanda — qué se busca, a qué precio, con qué urgencia — por ciudad y especialidad, vendido aparte a quien todavía no quiere la suscripción completa.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab moonshot">Horizonte 3</span>
+          <h4>Certificaciones verificadas por terceros</h4>
+          <p>Insignias de pago pero verificadas de verdad — "especialista certificado en mediación familiar", por ejemplo — en alianza con instituciones que ya emiten esas certificaciones. Más parecido a LinkedIn Learning que a una insignia decorativa.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Destacado por día</h4>
+          <p>Más flexible que el Impulso de 72 horas: comprar Destacado por 24 o 48 horas a precio prorrateado, para un despacho que anticipa un pico de demanda puntual — tras una reforma laboral, por ejemplo, o un desastre natural en su región.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Marketplace de plantillas de la comunidad</h4>
+          <p>En vez de que <code>documentos.html</code> sea un catálogo fijo de cinco plantillas, dejar que cualquier abogado verificado suba y venda las suyas, con Idóneo quedándose con una comisión. El kit de documentos pasa de catálogo fijo a mercado con oferta creciente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="sueltas">
+      <span class="chapter-num">12</span>
+      <h2>Ideas sueltas</h2>
+      <p class="dek">Lo que no encajaba perfecto en ningún capítulo anterior, pero que valía la pena no dejar fuera de la lluvia de ideas.</p>
+
+      <div class="idea-grid cols-2">
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Botón de emergencia</h4>
+          <p>Un botón flotante para el momento de mayor pánico ("me detuvieron", "me van a desalojar") que de inmediato muestra los primeros pasos y filtra a abogados de la especialidad correcta, urgentes 24/7, en un clic — sin pedir que la persona sepa primero qué especialidad necesita.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Precio fijo garantizado</h4>
+          <p>Una insignia que el abogado activa voluntariamente: el precio de la primera consulta que se ve en el perfil es el precio que se cobra, sin sorpresas al llegar. Ataca el miedo número uno de contratar a un abogado por primera vez: no saber si "te van a ver la cara".</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Checklist antes de firmar</h4>
+          <p>Un asistente corto de preguntas — no necesita IA — para los dos documentos que más gente firma sin leer bien: un contrato de arrendamiento y uno de compraventa. No sustituye al abogado; ayuda a saber qué preguntarle.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Casos de la comunidad, anonimizados</h4>
+          <p>Historias reales y breves — con permiso del cliente — de cómo se resolvió un caso típico. Humaniza un proceso que hoy se siente como caja negra, y reduce el miedo de "no sé qué va a pasar" antes de dar el primer paso.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Modo "explícaselo a mis papás"</h4>
+          <p>Una versión aún más simple de cada guía legal, pensada para leerse en voz alta a alguien mayor. Nicho, pero real: mucha gente busca ayuda legal en nombre de un familiar, no para sí misma.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Sala de consulta comunitaria en vivo</h4>
+          <p>Una vez al mes, un abogado Destacado dona 30 minutos de consulta grupal por videollamada, transmitida dentro del sitio con un chat de preguntas moderado — una versión en vivo del Fondo de acceso a la justicia, con cara y voz en vez de solo un porcentaje donado.</p>
+        </div>
+        <div class="idea-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Verifícalo tú mismo</h4>
+          <p>En vez de pedir que el usuario confíe en el sello de Idóneo sin más, un botón que lo lleva paso a paso a consultar la cédula directamente en el registro oficial de la SEP. Contra-intuitivo — invitar a alguien a no confiar ciegamente — pero por eso mismo, la forma más rápida de ganarse la confianza de quien ya fue estafado antes.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="priorizar">
+      <span class="chapter-num">13</span>
+      <h2>Cómo priorizar</h2>
+      <p class="dek">65 ideas sin un criterio de orden son solo una lista larga. El criterio importa tanto como las ideas.</p>
+
+      <p>El criterio que se usó en este documento es simple a propósito: <strong>impacto</strong> (¿cuánto cambia si funciona?) contra <strong>esfuerzo</strong> (¿cuánto pide antes de saber si funciona?) — y una tercera variable que en un sitio sin backend propio pesa más de lo normal: dependencia técnica, es decir, si la idea necesita una función de servidor que hoy no existe.</p>
+
+      <div class="flow">
+        <div class="flow-step">Idea</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Validar con 5–10 personas reales</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Prototipo sin código</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Piloto de 30 días</div><div class="flow-arrow">→</div>
+        <div class="flow-step">Escalar o descartar</div>
+      </div>
+
+      <h3>Los tres horizontes</h3>
+      <div class="deflist">
+        <div class="defrow"><span class="field-name">Horizonte 1</span><span class="field-desc">0 a 3 meses. Cero backend nuevo — corre con HTML estático y reglas de Firestore, igual que hoy.</span></div>
+        <div class="defrow"><span class="field-name">Horizonte 2</span><span class="field-desc">3 a 9 meses. Pide una función de servidor ligera (una Cloud Function delgada) para IA, webhooks de Stripe, pagos alternos o notificaciones, sin volverse una aplicación con backend completo.</span></div>
+        <div class="defrow"><span class="field-name">Horizonte 3</span><span class="field-desc">9 meses en adelante. Apuestas grandes que piden alianzas, negociación o una inversión mayor antes de la primera versión.</span></div>
+      </div>
+    </section>
+
+    <section class="chapter" id="hoja-de-ruta">
+      <span class="chapter-num">14</span>
+      <h2>Hoja de ruta sugerida</h2>
+      <p class="dek">Las 65 ideas de ambas rondas, ahora ordenadas por cuándo tiene sentido empezarlas.</p>
+
+      <div class="horizon-grid">
+        <div class="horizon-card"><span class="idea-tab">Horizonte 1</span>
+          <h4>Ahora</h4>
+          <p>0–3 meses · cero backend nuevo. 21 ideas que corren con lo que ya existe hoy.</p>
+        </div>
+        <div class="horizon-card"><span class="idea-tab">Horizonte 2</span>
+          <h4>Con una función de servidor</h4>
+          <p>3–9 meses · una Cloud Function delgada. 33 ideas: la mayoría del salto de IA, confianza y pagos inclusivos.</p>
+        </div>
+        <div class="horizon-card"><span class="idea-tab moonshot">Horizonte 3</span>
+          <h4>Apuestas grandes</h4>
+          <p>9+ meses · alianzas o inversión mayor. 11 ideas, incluidos los 5 moonshots.</p>
+        </div>
+      </div>
+
+      <div class="pagemap">
+        <table class="pagemaptable">
+          <thead><tr><th>Idea</th><th>Categoría</th><th>Horizonte</th><th>Esfuerzo</th><th>Impacto</th></tr></thead>
+          <tbody>
+            <tr><td>Asistente legal conversacional</td><td>IA</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Brief automático para el abogado</td><td>IA</td><td>H2</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Radar de Plazos con lectura de documentos</td><td>IA</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Redacción asistida de perfil</td><td>IA</td><td>H2</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Revisor de contratos con IA</td><td>IA</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Buscador semántico</td><td>IA</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Verificación viva de cédula</td><td>Confianza</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Onboarding con e.firma</td><td>Confianza</td><td>H2</td><td>Alto</td><td>Medio</td></tr>
+            <tr><td>Consulta pagada en garantía</td><td>Confianza</td><td>H2</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Segunda opinión exprés</td><td>Confianza</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Reseñas con evidencia</td><td>Confianza</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Idóneo Score</td><td>Confianza</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Comisión Idóneo Pay</td><td>Monetización</td><td>H2</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Red de referidos abierta por mérito</td><td>Monetización</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>API de verificación como servicio</td><td>Monetización</td><td>H3</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Idóneo Protección</td><td>Monetización</td><td>H3</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Reportes de inteligencia de mercado</td><td>Monetización</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Academia Idóneo</td><td>Monetización</td><td>H2</td><td>Medio</td><td>Bajo</td></tr>
+            <tr><td>Mensajería interna</td><td>Producto</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Videoconsulta agendable</td><td>Producto</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Línea de tiempo del caso</td><td>Producto</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>App instalable con notificaciones</td><td>Producto</td><td>H2</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Modo urgente en vivo</td><td>Producto</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>SEO programático por ciudad y especialidad</td><td>Crecimiento</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Foro de preguntas públicas</td><td>Crecimiento</td><td>H1</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Blog legal vivo</td><td>Crecimiento</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Reporte anual "Estado de la justicia"</td><td>Crecimiento</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Referidos de dos lados</td><td>Crecimiento</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Comunidad privada de despachos</td><td>Comunidad</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Gamificación seria</td><td>Comunidad</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Fondo de acceso a la justicia</td><td>Comunidad</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Radar de tiempos de juzgados</td><td>Moonshot</td><td>H3</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Licenciamiento a colegios de abogados</td><td>Moonshot</td><td>H3</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Expansión a notarios y otros profesionistas</td><td>Moonshot</td><td>H3</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Idóneo LatAm</td><td>Moonshot</td><td>H3</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Mediación en línea</td><td>Moonshot</td><td>H3</td><td>Alto</td><td>Medio</td></tr>
+            <tr><td>Pago en efectivo vía OXXO Pay</td><td>México</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>CoDi como cobro sin comisión</td><td>México</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Registro y contacto solo con WhatsApp</td><td>México</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Filtro y guías en lenguas indígenas</td><td>México</td><td>H3</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Modo de solo-audio para las guías</td><td>México</td><td>H2</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Versión ultra ligera del sitio</td><td>México</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Alertas de estafas legales comunes</td><td>México</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Mini-CRM de leads</td><td>Despachos</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Recordatorio de seguimiento</td><td>Despachos</td><td>H2</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Calendario de vencimientos del despacho</td><td>Despachos</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Plantillas de respuesta rápida</td><td>Despachos</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Reporte automático de actividad</td><td>Despachos</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Firma electrónica para carta de patrocinio</td><td>Despachos</td><td>H3</td><td>Alto</td><td>Medio</td></tr>
+            <tr><td>Ayuda para facturar (CFDI)</td><td>Despachos</td><td>H2</td><td>Alto</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Directorio interno de peritos y apoyo</td><td>Despachos</td><td>H3</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Cuentas de colaborador</td><td>Despachos</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Cobro por lead calificado</td><td>Cobro</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Comisión de conexión rápida</td><td>Cobro</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Idóneo Data Pack</td><td>Cobro</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Certificaciones verificadas por terceros</td><td>Cobro</td><td>H3</td><td>Alto</td><td>Medio</td></tr>
+            <tr><td>Destacado por día</td><td>Cobro</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Marketplace de plantillas de la comunidad</td><td>Cobro</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Botón de emergencia</td><td>Sueltas</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Precio fijo garantizado</td><td>Sueltas</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Checklist antes de firmar</td><td>Sueltas</td><td>H1</td><td>Bajo</td><td>Medio</td></tr>
+            <tr><td>Casos de la comunidad, anonimizados</td><td>Sueltas</td><td>H2</td><td>Medio</td><td>Medio</td></tr>
+            <tr><td>Modo "explícaselo a mis papás"</td><td>Sueltas</td><td>H1</td><td>Bajo</td><td>Bajo</td></tr>
+            <tr><td>Sala de consulta comunitaria en vivo</td><td>Sueltas</td><td>H2</td><td>Medio</td><td><strong>Alto</strong></td></tr>
+            <tr><td>Verifícalo tú mismo</td><td>Sueltas</td><td>H1</td><td>Bajo</td><td><strong>Alto</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Fuentes y referencias externas</h3>
+      <div class="callout">Primera ronda: historia y modelo de Avvo, adquirida por Internet Brands en 2018 — <a href="https://www.geekwire.com/2018/avvo-acquired-internet-brands-parent-webmd-martindale-hubbell-major-exit-seattle-based-legal-marketplace/" target="_blank" rel="noopener">GeekWire</a>, <a href="https://www.abajournal.com/news/article/internet_brands_renames_legal_offerings_as_martindale_avvo" target="_blank" rel="noopener">ABA Journal</a>; modelos de membresía y marketplace legal — <a href="https://www.legalzoom.com/compare/legalzoom-vs-legalshield-business" target="_blank" rel="noopener">LegalZoom</a>, <a href="https://www.cbinsights.com/compare/rocket-lawyer-vs-upcounsel" target="_blank" rel="noopener">CB Insights</a>; portales judiciales estatales fragmentados — <a href="https://poderjudicialcdmx.gob.mx/tramites-en-linea/" target="_blank" rel="noopener">Poder Judicial CDMX</a>, <a href="https://www.serviciosenlinea.pjf.gob.mx/" target="_blank" rel="noopener">Poder Judicial de la Federación</a>; identidad digital con e.firma — <a href="https://www.sat.gob.mx/consultas/23572/verifica-la-integridad-y-autoria-de-documentos-firmados-con-la-e.firma-o-sello-digital-de-los-funcionarios-competentes" target="_blank" rel="noopener">SAT</a>; panorama de legaltech en México — <a href="https://tracxn.com/d/explore/legal-tech-startups-in-mexico/__EmvAnhoBrZUOABG6hdyu8LrP8bPBbi4cXsiUBkHrX-o/companies" target="_blank" rel="noopener">Tracxn</a>. Segunda ronda: pago en efectivo — <a href="https://www.oxxo.com/oxxo-pay" target="_blank" rel="noopener">OXXO Pay</a>; pagos QR interbancarios sin comisión — <a href="https://www.banxico.org.mx/sistemas-de-pago/codi-cobro-digital-banco-me.html" target="_blank" rel="noopener">CoDi, Banco de México</a>; inclusión financiera — <a href="https://www.gob.mx/cnbv/articulos/cnbv-y-el-inegi-presentan-los-resultados-de-la-encuesta-nacional-de-inclusion-financiera-2024?idiom=es" target="_blank" rel="noopener">ENIF 2024, INEGI/CNBV</a>; facturación de servicios legales — <a href="https://blog.lemontech.com/lemontech/que-es-el-cfdi-y-como-aplica-a-servicios-legales" target="_blank" rel="noopener">CFDI, Lemontech</a>.</div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">Idóneo</span>
+          <span class="brand-niche">Abogados</span>
+        </span>
+      </a>
+      <p class="footer-tagline">Directorio legal en México. Cédula verificada, reseñas reales, contacto directo por WhatsApp — sin intermediarios.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Buscar</span>
+      <a href="buscar.html">Todos los abogados</a>
+      <a href="buscar.html?especialidad=Familiar">Familiar</a>
+      <a href="buscar.html?especialidad=Penal">Penal</a>
+      <a href="buscar.html?especialidad=Laboral">Laboral</a>
+      <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Para abogados</span>
+      <a href="registro.html">Regístrate gratis</a>
+      <a href="mi-cuenta.html">Mi cuenta</a>
+      <a href="destacado.html">Idóneo Destacado</a>
+      <a href="precios.html">Precios</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
+      <a href="plazos.html">Radar de plazos</a>
+      <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
+      <a href="foro.html">Foro de preguntas</a>
+      <a href="ideas-innovacion.html">Ideas de innovación</a>
+      <a href="aviso-privacidad.html">Aviso de privacidad</a>
+      <a href="terminos.html">Términos y condiciones</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html">TÉRMINOS</a></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="listings.js"></script>
+<script src="auth.js"></script>
+<script src="pwa-register.js"></script>
+</body>
+</html>

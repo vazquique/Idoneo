@@ -285,6 +285,23 @@
     .articulo{grid-template-columns:1fr; gap:6px;}
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ---------- Botón de emergencia ---------- */
+  /* bottom más alto que en el resto del sitio para no chocar con la
+     barra de comparación (.compare-bar), que también vive fija abajo. */
+  .emergency-btn{position:fixed; bottom:88px; right:22px; z-index:71; display:inline-flex; align-items:center; gap:8px; background:var(--stamp); color:var(--parchment); border:none; padding:14px 18px; font-family:'Courier Prime', monospace; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; box-shadow:3px 3px 0 rgba(33,28,21,0.35); transition:background 0.15s ease;}
+  .emergency-btn:hover{background:var(--stamp-dark);}
+  .emergency-btn svg{width:17px; height:17px; flex-shrink:0;}
+  .emergency-panel{position:fixed; bottom:144px; right:22px; z-index:71; width:300px; max-width:calc(100vw - 44px); background:var(--parchment); border:1px solid var(--rule-strong); box-shadow:0 20px 44px rgba(20,16,10,0.35); padding:18px; opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;}
+  .emergency-panel.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;}
+  .emergency-panel-title{font-family:'Fraunces', serif; font-size:1.05rem; font-weight:600; color:var(--ink);}
+  .emergency-panel-sub{font-size:0.82rem; color:var(--ink-dim); margin:4px 0 14px;}
+  .emergency-link{display:flex; align-items:center; gap:10px; padding:11px 10px; text-decoration:none; color:var(--ink); border-top:1px solid var(--rule); font-size:0.88rem; transition:background 0.12s ease;}
+  .emergency-link:first-of-type{border-top:none;}
+  .emergency-link:hover{background:var(--parchment-dim);}
+  .emergency-link svg{width:16px; height:16px; color:var(--stamp); flex-shrink:0;}
+  .emergency-close{position:absolute; top:10px; right:10px; width:24px; height:24px; border:none; background:none; color:var(--ink-faint); cursor:pointer; font-size:1.1rem; line-height:1;}
+  @media (max-width:480px){ .emergency-btn .btn-label{display:none;} .emergency-btn{padding:14px;} }
 </style>
 </head>
 <body>
@@ -594,6 +611,7 @@
             ${activa && ab.disponible ? `<div class="disponible-tag"><span class="disponible-dot"></span>Disponible ahora</div>` : ''}
             ${ab.urgente24h ? `<div class="urgente24h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Urgente 24/7</div>` : ''}
             ${altoDesempeno ? `<div class="alto-desempeno-tag" title="Insignia gratuita por mérito — calificación, perfil completo y disponibilidad, no por pago"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Alto desempeño</div>` : ''}
+            ${ab.precioFijoGarantizado ? `<div class="verified-tag" title="El precio que ves aquí es el precio que cobra, sin sorpresas al llegar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>Precio fijo</div>` : ''}
           </div>
         </div>
         ${activePromo(ab) ? `<div class="promo-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6l-8 8a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8l8-8A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.8z"/><circle cx="15.5" cy="8.5" r="1.5"/></svg>${escapeHtml(activePromo(ab))}</div>` : ''}
@@ -812,6 +830,12 @@
       const sel = document.getElementById('fCiudad');
       if([...sel.options].some(o => o.value === ciudad)) sel.value = ciudad;
     }
+    // buscar.html?urgente=1 — usado por el botón de emergencia del home,
+    // marca de una vez el filtro "solo urgente 24/7" sin que la persona
+    // tenga que encontrarlo en el panel de filtros.
+    if(params.get('urgente') === '1'){
+      document.getElementById('fUrgente24h').checked = true;
+    }
   }
 
   // Título y meta description reflejan el filtro activo -- así cada
@@ -899,6 +923,39 @@
   });
 </script>
 
+<button class="emergency-btn" id="emergencyBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="emergencyPanel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+  <span class="btn-label">Emergencia</span>
+</button>
+<div class="emergency-panel" id="emergencyPanel" role="dialog" aria-label="Emergencia legal">
+  <button class="emergency-close" id="emergencyClose" type="button" aria-label="Cerrar">&times;</button>
+  <div class="emergency-panel-title">¿Qué está pasando?</div>
+  <div class="emergency-panel-sub">Te llevamos directo a abogados urgentes 24/7 de la especialidad correcta.</div>
+  <a class="emergency-link" href="buscar.html?especialidad=Penal&urgente=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>Me detuvieron / caso penal</a>
+  <a class="emergency-link" href="buscar.html?especialidad=Familiar&urgente=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6.5-8 11-8 11z"/></svg>Violencia o riesgo familiar</a>
+  <a class="emergency-link" href="buscar.html?especialidad=Civil&urgente=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Me van a desalojar</a>
+  <a class="emergency-link" href="buscar.html?especialidad=Laboral&urgente=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Me despidieron hoy</a>
+  <a class="emergency-link" href="cuestionario.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4M12 17h.01"/></svg>No sé qué necesito</a>
+</div>
+<script>
+  (function(){
+    const btn = document.getElementById('emergencyBtn');
+    const panel = document.getElementById('emergencyPanel');
+    const closeBtn = document.getElementById('emergencyClose');
+    if(!btn || !panel) return;
+    function toggle(open){
+      const willOpen = open !== undefined ? open : !panel.classList.contains('open');
+      panel.classList.toggle('open', willOpen);
+      btn.setAttribute('aria-expanded', String(willOpen));
+    }
+    btn.addEventListener('click', () => toggle());
+    closeBtn.addEventListener('click', () => toggle(false));
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') toggle(false); });
+    document.addEventListener('click', e => {
+      if(panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) toggle(false);
+    });
+  })();
+</script>
 <script src="pwa-register.js"></script>
 </body>
 </html>

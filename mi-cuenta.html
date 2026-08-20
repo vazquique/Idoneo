@@ -421,9 +421,12 @@
   .mini-review-text{font-size:0.88rem; color:var(--ink);}
   .empty-note{color:var(--ink-faint); font-size:0.86rem;}
 
-  .views-stat{display:flex; align-items:center; gap:9px; background:rgba(138,90,30,0.08); border:1px solid var(--brass-light); padding:12px 16px; margin-top:22px; font-size:0.88rem; color:var(--ink-2);}
-  .views-stat svg{width:18px; height:18px; color:var(--brass); flex-shrink:0;}
-  .views-stat strong{color:var(--ink); font-family:'Courier Prime', monospace;}
+  .activity-summary{background:rgba(138,90,30,0.08); border:1px solid var(--brass-light); padding:16px 18px; margin-top:22px;}
+  .activity-summary-title{font-family:'Courier Prime', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--brass); margin-bottom:12px;}
+  .activity-summary-row{display:flex; gap:26px; flex-wrap:wrap;}
+  .activity-stat{display:flex; flex-direction:column;}
+  .activity-stat strong{font-family:'Fraunces', serif; font-size:1.3rem; font-weight:600; color:var(--ink); line-height:1;}
+  .activity-stat span{font-size:0.76rem; color:var(--ink-dim); margin-top:3px;}
 
   .mini-reply-block{margin-top:10px; padding-top:10px; border-top:1px dashed var(--rule-strong);}
   .mini-reply-existing{font-size:0.86rem; color:var(--ink); background:rgba(138,90,30,0.08); border-left:2px solid var(--brass-light); padding:8px 12px; margin-bottom:8px;}
@@ -1645,6 +1648,15 @@
           <p class="field-hint">Actívalo si atiendes emergencias reales fuera de horario — por ejemplo, una detención en curso. Se muestra como una insignia especial en tu tarjeta y perfil. Disponible para cualquier cuenta, no solo Destacado.</p>
         </div>
 
+        <div class="field full">
+          <label class="disponible-toggle" style="margin-bottom:0;">
+            <input type="checkbox" data-role="precioFijoCheck" ${l.precioFijoGarantizado ? 'checked' : ''}>
+            <span class="disponible-toggle-track"><span class="disponible-toggle-thumb"></span></span>
+            <span class="disponible-toggle-label">Precio fijo garantizado</span>
+          </label>
+          <p class="field-hint">Solo actívalo si el precio de tu primera consulta que aparece en tu perfil es el precio que de verdad cobras, sin sorpresas al llegar. Es una promesa hacia el cliente, no una insignia decorativa — actívala con cuidado.</p>
+        </div>
+
         <div class="listing-actions">
           <button type="button" class="save-btn" data-action="save">Guardar cambios</button>
           <button type="button" class="delete-btn" data-action="delete">Eliminar mi registro</button>
@@ -1652,9 +1664,13 @@
         </div>
 
         ${l.status === 'approved' ? `
-          <div class="views-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            <strong>${(l.views || 0).toLocaleString('es-MX')}</strong> visita${l.views === 1 ? '' : 's'} a tu perfil
+          <div class="activity-summary">
+            <div class="activity-summary-title">Resumen de actividad</div>
+            <div class="activity-summary-row">
+              <div class="activity-stat"><strong>${(l.views || 0).toLocaleString('es-MX')}</strong><span>Vista${l.views === 1 ? '' : 's'} al perfil</span></div>
+              <div class="activity-stat"><strong>${(l.contactClicks || 0).toLocaleString('es-MX')}</strong><span>Clic${l.contactClicks === 1 ? '' : 's'} a WhatsApp</span></div>
+              <div class="activity-stat"><strong>${(l.reviews || 0).toLocaleString('es-MX')}</strong><span>Reseña${l.reviews === 1 ? '' : 's'} recibidas</span></div>
+            </div>
           </div>
         ` : ''}
 
@@ -1939,6 +1955,7 @@
       linkedin: card.querySelector('[data-field="linkedin"]').value.trim(),
       horario: card.querySelector('[data-field="horario"]').value.trim(),
       urgente24h: card.querySelector('[data-role="urgente24hCheck"]').checked,
+      precioFijoGarantizado: card.querySelector('[data-role="precioFijoCheck"]').checked,
       tipo: card.querySelector('[data-field="tipo"]').value,
       numAbogados: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="numAbogados"]').value.trim() : '',
       anioFundacion: card.querySelector('[data-field="tipo"]').value === 'despacho' ? card.querySelector('[data-field="anioFundacion"]').value.trim() : '',

@@ -98,7 +98,11 @@
   .msg-bubble{max-width:72%; padding:10px 14px; font-size:0.9rem; line-height:1.42; word-wrap:break-word; white-space:pre-wrap;}
   .msg-bubble.mine{align-self:flex-end; background:var(--stamp); color:var(--parchment);}
   .msg-bubble.theirs{align-self:flex-start; background:var(--parchment-dim); border:1px solid var(--rule-strong); color:var(--ink);}
-  .msg-compose{display:flex; align-items:flex-end; gap:10px; padding:14px 16px; border-top:1px solid var(--rule-strong); flex-shrink:0; background:var(--parchment);}
+  .msg-templates{display:flex; gap:6px; flex-wrap:wrap; padding:10px 16px 0; flex-shrink:0; background:var(--parchment); border-top:1px solid var(--rule-strong);}
+  .msg-template-chip{font-family:'Courier Prime', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.03em; padding:6px 10px; border:1px solid var(--rule-strong); background:var(--parchment-dim); color:var(--ink-dim); cursor:pointer; transition:border-color 0.15s ease, color 0.15s ease;}
+  .msg-template-chip:hover{border-color:var(--stamp); color:var(--ink);}
+  .msg-compose{display:flex; align-items:flex-end; gap:10px; padding:10px 16px 14px; flex-shrink:0; background:var(--parchment);}
+  .msg-compose.has-border-top{border-top:1px solid var(--rule-strong); padding-top:14px;}
   .msg-compose textarea{flex:1; resize:none; max-height:110px; padding:11px 13px; border:1px solid var(--rule-strong); background:var(--parchment); font-family:'Public Sans', sans-serif; font-size:0.9rem; color:var(--ink); line-height:1.4;}
   .msg-compose textarea:focus-visible{outline:2px solid var(--brass); outline-offset:1px;}
   .msg-send-btn{width:40px; height:40px; background:var(--stamp); color:var(--parchment); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:background 0.15s ease;}
@@ -361,6 +365,19 @@
     const input = document.getElementById('msgComposeInput');
     const btn = document.getElementById('msgSendBtn');
     if(!form) return;
+    const templates = document.getElementById('msgTemplates');
+    if(templates){
+      templates.addEventListener('click', (e) => {
+        const chip = e.target.closest('.msg-template-chip');
+        if(!chip) return;
+        const text = chip.dataset.text || '';
+        input.value = input.value ? (input.value.trim() + ' ' + text) : text;
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 110) + 'px';
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      });
+    }
     input.addEventListener('keydown', (e) => {
       if(e.key === 'Enter' && !e.shiftKey){
         e.preventDefault();
@@ -408,7 +425,15 @@
         ${esCliente ? `<a class="msg-thread-verlink" href="perfil.html?id=${encodeURIComponent(hilo.abogadoId)}">Ver perfil</a>` : ''}
       </div>
       <div class="msg-thread-body" id="msgThreadBody"><p class="empty-note" style="color:var(--ink-faint);">Cargando mensajes…</p></div>
-      <form class="msg-compose" id="msgComposeForm">
+      ${!esCliente ? `
+      <div class="msg-templates" id="msgTemplates">
+        <button type="button" class="msg-template-chip" data-text="Gracias por escribirme, cuéntame más sobre tu caso para poder orientarte mejor.">Pedir más contexto</button>
+        <button type="button" class="msg-template-chip" data-text="Con gusto te puedo atender. Mi primera consulta tiene un costo de">Cotizar consulta</button>
+        <button type="button" class="msg-template-chip" data-text="Ahora mismo estoy en una consulta, te respondo en cuanto pueda — gracias por tu paciencia.">Avisar que estoy ocupado</button>
+        <button type="button" class="msg-template-chip" data-text="¿Podrías compartirme algún documento o detalle adicional para revisar tu caso con más precisión?">Pedir documentos</button>
+      </div>
+      ` : ''}
+      <form class="msg-compose${esCliente ? ' has-border-top' : ''}" id="msgComposeForm">
         <textarea id="msgComposeInput" placeholder="Escribe tu mensaje…" rows="1" maxlength="2000" required></textarea>
         <button type="submit" class="msg-send-btn" id="msgSendBtn" aria-label="Enviar">${SEND_ICON}</button>
       </form>

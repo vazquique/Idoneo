@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#211C15">
+<title>Estado del acceso a la justicia — Idóneo</title>
+<meta name="description" content="El reporte anual de Idóneo sobre acceso a la justicia en México: metodología, qué medimos y por qué — primera edición, 2026.">
+<link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/reporte-anual.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Courier+Prime:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#211C15; --ink-2:#332B1E;
+    --brass:#8A5A1E; --brass-light:#C99A3E;
+    --parchment:#F5EFDD; --parchment-dim:#EAE0C5;
+    --line: rgba(245,239,221,0.14); --line-strong: rgba(245,239,221,0.32);
+    --stamp:#A32B1F; --stamp-dark:#7A1E15;
+    --pen:#2B3A55;
+    --rule: rgba(33,28,21,0.14); --rule-strong: rgba(33,28,21,0.26);
+    --ink-dim: rgba(33,28,21,0.68); --ink-faint: rgba(33,28,21,0.5);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--parchment); color:var(--ink); font-family:'Public Sans', sans-serif; line-height:1.55; overflow-x:hidden;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--ink); border-bottom:1px solid var(--line-strong);}
+  .header-inner{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px 28px; column-gap:14px;}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none; justify-self:center;}
+  .brand-mark{width:33px; height:20px; flex-shrink:0; color:var(--brass-light); transition:transform 0.2s ease;}
+  .brand:hover .brand-mark{transform:rotate(-8deg);}
+  .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
+  .brand-name{font-family:'Fraunces', serif; font-size:1.32rem; font-weight:600; font-style:italic; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.13em; color:var(--stamp); background:var(--parchment); padding:2px 8px; align-self:flex-start;}
+  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease, color 0.15s ease;}
+  .auth-slot{justify-self:end;}
+  .nav-toggle:hover{border-color:var(--brass-light);}
+  .nav-toggle.is-open{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
+
+  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 20px 40px rgba(20,16,10,0.35); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s; max-height:calc(100vh - 70px); overflow-y:auto;}
+  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;}
+  .mega-menu-inner{display:grid; grid-template-columns:repeat(4, 1fr); gap:36px; padding:36px 28px;}
+  .mega-col-title{display:block; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:8px;}
+  .mega-col a{display:block; padding:7px 0; color:rgba(245,239,221,0.8); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
+  .mega-col a:hover{color:var(--parchment); transform:translateX(3px);}
+  .mega-col a.mega-primary{color:var(--stamp); font-weight:700;}
+  @media (max-width:860px){ .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;} }
+  @media (max-width:680px){
+    .mega-menu-inner{grid-template-columns:1fr; gap:2px; padding:18px 24px;}
+    .mega-col{padding-bottom:12px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+    .mega-col:last-child{border-bottom:none;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative; padding:88px 0 70px; border-bottom:1px solid var(--rule-strong);}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); margin-bottom:24px; border:1px dashed var(--stamp); padding:6px 12px;}
+  h1{font-family:'Fraunces', serif; font-size:clamp(2.2rem, 4.8vw, 3.3rem); font-weight:500; line-height:1.14; max-width:20ch; letter-spacing:-0.01em;}
+  h1 .marked{font-style:italic; font-weight:600; background:linear-gradient(transparent 62%, rgba(163,43,31,0.16) 62%); padding:0 2px;}
+  .hero-sub{margin-top:20px; max-width:64ch; font-size:1.02rem; color:var(--ink-dim);}
+  .hero-cta-row{display:flex; flex-wrap:wrap; align-items:center; gap:16px; margin-top:30px;}
+  .cta-primary{
+    display:inline-flex; align-items:center; gap:9px; background:var(--stamp); color:var(--parchment); text-decoration:none;
+    padding:15px 28px; font-family:'Courier Prime', monospace; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em;
+    transition:background 0.15s ease, transform 0.1s ease; box-shadow:3px 3px 0 var(--rule-strong);
+  }
+  .cta-primary:hover{background:var(--stamp-dark);}
+  .cta-primary:active{transform:translate(3px,3px); box-shadow:0 0 0 var(--rule-strong);}
+  .cta-secondary{
+    display:inline-flex; align-items:center; gap:8px; background:none; color:var(--ink); text-decoration:none;
+    padding:14px 26px; border:1px solid var(--rule-strong); font-family:'Courier Prime', monospace; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .cta-secondary:hover{border-color:var(--ink); background:rgba(33,28,21,0.04);}
+  .ficha{display:flex; flex-wrap:wrap; margin-top:40px; border-top:1px dashed var(--rule-strong); padding-top:2px;}
+  .ficha-item{padding:16px 26px 0 0; margin-right:26px; border-right:1px dashed var(--rule-strong);}
+  .ficha-item:last-child{border-right:none; margin-right:0;}
+  .ficha-value{display:block; font-family:'Fraunces', serif; font-size:1.5rem; font-weight:600; color:var(--stamp); line-height:1.15;}
+  .ficha-label{display:block; margin-top:4px; font-family:'Courier Prime', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-faint);}
+  .ficha-note{margin-top:14px; font-family:'Courier Prime', monospace; font-size:0.7rem; color:var(--ink-faint);}
+
+  section{padding:76px 0;}
+  .section-head{max-width:680px; margin-bottom:44px;}
+  .kicker{font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); display:block; margin-bottom:12px;}
+  h2{font-family:'Fraunces', serif; font-size:clamp(1.6rem,2.8vw,2.2rem); font-weight:500; letter-spacing:-0.01em;}
+  .section-head p{margin-top:14px; color:var(--ink-dim); font-size:1rem; max-width:64ch;}
+
+  /* ---------- Callout ---------- */
+  .callout{position:relative; background:var(--parchment-dim); border:1px dashed var(--pen); border-left:3px solid var(--pen); padding:20px 24px; margin:0 0 8px; font-size:0.94rem; color:var(--ink-dim); max-width:78ch;}
+  .callout strong{color:var(--ink);}
+
+  /* ---------- Def list (qué mide cada edición) ---------- */
+  .metodologia{border-top:1px solid var(--rule-strong); background:var(--parchment-dim);}
+  .deflist{border-top:1px dashed var(--rule-strong); margin-top:6px; max-width:82ch;}
+  .defrow{display:grid; grid-template-columns:230px 1fr; gap:18px; padding:18px 0; border-bottom:1px dashed var(--rule-strong); align-items:baseline;}
+  .defrow .field-name{font-family:'Courier Prime', monospace; font-size:0.78rem; color:var(--stamp); font-weight:700; text-transform:uppercase; letter-spacing:0.02em;}
+  .defrow .field-desc{font-size:0.94rem; color:var(--ink-dim);}
+  @media (max-width:640px){ .defrow{grid-template-columns:1fr; gap:4px;} }
+
+  /* ---------- Compromiso (tab-card) ---------- */
+  .tab-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); margin-top:16px;}
+  .card-tab{position:absolute; top:-12px; left:16px; background:var(--ink); color:var(--parchment); font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:5px 11px;}
+  .compromiso-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px 18px; padding-top:2px;}
+  .compromiso{padding:26px 22px 22px;}
+  .compromiso .card-tab{background:var(--stamp);}
+  .compromiso-icon{width:24px; height:24px; margin-bottom:14px; color:var(--pen);}
+  .compromiso h3{font-family:'Fraunces', serif; font-weight:600; font-size:1.02rem; margin-bottom:8px;}
+  .compromiso p{font-size:0.88rem; color:var(--ink-dim);}
+  @media (max-width:860px){ .compromiso-grid{grid-template-columns:1fr;} }
+
+  /* ---------- Puente / CTA final ---------- */
+  .puente{position:relative; padding:90px 0; border-bottom:1px solid var(--rule-strong); text-align:center; overflow:hidden;}
+  .puente-watermark{position:absolute; top:50%; left:50%; width:520px; height:520px; transform:translate(-50%,-50%) rotate(-9deg); color:var(--stamp); opacity:0.05; pointer-events:none;}
+  .puente .wrap{position:relative;}
+  .puente h2{max-width:28ch; margin:0 auto;}
+  .puente p{margin-top:16px; max-width:58ch; margin-left:auto; margin-right:auto; color:var(--ink-dim);}
+  .puente-secondary{display:block; margin-top:18px; font-family:'Courier Prime', monospace; font-size:0.78rem; color:var(--ink-faint); text-decoration:none; transition:color 0.15s ease;}
+  .puente-secondary strong{color:var(--stamp); text-decoration:underline;}
+  .puente-secondary:hover{color:var(--ink);}
+
+  footer{padding:56px 0 28px; background:var(--ink); color:var(--parchment); border-top:4px solid var(--stamp);}
+  .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
+  .footer-brand .brand{justify-self:start; margin-bottom:12px;}
+  .footer-tagline{font-size:0.86rem; color:rgba(245,239,221,0.6); max-width:34ch; line-height:1.55;}
+  .footer-col{display:flex; flex-direction:column; gap:9px;}
+  .footer-col-title{font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
+  .footer-col a{font-size:0.86rem; color:rgba(245,239,221,0.7); text-decoration:none; transition:color 0.15s ease;}
+  .footer-col a:hover{color:var(--parchment);}
+  .footer-bottom{padding-top:22px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  footer .mono{font-size:0.72rem; color:rgba(245,239,221,0.5); font-family:'Courier Prime', monospace;}
+  footer a.mono{text-decoration:none;}
+  footer a.mono:hover{color:rgba(245,239,221,0.82);}
+  @media (max-width:860px){ .footer-grid{grid-template-columns:1fr 1fr; gap:28px;} .footer-brand{grid-column:1 / -1;} }
+  @media (max-width:520px){ .footer-grid{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner wrap" style="padding-left:0; padding-right:0;">
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="megaMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">Idóneo</span>
+        <span class="brand-niche">Abogados</span>
+      </span>
+    </a>
+    <div class="auth-slot" id="navAuth"></div>
+  </div>
+  <nav class="mega-menu" id="megaMenu" aria-label="Menú principal">
+    <div class="wrap mega-menu-inner">
+      <div class="mega-col">
+        <span class="mega-col-title">Buscar</span>
+        <a class="mega-primary" href="buscar.html">Todos los abogados</a>
+        <a href="buscar.html?especialidad=Familiar">Familiar</a>
+        <a href="buscar.html?especialidad=Penal">Penal</a>
+        <a href="buscar.html?especialidad=Laboral">Laboral</a>
+        <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+        <a href="buscar.html?especialidad=Corporativo">Corporativo</a>
+        <a href="buscar.html?especialidad=Migratorio">Migratorio</a>
+        <a href="buscar.html?especialidad=Bienes%20ra%C3%ADces">Bienes raíces</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Para abogados</span>
+        <a class="mega-primary" href="registro.html">Regístrate gratis</a>
+        <a href="mi-cuenta.html">Mi cuenta</a>
+        <a href="destacado.html">Idóneo Destacado</a>
+        <a href="precios.html">Precios</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Recursos</span>
+        <a href="cuestionario.html">¿Qué abogado necesito?</a>
+        <a class="mega-primary" href="plazos.html">Radar de plazos</a>
+        <a href="guias.html">Guías legales</a>
+        <a href="documentos.html">Kit de documentos</a>
+        <a href="foro.html">Foro de preguntas</a>
+        <a href="ideas-innovacion.html">Ideas de innovación</a>
+        <a href="index.html#como-funciona">Cómo funciona</a>
+        <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
+      </div>
+      <div class="mega-col">
+        <span class="mega-col-title">Legal</span>
+        <a href="aviso-privacidad.html">Aviso de privacidad</a>
+        <a href="terminos.html">Términos y condiciones</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Edición 2026 · Primera edición</span>
+    <h1>Estado del <span class="marked">acceso a la justicia</span> en México.</h1>
+    <p class="hero-sub">Cada año, Idóneo va a publicar gratis un reporte con datos agregados y anonimizados de la propia plataforma: cuánto tarda un despacho en responder, qué tan caro es hablar con un abogado por primera vez, y dónde del país hay más o menos oferta legal verificada. Esta primera edición es, sobre todo, honesta respecto a dónde estamos: presenta la metodología completa y las primeras cifras reales que tenemos — no proyecciones ni datos inventados. Van a crecer edición tras edición conforme más gente use el sitio.</p>
+    <div class="hero-cta-row">
+      <a href="#" id="ctaPressTop" class="cta-primary">
+        Contacto de prensa
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+      </a>
+      <a href="buscar.html" class="cta-secondary">Usa el buscador y aporta a la próxima edición</a>
+    </div>
+    <div class="ficha">
+      <div class="ficha-item"><span class="ficha-value">Edición 01</span><span class="ficha-label">Reporte publicado</span></div>
+      <div class="ficha-item"><span class="ficha-value">Próximamente</span><span class="ficha-label">Tiempo de respuesta promedio</span></div>
+      <div class="ficha-item"><span class="ficha-value">Próximamente</span><span class="ficha-label">Precio de primera consulta</span></div>
+      <div class="ficha-item"><span class="ficha-value">Anual</span><span class="ficha-label">Frecuencia de publicación</span></div>
+    </div>
+    <p class="ficha-note">Cifras marcadas "Próximamente": todavía no tenemos suficiente volumen de datos reales de la plataforma para publicarlas de forma confiable. Preferimos decir eso a inventar un número.</p>
+  </div>
+</section>
+
+<section class="metodologia">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Metodología</span>
+      <h2>De dónde van a salir los datos, y por qué no hay grandes cifras todavía.</h2>
+      <p>Idóneo es una plataforma joven. Cualquier reporte de un sitio que apenas está creciendo, si presume estadísticas grandes y precisas, casi seguro se las está inventando. Preferimos lo contrario: explicar bien la metodología ahora, y dejar que las cifras crezcan con el uso real del sitio.</p>
+    </div>
+    <div class="callout">Todo dato que publiquemos en este reporte va a salir de actividad real y agregada dentro de Idóneo — nunca de encuestas externas ni de estimaciones de mercado disfrazadas de dato propio. Cuando una cifra no tenga todavía suficiente volumen para ser representativa, la vamos a marcar como pendiente en vez de forzarla.</div>
+  </div>
+</section>
+
+<section class="que-mide">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Qué mide cada edición</span>
+      <h2>Cinco indicadores, medidos igual año con año.</h2>
+      <p>La utilidad de un reporte anual está en poder comparar una edición contra la siguiente. Por eso definimos desde ahora qué se mide cada año, aunque la primera edición todavía no tenga cifra para todos los renglones.</p>
+    </div>
+    <div class="deflist">
+      <div class="defrow">
+        <span class="field-name">Tiempo de respuesta</span>
+        <span class="field-desc">Tiempo promedio entre el primer contacto por WhatsApp y la primera respuesta del despacho, agregado por especialidad y por estado.</span>
+      </div>
+      <div class="defrow">
+        <span class="field-name">Especialidades por estado</span>
+        <span class="field-desc">Qué tipo de caso se busca más en cada estado — familiar, penal, laboral, mercantil y el resto de las especialidades del directorio — y cómo cambia esa demanda de una edición a otra.</span>
+      </div>
+      <div class="defrow">
+        <span class="field-name">Precio de primera consulta</span>
+        <span class="field-desc">Rango de precio declarado por los propios despachos para una primera consulta, por especialidad, sin promediar entre categorías muy distintas entre sí.</span>
+      </div>
+      <div class="defrow">
+        <span class="field-name">Demanda por región</span>
+        <span class="field-desc">En qué ciudades y estados hay más búsquedas activas frente a cuántos abogados verificados hay disponibles ahí — una forma honesta de ver dónde falta oferta legal confiable.</span>
+      </div>
+      <div class="defrow">
+        <span class="field-name">Cobertura de verificación</span>
+        <span class="field-desc">Cuántos perfiles nuevos completan la verificación de cédula profesional cada año, y en qué estados esa cobertura todavía es baja.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="compromiso-section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">El compromiso detrás del reporte</span>
+      <h2>Por qué nos importa publicar esto, incluso apenas empezando.</h2>
+    </div>
+    <div class="compromiso-grid">
+      <div class="compromiso tab-card">
+        <span class="card-tab">Transparencia</span>
+        <svg class="compromiso-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h3>Metodología pública, siempre</h3>
+        <p>Cada edición va a explicar exactamente de dónde sale cada cifra — para que se pueda cuestionar, no solo citar.</p>
+      </div>
+      <div class="compromiso tab-card">
+        <span class="card-tab">Gratis</span>
+        <svg class="compromiso-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><path d="M2 7h20v5H2zM12 22V7M12 7a2.5 2.5 0 1 1 0-5c1.5 0 2.5 2 2.5 5M12 7a2.5 2.5 0 1 0 0-5c-1.5 0-2.5 2-2.5 5"/></svg>
+        <h3>Siempre gratuito y abierto</h3>
+        <p>Sin muro de pago ni formulario que pida datos a cambio de descargarlo — cualquier persona, medio o despacho puede citarlo libremente.</p>
+      </div>
+      <div class="compromiso tab-card">
+        <span class="card-tab">Anonimizado</span>
+        <svg class="compromiso-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-2.5 1.5-2.5 3.5"/><path d="M12 17h.01"/></svg>
+        <h3>Solo cifras agregadas</h3>
+        <p>Nunca se publican datos de un abogado, despacho o usuario identificable — todo se reporta agrupado, nunca caso por caso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="puente">
+  <svg class="puente-watermark" viewBox="0 0 200 200" aria-hidden="true">
+    <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="100" cy="100" r="68" fill="none" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M100 52v96M76 60l-12 24a16 16 0 0 0 32 0l-12-24m50 0l-12 24a16 16 0 0 0 32 0l-12-24M64 60h24m20 0h24M74 132h32" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  </svg>
+  <div class="wrap">
+    <span class="kicker">¿Eres periodista o medio de comunicación?</span>
+    <h2>Escríbenos si quieres la metodología completa o una entrevista.</h2>
+    <p>Con gusto compartimos más detalle sobre cómo se calcula cada indicador, o conversamos sobre lo que estamos viendo en el mercado legal mexicano.</p>
+    <a href="#" id="ctaPressBottom" class="cta-primary" style="margin-top:26px;">Contacto de prensa</a>
+    <a href="buscar.html" class="puente-secondary">O usa el <strong>buscador de Idóneo</strong> — tu actividad, siempre anonimizada, ayuda a construir la próxima edición →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+          <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+          <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">Idóneo</span>
+          <span class="brand-niche">Abogados</span>
+        </span>
+      </a>
+      <p class="footer-tagline">Directorio legal en México. Cédula verificada, reseñas reales, contacto directo por WhatsApp — sin intermediarios.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Buscar</span>
+      <a href="buscar.html">Todos los abogados</a>
+      <a href="buscar.html?especialidad=Familiar">Familiar</a>
+      <a href="buscar.html?especialidad=Penal">Penal</a>
+      <a href="buscar.html?especialidad=Laboral">Laboral</a>
+      <a href="buscar.html?especialidad=Mercantil">Mercantil</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Para abogados</span>
+      <a href="registro.html">Regístrate gratis</a>
+      <a href="mi-cuenta.html">Mi cuenta</a>
+      <a href="destacado.html">Idóneo Destacado</a>
+      <a href="precios.html">Precios</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-title">Recursos</span>
+      <a href="cuestionario.html">¿Qué abogado necesito?</a>
+      <a href="plazos.html">Radar de plazos</a>
+      <a href="guias.html">Guías legales</a>
+      <a href="documentos.html">Kit de documentos</a>
+      <a href="foro.html">Foro de preguntas</a>
+      <a href="ideas-innovacion.html">Ideas de innovación</a>
+      <a href="index.html#como-funciona">Cómo funciona</a>
+      <a href="aviso-privacidad.html">Aviso de privacidad</a>
+      <a href="terminos.html">Términos y condiciones</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span class="mono">© 2026 IDÓNEO — DIRECTORIO LEGAL, MÉXICO</span>
+    <span class="mono"><a class="mono" href="aviso-privacidad.html">AVISO DE PRIVACIDAD</a> · <a class="mono" href="terminos.html">TÉRMINOS</a></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="listings.js"></script>
+<script src="auth.js"></script>
+<script>
+  // Mismo patrón de mailto que usa destacado.html para su contacto de plan
+  // anual: todavía no hay un canal automático de prensa, así que el botón
+  // arma un correo pre-llenado en vez de simular un flujo que no existe.
+  const PRENSA_EMAIL = 'prensa@TU-DOMINIO.com';
+  const PRENSA_MAILTO = `mailto:${PRENSA_EMAIL}?subject=${encodeURIComponent('Reporte Idóneo — Estado del acceso a la justicia')}&body=${encodeURIComponent('Hola, escribo de un medio de comunicación y quiero más información sobre el reporte de Idóneo. Este es mi medio y mi contacto:')}`;
+  ['ctaPressTop', 'ctaPressBottom'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.href = PRENSA_MAILTO;
+  });
+</script>
+<script src="pwa-register.js"></script>
+</body>
+</html>
