@@ -908,48 +908,18 @@ listas planas de strings, no requieren ningún cambio de arquitectura.
 ### Cómo conectar un modelo de lenguaje real (si quieres ir más lejos)
 
 Si en algún momento quieres que el asistente entienda casos más
-ambiguos o mantenga una conversación de verdad (no solo clasificar un
-mensaje), la pieza que falta es un **backend real** — este sitio no
-tiene uno a propósito (es HTML + JavaScript + Firebase, sin servidor
-propio), y llamar a la API de un modelo de lenguaje directamente desde
-el navegador expondría tu clave de API a cualquiera que abra las
-herramientas de desarrollador de Chrome — eso es lo que te robarían y
-usarían para cobrarte a ti, así que no es algo que debas hacer nunca,
-ni yo ni nadie debería configurarlo así. El camino correcto:
-
-1. **Activa el plan Blaze de Firebase** (pago por uso, con una capa
-   gratuita generosa) — Firebase Functions no funciona en el plan
-   gratuito Spark. Esto requiere que ligues una tarjeta a tu proyecto de
-   Firebase; solo tú puedes hacerlo, es tu cuenta y tu método de pago.
-2. **Crea una cuenta y una API key** con el proveedor del modelo que
-   quieras usar — por ejemplo, [console.anthropic.com](https://console.anthropic.com)
-   para la API de Claude. De nuevo, esto requiere tus propios datos de
-   pago; nadie más lo puede hacer por ti.
-3. **Escribe una Firebase Function** (Node.js) que reciba el texto del
-   usuario, la mande a la API del modelo con tu API key (guardada como
-   secreto de Functions, `firebase functions:secrets:set`, nunca en el
-   código ni en el HTML), y regrese la especialidad/urgencia/presupuesto
-   detectados — o una respuesta conversacional completa, si quieres que
-   sea un chat de verdad en vez de una sola clasificación.
-4. **Cambia `procesarConsulta()` en `cuestionario.html`** para que, en
-   vez de (o además de) correr `detectarEspecialidad()` localmente,
-   llame a esa Function (`fetch('https://TU-REGION-TU-PROYECTO.cloudfunctions.net/asistente', {...})`)
-   y use su respuesta. El resto de la página —el resumen editable, el
-   cálculo de matches, las tarjetas de resultado— no necesita cambiar
-   nada, porque ya está desacoplado de cómo se llenan `answers.situacion`
-   / `answers.urgencia` / `answers.presupuesto` / `answers.estado`.
-5. Considera un límite de uso (ej. por IP o por sesión) dentro de la
-   Function, para que nadie pueda hacerte gastar tu presupuesto de API
-   mandando miles de peticiones automatizadas.
-
-Esto es deliberadamente el único paso de todo este documento que no se
-construyó por ti de inicio a fin — requiere que abras cuentas y ligues
-métodos de pago tuyos en dos servicios externos (Firebase Blaze y el
-proveedor del modelo), y no es algo que deba hacerse en automático sin
-que tú decidas activarlo. El clasificador local de hoy ya resuelve el
-caso principal (identificar especialidad, urgencia y presupuesto a
-partir de una descripción libre) sin nada de esto — el LLM es para
-cuando quieras ir más allá de clasificar, hacia una conversación real.
+ambiguos (no solo clasificar por palabras clave), la pieza que falta es
+un **backend real** — este sitio no tiene uno a propósito, y llamar a
+la API de un modelo de lenguaje directamente desde el navegador
+expondría tu clave a cualquiera que abra las herramientas de
+desarrollador de Chrome. El tutorial completo, con todo el código para
+copiar (Cloud Function + el cambio exacto en `cuestionario.html`),
+**incluyendo cómo dejarlo en $0 de costo con la capa gratuita de
+Google Gemini**, vive aparte en
+[`INSTRUCCIONES-ASISTENTE-IA.md`](./INSTRUCCIONES-ASISTENTE-IA.md) —
+se separó de este documento para no seguirle metiendo texto a uno que
+ya es largo. El clasificador local de hoy ya resuelve el caso principal
+sin nada de esto; ese tutorial es para cuando quieras ir más allá.
 
 ## Ideas para seguir monetizando y mejorando (sin implementar todavía)
 

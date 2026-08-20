@@ -441,37 +441,58 @@
     });
   });
 
-  document.getElementById('asistenteSubmitBtn').addEventListener('click', () => {
-    const input = document.getElementById('asistenteInput');
-    const texto = input.value.trim();
-    if(!texto){
-      input.focus();
-      return;
-    }
-    procesarConsulta({texto});
-  });
-
-  function procesarConsulta({texto, especialidadManual}){
-    const textoNorm = normalize(texto || '');
-    let confianza = 0;
-    if(especialidadManual){
-      answers.situacion = especialidadManual;
+ document.getElementById('asistenteSubmitBtn').addEventListener('click', async (e) => {
+  const input = document.getElementById('asistenteInput');
+  const texto = input.value.trim();
+  if(!texto){ input.focus(); return; }
+  const btn = e.currentTarget;
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Pensando…';
+  try{
+    await procesarConsulta({texto});
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+});
+const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
+  async function procesarConsulta({texto, especialidadManual}){
+  const textoNorm = normalize(texto || '');
+  let confianza = 0;
+  if(especialidadManual){
+    answers.situacion = especialidadManual;
+    confianza = 99;
+  } else if(texto && ASISTENTE_FUNCTION_URL){
+    try{
+      const r = await fetch(ASISTENTE_FUNCTION_URL, {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({texto})
+      });
+      if(!r.ok) throw new Error('El asistente no respondió bien.');
+      const data = await r.json();
+      answers.situacion = data.especialidad || 'Otra';
+      if(data.urgencia) answers.urgencia = data.urgencia;
+      if(data.presupuesto) answers.presupuesto = data.presupuesto;
+      if(data.estado) answers.estado = data.estado;
       confianza = 99;
-    } else {
+    } catch(err){
+      console.error('El asistente con IA no respondió, usando el clasificador local.', err);
       const det = detectarEspecialidad(textoNorm);
       answers.situacion = det.especialidad;
       confianza = det.confianza;
     }
-    answers.urgencia = detectarUrgencia(textoNorm) || answers.urgencia;
-    answers.presupuesto = detectarPresupuesto(textoNorm) || answers.presupuesto;
-    const estadoDet = detectarEstado(textoNorm);
-    if(estadoDet) answers.estado = estadoDet;
-
-    document.getElementById('asistenteCard').style.display = 'none';
-    renderResumen(confianza);
-    showResults();
-    document.getElementById('resumenSlot').scrollIntoView({behavior: 'smooth', block: 'start'});
+  } else {
+    const det = detectarEspecialidad(textoNorm);
+    answers.situacion = det.especialidad;
+    confianza = det.confianza;
   }
+  answers.urgencia = detectarUrgencia(textoNorm) || answers.urgencia;
+  answers.presupuesto = detectarPresupuesto(textoNorm) || answers.presupuesto;
+  const estadoDet = detectarEstado(textoNorm);
+  if(estadoDet) answers.estado = estadoDet;
+
 
   function renderResumen(confianza){
     const bajaConfianza = confianza === 0 && answers.situacion === 'Otra';
@@ -535,6 +556,10 @@
       renderResumen(99);
       showResults();
     });
+  }
+
+  renderResumen(confianza);
+  showResults();
   }
 
   // ---------- Puntuación y resultados ----------
