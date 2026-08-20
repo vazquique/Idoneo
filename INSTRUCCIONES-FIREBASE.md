@@ -1167,6 +1167,70 @@ una forma de disparar la notificación desde algún lado (típicamente una
 Cloud Function), la misma pieza de servidor que falta para la IA real
 (ver más abajo).
 
+### Mensajería interna (`mensajes.html`)
+
+Alternativa privada al botón de WhatsApp: el cliente le escribe al
+abogado sin salir de Idóneo, y ambos ven la conversación desde su
+cuenta. Dos colecciones nuevas en Firestore:
+
+- `hilos` — una conversación entre un cliente (`clienteUid`) y un
+  abogado/despacho (`abogadoId` + `abogadoUid`), con el último mensaje
+  cacheado (`ultimoMensaje`, `ultimoMensajeAt`, `ultimoMensajePor`) y
+  dos banderas de no leído (`noLeidoCliente`, `noLeidoAbogado`) para
+  pintar el punto de "sin leer" sin tener que abrir la conversación.
+- `mensajes` — los mensajes de cada hilo (campo `hiloId`), inmutables
+  una vez enviados. Cada mensaje repite `clienteUid`/`abogadoUid` del
+  hilo al que pertenece, para que la regla de lectura no tenga que
+  hacer un `get()` extra por cada mensaje que devuelve una consulta.
+
+Reglas clave (ver `firestore.rules`):
+
+- **Solo el cliente puede abrir un hilo nuevo.** El abogado nunca puede
+  iniciar una conversación con alguien que no lo contactó primero, así
+  Mensajes no se vuelve un canal para escribirle en frío a un cliente.
+  `esDuenoAprobado()` verifica que `abogadoUid` sea de verdad el dueño
+  actual y aprobado de `abogadoId` — no un dato que el cliente pueda
+  inventar desde la consola del navegador.
+- Ambos lados pueden actualizar el hilo, pero **solo los campos de
+  vista previa y de leído** (`diff().affectedKeys().hasOnly([...])`) —
+  nadie puede cambiar quién es el cliente o el abogado de un hilo ya
+  creado.
+- Los mensajes son ilegibles para quien no participa en ese hilo, y
+  nadie los puede editar ni borrar después de enviados.
+- **A propósito, el admin no puede leer las conversaciones.** A
+  diferencia de las reseñas (públicas) o los casos ganados (relevantes
+  para facturar la comisión), un mensaje privado entre cliente y
+  abogado no tiene una razón de negocio para que Idóneo lo lea por
+  default — es la postura más protectora de la privacidad del usuario.
+  Si más adelante quieres un botón de "reportar conversación" para
+  moderar abuso, es una pieza nueva a propósito (copiar lo reportado a
+  una colección que el admin sí pueda leer), no algo que se dejó a
+  medias aquí.
+
+`mensajes.html` es la bandeja: lista de conversaciones a la izquierda y
+la conversación activa a la derecha (una sola columna en celular, con
+botón de regresar). Usa `onSnapshot` (tiempo real) en vez de `get()`
+una sola vez, así que los mensajes nuevos aparecen solos sin recargar
+— es la única parte del sitio que funciona así; el resto usa lecturas
+puntuales porque no necesitaba actualizarse en vivo.
+
+**Requiere un índice compuesto** la primera vez que se use de verdad:
+la consulta de mensajes de un hilo (`where('hiloId', '==', X)` +
+`orderBy('createdAt', 'asc')`) necesita un índice compuesto en
+Firestore. La primera vez que corra esa consulta en tu proyecto real,
+la consola del navegador va a mostrar un error con un link directo para
+crear ese índice con un clic — no hace falta configurarlo a mano de
+antemano.
+
+El botón "Enviar mensaje" vive en `perfil.html`, junto a "Guardar" y
+"Compartir" — nunca reemplaza al botón de WhatsApp (que sigue siendo el
+canal principal, ya establecido y de menor fricción); solo da una
+opción privada para quien prefiere no compartir su número todavía. Solo
+aparece en cuentas reales registradas (los 8 perfiles de ejemplo no
+tienen un dueño de verdad al que escribirle) y se oculta en tu propio
+perfil. El menú de cuenta (arriba a la derecha, en cualquier página)
+muestra un punto y un contador cuando tienes mensajes sin leer.
+
 ## Lo que NO se construyó, y por qué
 
 El documento de ideación traía 36 propuestas. Lo de arriba son las que
@@ -1220,10 +1284,10 @@ o decidas cuánto donar — nada de eso se puede decidir en automático en
 tu nombre.
 
 **Quedaron fuera por alcance esta vez (buildables, pero no se llegó)**
-— mensajería interna, videoconsulta agendable, línea de tiempo del
-caso, modo urgente en vivo, comunidad privada de despachos, un
-leaderboard público del Idóneo Score, segunda opinión exprés, e Idóneo
-Protección (membresía mensual tipo LegalShield). Ninguna necesita
+— videoconsulta agendable, línea de tiempo del caso, modo urgente en
+vivo, comunidad privada de despachos, un leaderboard público del
+Idóneo Score, segunda opinión exprés, e Idóneo Protección (membresía
+mensual tipo LegalShield). Ninguna necesita
 backend nuevo — todas son extensiones del mismo patrón que ya usa el
 resto del sitio (una colección nueva en Firestore + reglas + una
 página o sección). Son el siguiente lote natural si quieres seguir por

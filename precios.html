@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#182644">
+<meta name="theme-color" content="#211C15">
 <title>Precios — Idóneo Abogados</title>
 <meta name="description" content="Todas las formas de invertir en tu perfil en Idóneo: Destacado, Impulso puntual, verificación de persona moral, comisión por caso ganado, publicidad y kit de documentos legales.">
 <link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/precios.html">
@@ -14,95 +14,106 @@
 <meta property="og:title" content="Precios — Idóneo">
 <meta property="og:description" content="Todas las formas de invertir en tu perfil en Idóneo, en un solo lugar.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Courier+Prime:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
-    --parchment:#f1ead8; --parchment-dim:#e4dbc4;
-    --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+    --ink:#211C15; --ink-2:#332B1E;
+    --brass:#8A5A1E; --brass-light:#C99A3E;
+    --parchment:#F5EFDD; --parchment-dim:#EAE0C5;
+    --line: rgba(245,239,221,0.14); --line-strong: rgba(245,239,221,0.32);
+    --stamp:#A32B1F; --stamp-dark:#7A1E15;
+    --pen:#2B3A55;
+    --rule: rgba(33,28,21,0.14); --rule-strong: rgba(33,28,21,0.26);
+    --ink-dim: rgba(33,28,21,0.68); --ink-faint: rgba(33,28,21,0.5);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
-  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5; overflow-x:hidden;}
+  body{
+    background:var(--parchment); color:var(--ink); font-family:'Public Sans', sans-serif; line-height:1.55; overflow-x:hidden;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   a{color:inherit;}
+  :focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
   .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
 
-  header{position:sticky; top:0; z-index:50; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  header{position:sticky; top:0; z-index:50; background:var(--ink); border-bottom:1px solid var(--line-strong);}
   .header-inner{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px 28px; column-gap:14px;}
-  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; justify-self:center;}
-  .brand-mark{width:32px; height:32px; flex-shrink:0; color:var(--brass-light); transition:transform 0.3s ease;}
-  .brand:hover .brand-mark{transform:rotate(-6deg);}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none; justify-self:center;}
+  .brand-mark{width:33px; height:20px; flex-shrink:0; color:var(--brass-light); transition:transform 0.2s ease;}
+  .brand:hover .brand-mark{transform:rotate(-8deg);}
   .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
-  .brand-name{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; color:var(--parchment); letter-spacing:0.01em;}
-  .brand-niche{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.13em; color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); border-radius:20px; padding:2px 8px; align-self:flex-start; background:rgba(217,171,82,0.08);}
+  .brand-name{font-family:'Fraunces', serif; font-size:1.32rem; font-weight:600; font-style:italic; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.13em; color:var(--stamp); background:var(--parchment); padding:2px 8px; align-self:flex-start;}
+  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease, color 0.15s ease;}
   .auth-slot{justify-self:end;}
-  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.2s ease, background 0.2s ease, color 0.2s ease;}
   .nav-toggle:hover{border-color:var(--brass-light);}
   .nav-toggle.is-open{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
 
-  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 24px 48px rgba(0,0,0,0.35); opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; max-height:calc(100vh - 70px); overflow-y:auto;}
-  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0s;}
+  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 20px 40px rgba(20,16,10,0.35); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s; max-height:calc(100vh - 70px); overflow-y:auto;}
+  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;}
   .mega-menu-inner{display:grid; grid-template-columns:repeat(4, 1fr); gap:36px; padding:36px 28px;}
-  .mega-col-title{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px;}
-  .mega-col a{display:block; padding:7px 0; color:rgba(241,234,216,0.82); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
+  .mega-col-title{display:block; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:8px;}
+  .mega-col a{display:block; padding:7px 0; color:rgba(245,239,221,0.8); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
   .mega-col a:hover{color:var(--parchment); transform:translateX(3px);}
-  .mega-col a.mega-primary{color:var(--brass-light); font-weight:600;}
-  @media (max-width:860px){
-    .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;}
-  }
+  .mega-col a.mega-primary{color:var(--stamp); font-weight:700;}
+  @media (max-width:860px){ .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;} }
   @media (max-width:680px){
     .mega-menu-inner{grid-template-columns:1fr; gap:2px; padding:18px 24px;}
     .mega-col{padding-bottom:12px; margin-bottom:8px; border-bottom:1px solid var(--line);}
     .mega-col:last-child{border-bottom:none;}
   }
 
-  .hero{position:relative; padding:72px 0 48px; border-bottom:1px solid var(--line);
-    background: radial-gradient(ellipse 700px 380px at 85% -10%, rgba(217,171,82,0.14), transparent 60%);}
-  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px;}
-  .eyebrow::before{content:''; width:24px; height:1px; background:var(--brass-light);}
-  h1{font-size:clamp(2rem, 4.4vw, 3rem); font-weight:500; line-height:1.1; max-width:22ch; letter-spacing:-0.01em;}
-  .hero-sub{margin-top:20px; max-width:60ch; font-size:1.02rem; color:rgba(241,234,216,0.78);}
+  .hero{position:relative; padding:76px 0 54px; border-bottom:1px solid var(--rule-strong);}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); margin-bottom:24px; border:1px dashed var(--stamp); padding:6px 12px;}
+  .eyebrow svg{width:14px; height:14px;}
+  h1{font-family:'Fraunces', serif; font-size:clamp(2rem, 4.4vw, 3rem); font-weight:500; line-height:1.14; max-width:22ch; letter-spacing:-0.01em;}
+  .hero-sub{margin-top:20px; max-width:60ch; font-size:1.02rem; color:var(--ink-dim);}
 
-  .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;}
-  .kicker::before{content:''; width:22px; height:1px; background:var(--brass-light);}
-  .section{padding:56px 0;}
+  .kicker{font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .section{padding:64px 0;}
   .section-head{margin-bottom:32px;}
-  .section-head h2{font-family:'Newsreader', serif; font-size:1.5rem; font-weight:600; max-width:36ch;}
-  .section-head p{margin-top:10px; font-size:0.92rem; color:rgba(241,234,216,0.7); max-width:64ch;}
-  .section + .section{border-top:1px solid var(--line);}
+  .section-head h2{font-family:'Fraunces', serif; font-size:1.6rem; font-weight:500; max-width:36ch; letter-spacing:-0.01em;}
+  .section-head p{margin-top:10px; font-size:0.92rem; color:var(--ink-dim); max-width:64ch;}
+  .section + .section{border-top:1px solid var(--rule-strong);}
 
-  .precio-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;}
-  .precio-card{background:var(--ink-2); border:1px solid var(--line-strong); border-radius:8px; padding:28px; display:flex; flex-direction:column; gap:12px;}
+  /* ---------- Tarjeta con pestaña de expediente ---------- */
+  .tab-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong);}
+  .card-tab{position:absolute; top:-12px; left:16px; background:var(--ink); color:var(--parchment); font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:5px 11px;}
+
+  .precio-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:20px; padding-top:2px;}
+  .precio-card{background:var(--parchment-dim); border:1px solid var(--rule-strong); padding:28px; display:flex; flex-direction:column; gap:12px;}
   .precio-card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:14px;}
-  .precio-card h3{font-family:'Newsreader', serif; font-size:1.15rem; font-weight:600; line-height:1.3;}
-  .precio-tag{flex-shrink:0; font-family:'IBM Plex Mono', monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); border-radius:20px; padding:3px 9px; white-space:nowrap;}
-  .precio-amount{font-family:'IBM Plex Mono', monospace; font-size:1.15rem; font-weight:600; color:var(--brass-light);}
-  .precio-card p{font-size:0.88rem; color:rgba(241,234,216,0.7); flex:1;}
-  .precio-cta{align-self:flex-start; display:inline-block; background:transparent; border:1px solid var(--brass-light); color:var(--brass-light); text-decoration:none; padding:9px 18px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; transition:background 0.15s ease, color 0.15s ease;}
-  .precio-cta:hover{background:var(--brass-light); color:var(--ink);}
-  .precio-card.featured{background:linear-gradient(160deg, rgba(217,171,82,0.14), var(--ink-2) 60%); border-color:var(--brass-light);}
-  .precio-card.featured .precio-cta{background:var(--brass-light); color:var(--ink);}
-  .precio-card.featured .precio-cta:hover{background:#e8bd74;}
+  .precio-card h3{font-family:'Fraunces', serif; font-size:1.15rem; font-weight:600; line-height:1.3;}
+  .precio-tag{flex-shrink:0; font-family:'Courier Prime', monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); border:1px solid var(--rule-strong); padding:4px 10px; white-space:nowrap;}
+  .precio-amount{font-family:'Fraunces', serif; font-size:1.3rem; font-weight:600; color:var(--stamp);}
+  .precio-amount span{font-family:'Courier Prime', monospace; font-weight:400; color:var(--ink-faint); font-size:0.72rem; text-transform:uppercase;}
+  .precio-card p{font-size:0.88rem; color:var(--ink-dim); flex:1;}
+  .precio-cta{align-self:flex-start; display:inline-block; background:none; border:1px solid var(--stamp); color:var(--stamp); text-decoration:none; padding:9px 18px; font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; transition:background 0.15s ease, color 0.15s ease;}
+  .precio-cta:hover{background:var(--stamp); color:var(--parchment);}
+  .precio-card.featured{position:relative;}
+  .precio-card.featured .precio-tag{display:none;}
+  .precio-card.featured .precio-cta{background:var(--stamp); color:var(--parchment); box-shadow:3px 3px 0 var(--rule-strong);}
+  .precio-card.featured .precio-cta:hover{background:var(--stamp-dark);}
 
-  .anunciate-card{background:var(--parchment); color:var(--ink); border-radius:8px; padding:36px; display:flex; align-items:center; gap:30px; flex-wrap:wrap;}
+  .anunciate-card{background:var(--ink); color:var(--parchment); border-top:4px solid var(--stamp); padding:36px; display:flex; align-items:center; gap:30px; flex-wrap:wrap;}
   .anunciate-text{flex:1; min-width:260px;}
-  .anunciate-text h2{font-family:'Newsreader', serif; font-size:1.4rem; font-weight:600; margin-bottom:10px;}
-  .anunciate-text p{font-size:0.92rem; color:#4a4230; line-height:1.6;}
-  .anunciate-cta{flex-shrink:0; display:inline-block; background:var(--ink); color:var(--parchment); text-decoration:none; padding:13px 24px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; transition:background 0.15s ease;}
-  .anunciate-cta:hover{background:var(--ink-2);}
+  .anunciate-text h2{font-family:'Fraunces', serif; font-size:1.4rem; font-weight:600; margin-bottom:10px;}
+  .anunciate-text p{font-size:0.92rem; color:rgba(245,239,221,0.75); line-height:1.6;}
+  .anunciate-cta{flex-shrink:0; display:inline-block; background:var(--brass-light); color:var(--ink); text-decoration:none; padding:13px 24px; font-family:'Courier Prime', monospace; font-weight:700; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; box-shadow:3px 3px 0 rgba(0,0,0,0.3); transition:background 0.15s ease;}
+  .anunciate-cta:hover{background:#e0bd74;}
 
-  footer{padding:56px 0 28px; border-top:1px solid var(--line);}
+  footer{padding:56px 0 28px; background:var(--ink); color:var(--parchment); border-top:4px solid var(--stamp);}
   .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
   .footer-brand .brand{justify-self:start; margin-bottom:12px;}
-  .footer-tagline{font-size:0.86rem; color:rgba(241,234,216,0.58); max-width:34ch; line-height:1.55;}
+  .footer-tagline{font-size:0.86rem; color:rgba(245,239,221,0.6); max-width:34ch; line-height:1.55;}
   .footer-col{display:flex; flex-direction:column; gap:9px;}
-  .footer-col-title{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
-  .footer-col a{font-size:0.86rem; color:rgba(241,234,216,0.68); text-decoration:none; transition:color 0.15s ease;}
+  .footer-col-title{font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
+  .footer-col a{font-size:0.86rem; color:rgba(245,239,221,0.7); text-decoration:none; transition:color 0.15s ease;}
   .footer-col a:hover{color:var(--parchment);}
   .footer-bottom{padding-top:22px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
-  footer .mono{font-size:0.72rem; color:rgba(241,234,216,0.5); font-family:'IBM Plex Mono', monospace;}
+  footer .mono{font-size:0.72rem; color:rgba(245,239,221,0.5); font-family:'Courier Prime', monospace;}
   footer a.mono{text-decoration:none;}
-  footer a.mono:hover{color:rgba(241,234,216,0.8);}
+  footer a.mono:hover{color:rgba(245,239,221,0.82);}
   @media (max-width:860px){
     .footer-grid{grid-template-columns:1fr 1fr; gap:28px;}
     .footer-brand{grid-column:1 / -1;}
@@ -123,9 +134,11 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <a href="index.html" class="brand">
-      <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="16" r="14.5" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
-        <path d="M16 8.5v15M10.3 11.5l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1m11.4 0l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1M8 11.5h4.7m6.6 0H24M11.7 23.5h8.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
       </svg>
       <span class="brand-text">
         <span class="brand-name">Idóneo</span>
@@ -189,12 +202,12 @@
       <p>No tienes que elegir uno para siempre — puedes empezar con el que arriesgue menos y cambiarte cuando quieras.</p>
     </div>
     <div class="precio-grid">
-      <div class="precio-card featured">
+      <div class="precio-card featured tab-card">
+        <span class="card-tab">Más popular</span>
         <div class="precio-card-head">
           <h3>Idóneo Destacado</h3>
-          <span class="precio-tag">Más popular</span>
         </div>
-        <div class="precio-amount">$299 MXN <span style="font-weight:400; color:rgba(241,234,216,0.55); font-size:0.8rem;">/ mes, o $2,990/año</span></div>
+        <div class="precio-amount">$299 MXN <span>/ mes, o $2,990/año</span></div>
         <p>Prioridad en el buscador, insignia dorada, panel de estadísticas con comparación contra tu categoría, hasta 5 especialidades, galería de fotos, Equipo del despacho, y acceso a la Red de referidos entre Destacados.</p>
         <a class="precio-cta" href="destacado.html">Ver todo lo que incluye</a>
       </div>
@@ -203,7 +216,7 @@
           <h3>Impulso puntual</h3>
           <span class="precio-tag">Sin compromiso</span>
         </div>
-        <div class="precio-amount">$99 MXN <span style="font-weight:400; color:rgba(241,234,216,0.55); font-size:0.8rem;">/ 72 horas</span></div>
+        <div class="precio-amount">$99 MXN <span>/ 72 horas</span></div>
         <p>Todas las ventajas de Destacado durante 3 días, pago único. Para probar si te funciona, o para un pico de necesidad puntual (campaña, temporada alta, caso urgente).</p>
         <a class="precio-cta" href="destacado.html#pricing">Ver detalles</a>
       </div>
@@ -212,7 +225,7 @@
           <h3>Comisión por caso ganado</h3>
           <span class="precio-tag">Pagas por resultados</span>
         </div>
-        <div class="precio-amount">$150–350 MXN <span style="font-weight:400; color:rgba(241,234,216,0.55); font-size:0.8rem;">/ caso confirmado</span></div>
+        <div class="precio-amount">$150–350 MXN <span>/ caso confirmado</span></div>
         <p>¿No quieres comprometerte a una mensualidad? Reporta cada caso real que cerraste por Idóneo desde "Mi cuenta" y te facturamos aparte — cero riesgo si un mes no te llega ningún caso.</p>
         <a class="precio-cta" href="mi-cuenta.html">Repórtalo desde Mi cuenta</a>
       </div>
@@ -221,7 +234,7 @@
           <h3>Verificación de persona moral</h3>
           <span class="precio-tag">Pago único</span>
         </div>
-        <div class="precio-amount">$299 MXN <span style="font-weight:400; color:rgba(241,234,216,0.55); font-size:0.8rem;">una sola vez</span></div>
+        <div class="precio-amount">$299 MXN <span>una sola vez</span></div>
         <p>Confirmamos el acta constitutiva y RFC de tu despacho y te quedas con la insignia "Persona moral verificada" para siempre — señal extra de formalidad para clientes que van a firmar contrato.</p>
         <a class="precio-cta" href="mi-cuenta.html">Solicítala desde Mi cuenta</a>
       </div>
@@ -258,7 +271,7 @@
           <h3>Kit de documentos legales</h3>
           <span class="precio-tag">Descarga inmediata</span>
         </div>
-        <div class="precio-amount">Desde $49 MXN <span style="font-weight:400; color:rgba(241,234,216,0.55); font-size:0.8rem;">c/u, o $199 el Kit completo</span></div>
+        <div class="precio-amount">Desde $49 MXN <span>c/u, o $199 el Kit completo</span></div>
         <p>Carta poder, contrato de arrendamiento, queja ante PROFECO, aviso de rescisión laboral y contrato de prestación de servicios.</p>
         <a class="precio-cta" href="documentos.html">Ver los documentos</a>
       </div>
@@ -270,9 +283,11 @@
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <a href="index.html" class="brand">
-        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="14.5" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
-          <path d="M16 8.5v15M10.3 11.5l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1m11.4 0l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1M8 11.5h4.7m6.6 0H24M11.7 23.5h8.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+          <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+          <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
         <span class="brand-text">
           <span class="brand-name">Idóneo</span>

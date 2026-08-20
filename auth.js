@@ -99,27 +99,27 @@
       transition:transform 0.28s cubic-bezier(.22,1,.36,1);
     }
     .auth-overlay.show .auth-modal{transform:scale(1) translateY(0);}
-    .auth-modal-title{font-family:'Newsreader', serif; font-size:1.25rem; font-weight:600; margin-bottom:18px;}
+    .auth-modal-title{font-family:'Fraunces', serif; font-size:1.25rem; font-weight:600; margin-bottom:18px;}
     .auth-close{position:absolute; top:14px; right:14px; width:30px; height:30px; background:none; border:none; border-radius:50%; font-size:1.3rem; line-height:1; color:var(--ink-2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s ease;}
     .auth-close:hover{background:rgba(24,38,68,0.08);}
     .auth-close:focus-visible, .auth-trigger:focus-visible, .auth-tab:focus-visible, .nav-account-menu button:focus-visible, .google-auth-btn:focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
     .auth-tabs{display:flex; gap:4px; background:#e4dbc4; border-radius:4px; padding:3px; margin-bottom:20px;}
-    .auth-tab{flex:1; background:none; border:none; padding:9px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); cursor:pointer; transition:background 0.15s ease, color 0.15s ease;}
+    .auth-tab{flex:1; background:none; border:none; padding:9px; border-radius:3px; font-family:'Courier Prime', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); cursor:pointer; transition:background 0.15s ease, color 0.15s ease;}
     .auth-tab:hover{color:var(--ink);}
     .auth-tab.active{background:var(--parchment); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,0.15);}
-    .google-auth-btn{width:100%; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; color:#3c4043; border:1px solid #c9bd9c; border-radius:3px; padding:11px 12px; font-family:'IBM Plex Sans', sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:box-shadow 0.15s ease, transform 0.15s ease;}
+    .google-auth-btn{width:100%; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; color:#3c4043; border:1px solid #c9bd9c; border-radius:3px; padding:11px 12px; font-family:'Public Sans', sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:box-shadow 0.15s ease, transform 0.15s ease;}
     .google-auth-btn:hover{box-shadow:0 4px 14px rgba(0,0,0,0.18); transform:translateY(-1px);}
     .google-auth-btn:active{transform:translateY(0);}
     .google-auth-btn:disabled{opacity:0.6; cursor:default;}
-    .auth-divider{display:flex; align-items:center; gap:10px; margin:18px 0; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a8069;}
+    .auth-divider{display:flex; align-items:center; gap:10px; margin:18px 0; font-family:'Courier Prime', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a8069;}
     .auth-divider::before, .auth-divider::after{content:''; flex:1; height:1px; background:#ddd2b0;}
     .auth-form{display:flex; flex-direction:column; gap:13px;}
     .auth-form .field label{display:block; font-size:0.8rem; font-weight:600; margin-bottom:5px; color:var(--ink-2);}
-    .auth-form .field input{width:100%; padding:11px 12px; border:1px solid #c9bd9c; border-radius:3px; background:#fbf8f0; font-family:'IBM Plex Sans', sans-serif; font-size:0.94rem; color:var(--ink);}
+    .auth-form .field input{width:100%; padding:11px 12px; border:1px solid #c9bd9c; border-radius:3px; background:#fbf8f0; font-family:'Public Sans', sans-serif; font-size:0.94rem; color:var(--ink);}
     .auth-form .field input:focus-visible{outline:2px solid var(--brass); outline-offset:1px;}
     .auth-msg{display:none; font-size:0.8rem; color:#6b2a2a; background:#f2e6e6; padding:9px 11px; border-radius:3px;}
     .auth-msg.show{display:block;}
-    .auth-form .submit-btn{margin-top:2px; background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:13px 20px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.15s ease, opacity 0.15s ease, transform 0.15s ease;}
+    .auth-form .submit-btn{margin-top:2px; background:var(--ink); color:var(--parchment); border:none; border-radius:3px; padding:13px 20px; font-family:'Courier Prime', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.07em; cursor:pointer; transition:background 0.15s ease, opacity 0.15s ease, transform 0.15s ease;}
     .auth-form .submit-btn:hover:not(:disabled){background:var(--ink-2); transform:translateY(-1px);}
     .auth-form .submit-btn:active:not(:disabled){transform:translateY(0);}
     .auth-form .submit-btn:disabled{opacity:0.6; cursor:default;}
@@ -133,17 +133,20 @@
     .google-consent-note a{color:var(--brass); text-decoration:underline;}
 
     .auth-slot{position:relative; display:flex; align-items:center;}
-    .auth-trigger{display:inline-flex; align-items:center; gap:8px; background:none; border:1px solid var(--line-strong); border-radius:20px; padding:4px 14px 4px 4px; cursor:pointer; color:rgba(241,234,216,0.9); font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; transition:border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;}
+    .auth-trigger{display:inline-flex; align-items:center; gap:8px; background:none; border:1px solid var(--line-strong); border-radius:20px; padding:4px 14px 4px 4px; cursor:pointer; color:rgba(244,238,220,0.9); font-family:'Courier Prime', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; transition:border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;}
     .auth-trigger:hover{border-color:var(--brass-light); background:rgba(241,234,216,0.06); transform:translateY(-1px);}
     .auth-trigger:active{transform:translateY(0);}
     .auth-trigger.is-pro{border-color:var(--brass-light); background:rgba(217,171,82,0.1);}
-    .auth-avatar{position:relative; width:26px; height:26px; border-radius:50%; background:rgba(241,234,216,0.14); color:var(--parchment); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
-    .auth-avatar.is-user{background:var(--brass-light); color:var(--ink); font-family:'Newsreader', serif; font-weight:600; font-size:0.72rem;}
+    .auth-avatar{position:relative; width:26px; height:26px; border-radius:50%; background:rgba(244,238,220,0.14); color:var(--parchment); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
+    .auth-avatar.is-user{background:var(--brass-light); color:var(--ink); font-family:'Fraunces', serif; font-weight:600; font-size:0.72rem;}
     .auth-avatar img{width:100%; height:100%; object-fit:cover;}
     .auth-avatar.is-pro{box-shadow:0 0 0 2px var(--brass-light);}
     .pro-badge{position:absolute; bottom:-3px; right:-3px; width:13px; height:13px; border-radius:50%; background:var(--brass-light); color:var(--ink); display:flex; align-items:center; justify-content:center; border:2px solid var(--ink); font-size:8px; line-height:1; font-weight:700;}
+    .msg-badge-dot{position:absolute; top:-2px; right:-2px; width:11px; height:11px; border-radius:50%; background:#c0392b; border:2px solid var(--ink);}
+    .nav-account-menu a.has-count{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+    .nav-msg-count{background:var(--brass); color:var(--ink); font-size:0.66rem; font-weight:700; border-radius:20px; padding:1px 7px; font-family:'Courier Prime', monospace;}
     .auth-label{white-space:nowrap;}
-    .nav-account-menu .who .pro-tag{display:inline-flex; align-items:center; gap:4px; margin-top:6px; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a6a1f; background:rgba(185,138,46,0.14); border:1px solid var(--brass-light); padding:3px 9px; border-radius:20px;}
+    .nav-account-menu .who .pro-tag{display:inline-flex; align-items:center; gap:4px; margin-top:6px; font-family:'Courier Prime', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:#8a6a1f; background:rgba(201,154,62,0.14); border:1px solid var(--brass-light); padding:3px 9px; border-radius:20px;}
     .nav-account-menu{
       position:absolute; top:calc(100% + 8px); right:0; background:var(--parchment); color:var(--ink); border-radius:6px; min-width:190px; box-shadow:0 12px 32px rgba(0,0,0,0.32); padding:8px; z-index:60;
       opacity:0; visibility:hidden; transform:translateY(-6px) scale(0.98); transform-origin:top right;
@@ -156,7 +159,7 @@
     .nav-account-menu .who{padding:8px 10px; font-size:0.8rem; border-bottom:1px solid #ddd2b0; margin-bottom:6px; word-break:break-word;}
     .nav-account-menu .who .name{font-weight:600;}
     .nav-account-menu .who .email{color:#6b6250; font-size:0.74rem;}
-    .nav-account-menu button, .nav-account-menu a{display:block; width:100%; text-align:left; background:none; border:none; padding:9px 10px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); cursor:pointer; text-decoration:none; box-sizing:border-box; transition:background 0.12s ease;}
+    .nav-account-menu button, .nav-account-menu a{display:block; width:100%; text-align:left; background:none; border:none; padding:9px 10px; border-radius:3px; font-family:'Courier Prime', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); cursor:pointer; text-decoration:none; box-sizing:border-box; transition:background 0.12s ease;}
     .nav-account-menu button:hover, .nav-account-menu a:hover{background:#e9e0c8;}
 
     @media (max-width: 560px){
@@ -356,6 +359,7 @@
       <div class="nav-account-menu" id="navAccountMenu" role="menu">
         <div class="who"><div class="name">${safeName}</div><div class="email">${safeEmail}</div></div>
         <a href="mi-cuenta.html" role="menuitem">Mi cuenta</a>
+        <a href="mensajes.html" role="menuitem" id="navMensajesLink">Mensajes</a>
         <button type="button" id="navLogoutBtn" role="menuitem">Cerrar sesión</button>
       </div>
     `;
@@ -401,13 +405,51 @@
     }
   }
 
+  // Punto rojo en el avatar + contador junto a "Mensajes" en el menú de
+  // cuenta -- mismo patron que el badge de cuenta profesional, pero
+  // consultando hilos no leidos en vez del perfil. Se corre en TODO el
+  // sitio (auth.js se incluye en cada pagina) porque no hay otro lugar
+  // central donde "avisar que llego un mensaje" sin que el usuario tenga
+  // que entrar primero a Mensajes.
+  async function checkUnreadMessages(user){
+    if(!user || typeof IdoneoListings === 'undefined' || !IdoneoListings.contarHilosNoLeidos) return 0;
+    try{
+      return await IdoneoListings.contarHilosNoLeidos();
+    } catch(err){
+      return 0;
+    }
+  }
+
+  async function applyUnreadBadge(user, token){
+    const count = await checkUnreadMessages(user);
+    if(token !== renderToken || !count) return;
+    const avatar = document.querySelector('#navAuthTrigger .auth-avatar');
+    if(avatar && !avatar.querySelector('.msg-badge-dot')){
+      const dot = document.createElement('span');
+      dot.className = 'msg-badge-dot';
+      dot.title = count === 1 ? 'Tienes 1 mensaje sin leer' : `Tienes ${count} mensajes sin leer`;
+      avatar.appendChild(dot);
+    }
+    const link = document.getElementById('navMensajesLink');
+    if(link && !link.querySelector('.nav-msg-count')){
+      link.classList.add('has-count');
+      const badge = document.createElement('span');
+      badge.className = 'nav-msg-count';
+      badge.textContent = String(count);
+      link.appendChild(badge);
+    }
+  }
+
   function updateAuthUI(){
     const slot = document.getElementById('navAuth');
     if(!slot) return;
     const user = getCurrentUser();
     const token = ++renderToken;
     slot.innerHTML = user ? loggedInHTML(user) : loggedOutHTML();
-    if(user) applyProfessionalBadge(user, token);
+    if(user){
+      applyProfessionalBadge(user, token);
+      applyUnreadBadge(user, token);
+    }
   }
 
   function onDocumentClick(e){

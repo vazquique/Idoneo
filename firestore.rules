@@ -150,6 +150,54 @@ service cloud.firestore {
       allow delete: if request.auth != null && (resource.data.autorUid == request.auth.uid || isAdmin());
     }
 
+    // Mensajeria interna -- alternativa privada al boton de WhatsApp (ver
+    // INSTRUCCIONES-FIREBASE.md, seccion "Mensajeria interna"). Solo el
+    // cliente puede abrir un hilo nuevo (nunca el despacho, para que
+    // nadie reciba mensajes en frio); se verifica que abogadoUid sea de
+    // verdad el dueno actual y aprobado de abogadoId, no un dato que el
+    // cliente pueda inventar desde la consola del navegador.
+    function hiloValido(hiloId, clienteUid, abogadoUid) {
+      let hilo = get(/databases/$(database)/documents/hilos/$(hiloId)).data;
+      return hilo.clienteUid == clienteUid && hilo.abogadoUid == abogadoUid;
+    }
+
+    match /hilos/{hiloId} {
+      allow read: if request.auth != null
+                  && (request.auth.uid == resource.data.clienteUid || request.auth.uid == resource.data.abogadoUid);
+      allow create: if request.auth != null
+                    && request.resource.data.clienteUid == request.auth.uid
+                    && request.resource.data.clienteUid != request.resource.data.abogadoUid
+                    && esDuenoAprobado(request.resource.data.abogadoId, request.resource.data.abogadoUid)
+                    && request.resource.data.ultimoMensaje is string
+                    && request.resource.data.ultimoMensaje.size() <= 300;
+      allow update: if request.auth != null
+                    && (request.auth.uid == resource.data.clienteUid || request.auth.uid == resource.data.abogadoUid)
+                    && request.resource.data.clienteUid == resource.data.clienteUid
+                    && request.resource.data.abogadoUid == resource.data.abogadoUid
+                    && request.resource.data.abogadoId == resource.data.abogadoId
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ultimoMensaje','ultimoMensajeAt','ultimoMensajePor','noLeidoCliente','noLeidoAbogado'])
+                    && request.resource.data.ultimoMensaje is string
+                    && request.resource.data.ultimoMensaje.size() <= 300;
+      allow delete: if false;
+    }
+
+    // Mensajes de cada hilo -- inmutables una vez enviados. clienteUid y
+    // abogadoUid se copian del hilo en cada mensaje (en vez de leer el
+    // hilo en cada lectura) para que una consulta que devuelve muchos
+    // mensajes no dispare un get() extra por cada uno.
+    match /mensajes/{mensajeId} {
+      allow read: if request.auth != null
+                  && (request.auth.uid == resource.data.clienteUid || request.auth.uid == resource.data.abogadoUid);
+      allow create: if request.auth != null
+                    && request.resource.data.remitenteUid == request.auth.uid
+                    && (request.auth.uid == request.resource.data.clienteUid || request.auth.uid == request.resource.data.abogadoUid)
+                    && hiloValido(request.resource.data.hiloId, request.resource.data.clienteUid, request.resource.data.abogadoUid)
+                    && request.resource.data.texto is string
+                    && request.resource.data.texto.size() > 0
+                    && request.resource.data.texto.size() <= 2000;
+      allow update, delete: if false;
+    }
+
     match /resenas/{reviewId} {
       allow read: if true;
       allow create: if request.auth != null

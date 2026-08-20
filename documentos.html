@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#182644">
+<meta name="theme-color" content="#211C15">
 <title>Kit de documentos legales — Idóneo Abogados</title>
 <meta name="description" content="Plantillas legales de referencia para México: carta poder, contrato de arrendamiento, queja ante PROFECO y más — descarga inmediata, sin agendar una consulta.">
 <link rel="canonical" href="https://TU-SITIO-PRINCIPAL.netlify.app/documentos.html">
@@ -14,118 +14,142 @@
 <meta property="og:title" content="Kit de documentos legales — Idóneo">
 <meta property="og:description" content="Plantillas legales de referencia para México, listas para adaptar a tu caso.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Courier+Prime:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#182644; --ink-2:#233258; --brass:#b98a2e; --brass-light:#d9ab52;
-    --parchment:#f1ead8; --parchment-dim:#e4dbc4;
-    --line: rgba(241,234,216,0.18); --line-strong: rgba(241,234,216,0.32);
+    --ink:#211C15; --ink-2:#332B1E;
+    --brass:#8A5A1E; --brass-light:#C99A3E;
+    --parchment:#F5EFDD; --parchment-dim:#EAE0C5;
+    --line: rgba(245,239,221,0.14); --line-strong: rgba(245,239,221,0.32);
+    --stamp:#A32B1F; --stamp-dark:#7A1E15;
+    --pen:#2B3A55;
+    --rule: rgba(33,28,21,0.14); --rule-strong: rgba(33,28,21,0.26);
+    --ink-dim: rgba(33,28,21,0.68); --ink-faint: rgba(33,28,21,0.5);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
-  body{background:var(--ink); color:var(--parchment); font-family:'IBM Plex Sans', sans-serif; line-height:1.5; overflow-x:hidden;}
+  body{
+    background:var(--parchment); color:var(--ink); font-family:'Public Sans', sans-serif; line-height:1.55; overflow-x:hidden;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   a{color:inherit;}
+  :focus-visible{outline:2px solid var(--brass); outline-offset:2px;}
   .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
 
-  header{position:sticky; top:0; z-index:50; background:rgba(24,38,68,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  header{position:sticky; top:0; z-index:50; background:var(--ink); border-bottom:1px solid var(--line-strong);}
   .header-inner{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px 28px; column-gap:14px;}
-  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; justify-self:center;}
-  .brand-mark{width:32px; height:32px; flex-shrink:0; color:var(--brass-light); transition:transform 0.3s ease;}
-  .brand:hover .brand-mark{transform:rotate(-6deg);}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none; justify-self:center;}
+  .brand-mark{width:33px; height:20px; flex-shrink:0; color:var(--brass-light); transition:transform 0.2s ease;}
+  .brand:hover .brand-mark{transform:rotate(-8deg);}
   .brand-text{display:flex; flex-direction:column; gap:3px; line-height:1;}
-  .brand-name{font-family:'Newsreader', serif; font-size:1.3rem; font-weight:600; color:var(--parchment); letter-spacing:0.01em;}
-  .brand-niche{font-family:'IBM Plex Mono', monospace; font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.13em; color:var(--brass-light); border:1px solid rgba(217,171,82,0.4); border-radius:20px; padding:2px 8px; align-self:flex-start; background:rgba(217,171,82,0.08);}
+  .brand-name{font-family:'Fraunces', serif; font-size:1.32rem; font-weight:600; font-style:italic; color:var(--parchment); letter-spacing:0.01em;}
+  .brand-niche{font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.13em; color:var(--stamp); background:var(--parchment); padding:2px 8px; align-self:flex-start;}
+  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease, color 0.15s ease;}
   .auth-slot{justify-self:end;}
-  .nav-toggle{justify-self:start; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--line-strong); border-radius:6px; background:none; color:var(--parchment); cursor:pointer; transition:border-color 0.2s ease, background 0.2s ease, color 0.2s ease;}
   .nav-toggle:hover{border-color:var(--brass-light);}
   .nav-toggle.is-open{background:var(--brass-light); border-color:var(--brass-light); color:var(--ink);}
 
-  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 24px 48px rgba(0,0,0,0.35); opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s; max-height:calc(100vh - 70px); overflow-y:auto;}
-  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0s;}
+  .mega-menu{position:absolute; top:100%; left:0; right:0; z-index:60; background:var(--ink-2); border-bottom:1px solid var(--line-strong); box-shadow:0 20px 40px rgba(20,16,10,0.35); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s; max-height:calc(100vh - 70px); overflow-y:auto;}
+  .mega-menu.open{opacity:1; visibility:visible; transform:translateY(0); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;}
   .mega-menu-inner{display:grid; grid-template-columns:repeat(4, 1fr); gap:36px; padding:36px 28px;}
-  .mega-col-title{display:block; font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px;}
-  .mega-col a{display:block; padding:7px 0; color:rgba(241,234,216,0.82); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
+  .mega-col-title{display:block; font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:8px;}
+  .mega-col a{display:block; padding:7px 0; color:rgba(245,239,221,0.8); text-decoration:none; font-size:0.92rem; transition:color 0.15s ease, transform 0.15s ease;}
   .mega-col a:hover{color:var(--parchment); transform:translateX(3px);}
-  .mega-col a.mega-primary{color:var(--brass-light); font-weight:600;}
-  @media (max-width:860px){
-    .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;}
-  }
+  .mega-col a.mega-primary{color:var(--stamp); font-weight:700;}
+  @media (max-width:860px){ .mega-menu-inner{grid-template-columns:repeat(2,1fr); gap:28px;} }
   @media (max-width:680px){
     .mega-menu-inner{grid-template-columns:1fr; gap:2px; padding:18px 24px;}
     .mega-col{padding-bottom:12px; margin-bottom:8px; border-bottom:1px solid var(--line);}
     .mega-col:last-child{border-bottom:none;}
   }
 
-  .hero{position:relative; padding:72px 0 48px; border-bottom:1px solid var(--line);
-    background: radial-gradient(ellipse 700px 380px at 85% -10%, rgba(217,171,82,0.14), transparent 60%);}
-  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); margin-bottom:22px;}
-  .eyebrow::before{content:''; width:24px; height:1px; background:var(--brass-light);}
-  h1{font-size:clamp(2rem, 4.4vw, 3rem); font-weight:500; line-height:1.1; max-width:22ch; letter-spacing:-0.01em;}
-  .hero-sub{margin-top:20px; max-width:58ch; font-size:1.02rem; color:rgba(241,234,216,0.78);}
+  /* ---------- Hero ---------- */
+  .hero{position:relative; padding:80px 0 52px; border-bottom:1px solid var(--rule-strong);}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); margin-bottom:22px; border:1px dashed var(--stamp); padding:6px 12px;}
+  .eyebrow svg{width:14px; height:14px; flex-shrink:0;}
+  h1{font-family:'Fraunces', serif; font-size:clamp(2rem, 4.4vw, 3rem); font-weight:500; line-height:1.14; max-width:22ch; letter-spacing:-0.01em;}
+  .hero-sub{margin-top:20px; max-width:58ch; font-size:1.02rem; color:var(--ink-dim);}
 
-  .disclaimer-banner{margin-top:28px; display:flex; align-items:flex-start; gap:12px; background:rgba(217,171,82,0.1); border:1px solid rgba(217,171,82,0.35); border-radius:6px; padding:16px 18px; max-width:74ch;}
-  .disclaimer-banner svg{width:20px; height:20px; flex-shrink:0; color:var(--brass-light); margin-top:1px;}
-  .disclaimer-banner p{font-size:0.86rem; color:rgba(241,234,216,0.82); line-height:1.55;}
-  .disclaimer-banner strong{color:var(--brass-light);}
+  .disclaimer-banner{margin-top:26px; display:flex; align-items:flex-start; gap:12px; background:var(--parchment-dim); border:1px dashed var(--brass); padding:16px 18px; max-width:74ch;}
+  .disclaimer-banner svg{width:20px; height:20px; flex-shrink:0; color:var(--brass); margin-top:1px;}
+  .disclaimer-banner p{font-size:0.86rem; color:var(--ink-dim); line-height:1.55;}
+  .disclaimer-banner strong{color:var(--ink);}
+  .disclaimer-banner a{color:var(--stamp); text-decoration:underline;}
 
-  .kicker{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass-light); display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;}
-  .kicker::before{content:''; width:22px; height:1px; background:var(--brass-light);}
-  .section-head{margin-bottom:36px;}
-  .section-head h2{font-family:'Newsreader', serif; font-size:1.7rem; font-weight:600; max-width:26ch;}
-  .section-head p{margin-top:10px; font-size:0.95rem; color:rgba(241,234,216,0.72); max-width:60ch;}
+  .kicker{font-family:'Courier Prime', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--stamp); display:block; margin-bottom:12px;}
+  .section-head{max-width:640px; margin-bottom:36px;}
+  h2{font-family:'Fraunces', serif; font-size:clamp(1.4rem,2.6vw,1.9rem); font-weight:500; letter-spacing:-0.01em;}
+  .section-head p{margin-top:10px; color:var(--ink-dim); font-size:0.95rem; max-width:60ch;}
 
+  /* ---------- Tarjeta con pestaña de expediente (sistema compartido con index.html) ---------- */
+  .tab-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); margin-top:16px; transition:border-color 0.15s ease;}
+  .card-tab{position:absolute; top:-12px; left:16px; background:var(--ink); color:var(--parchment); font-family:'Courier Prime', monospace; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:5px 11px;}
+
+  /* ---------- Documentos individuales ---------- */
   .productos{padding:64px 0;}
-  .productos-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;}
-  .producto-card{background:var(--ink-2); border:1px solid var(--line-strong); border-radius:6px; padding:26px; display:flex; flex-direction:column; gap:12px;}
-  .producto-card svg{width:26px; height:26px; color:var(--brass-light);}
-  .producto-card h3{font-family:'Newsreader', serif; font-size:1.1rem; font-weight:600; line-height:1.3;}
-  .producto-card p{font-size:0.86rem; color:rgba(241,234,216,0.68); flex:1;}
-  .producto-price{font-family:'IBM Plex Mono', monospace; font-size:1.1rem; font-weight:600; color:var(--brass-light);}
-  .producto-cta{display:inline-block; text-align:center; background:transparent; border:1px solid var(--brass-light); color:var(--brass-light); text-decoration:none; padding:10px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; transition:background 0.15s ease, color 0.15s ease;}
-  .producto-cta:hover{background:var(--brass-light); color:var(--ink);}
+  .productos-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:22px 18px; padding-top:2px;}
+  .producto-card{padding:30px 22px 22px; display:flex; flex-direction:column; gap:12px;}
+  .producto-card:hover{border-color:var(--stamp);}
+  .producto-card svg{width:24px; height:24px; color:var(--pen);}
+  .producto-card h3{font-family:'Fraunces', serif; font-size:1.05rem; font-weight:600; line-height:1.3;}
+  .producto-card p{font-size:0.86rem; color:var(--ink-dim); flex:1;}
+  .producto-price{font-family:'Courier Prime', monospace; font-size:1.05rem; font-weight:700; color:var(--stamp);}
+  .producto-cta{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; background:none; color:var(--ink); text-decoration:none;
+    padding:12px; border:1px solid var(--rule-strong); font-family:'Courier Prime', monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .producto-cta:hover{border-color:var(--ink); background:rgba(33,28,21,0.05);}
 
+  /* ---------- Kit completo ---------- */
   .kit-section{padding:0 0 64px;}
-  .kit-card{background:var(--parchment); color:var(--ink); border-radius:8px; padding:40px; display:flex; align-items:center; gap:36px; flex-wrap:wrap; box-shadow:0 24px 56px rgba(0,0,0,0.35);}
+  .kit-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); padding:40px; display:flex; align-items:center; gap:36px; flex-wrap:wrap;}
+  .kit-card .card-tab{background:var(--stamp);}
   .kit-card-text{flex:1; min-width:280px;}
-  .kit-card-text span.kicker{color:var(--brass); margin-bottom:10px;}
-  .kit-card-text span.kicker::before{background:var(--brass);}
-  .kit-card-text h2{font-family:'Newsreader', serif; font-size:1.6rem; font-weight:600; margin-bottom:10px;}
-  .kit-card-text p{font-size:0.92rem; color:#4a4230; line-height:1.6;}
+  .kit-card-text h2{font-family:'Fraunces', serif; font-size:1.5rem; font-weight:600; margin-bottom:10px; margin-top:4px;}
+  .kit-card-text p{font-size:0.92rem; color:var(--ink-dim); line-height:1.6;}
   .kit-card-price{flex-shrink:0; text-align:center;}
-  .kit-amount{font-family:'Newsreader', serif; font-size:2.6rem; font-weight:600;}
-  .kit-amount span{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; font-weight:400; color:#6b6250; display:block; margin-top:2px;}
-  .kit-cta{display:block; margin-top:14px; background:var(--ink); color:var(--parchment); text-decoration:none; padding:13px 24px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; transition:background 0.15s ease;}
-  .kit-cta:hover{background:var(--ink-2);}
-  .kit-note{font-size:0.72rem; color:#8a8069; margin-top:10px;}
+  .kit-amount{font-family:'Fraunces', serif; font-size:2.4rem; font-weight:600; color:var(--stamp);}
+  .kit-amount span{font-family:'Courier Prime', monospace; font-size:0.75rem; font-weight:400; color:var(--ink-faint); display:block; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;}
+  .kit-cta{
+    display:inline-flex; align-items:center; justify-content:center; gap:9px; margin-top:16px; background:var(--stamp); color:var(--parchment); text-decoration:none;
+    padding:14px 24px; font-family:'Courier Prime', monospace; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
+    transition:background 0.15s ease, transform 0.1s ease; box-shadow:3px 3px 0 var(--rule-strong);
+  }
+  .kit-cta:hover{background:var(--stamp-dark);}
+  .kit-cta:active{transform:translate(3px,3px); box-shadow:0 0 0 var(--rule-strong);}
+  .kit-note{font-size:0.72rem; color:var(--ink-faint); margin-top:12px; max-width:220px;}
 
-  .como-funciona{padding:0 0 64px;}
-  .como-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden;}
-  .como-item{background:var(--ink); padding:26px 24px;}
-  .como-item .num{font-family:'Newsreader', serif; font-size:1.6rem; font-weight:600; color:var(--brass-light); line-height:1;}
-  .como-item p{margin-top:10px; font-size:0.88rem; color:rgba(241,234,216,0.72);}
+  /* ---------- Cómo funciona (mismo patrón que index.html) ---------- */
+  .articulos{border-top:1px solid var(--rule-strong); border-bottom:1px solid var(--rule-strong); padding:64px 0;}
+  .articulo{display:grid; grid-template-columns:120px 1fr; gap:26px; padding:26px 0; border-top:1px solid var(--rule);}
+  .articulo:first-child{border-top:none; padding-top:2px;}
+  .art-label{font-family:'Courier Prime', monospace; font-size:0.8rem; color:var(--stamp); font-weight:700;}
+  .articulo h3{font-family:'Fraunces', serif; font-size:1.1rem; font-weight:500; margin-bottom:6px;}
+  .articulo p{color:var(--ink-dim); font-size:0.92rem; max-width:56ch;}
 
-  footer{padding:56px 0 28px; border-top:1px solid var(--line);}
+  footer{padding:56px 0 28px; background:var(--ink); color:var(--parchment); border-top:4px solid var(--stamp);}
   .footer-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px; padding-bottom:36px;}
   .footer-brand .brand{justify-self:start; margin-bottom:12px;}
-  .footer-tagline{font-size:0.86rem; color:rgba(241,234,216,0.58); max-width:34ch; line-height:1.55;}
+  .footer-tagline{font-size:0.86rem; color:rgba(245,239,221,0.6); max-width:34ch; line-height:1.55;}
   .footer-col{display:flex; flex-direction:column; gap:9px;}
-  .footer-col-title{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
-  .footer-col a{font-size:0.86rem; color:rgba(241,234,216,0.68); text-decoration:none; transition:color 0.15s ease;}
+  .footer-col-title{font-family:'Courier Prime', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--brass-light); margin-bottom:2px;}
+  .footer-col a{font-size:0.86rem; color:rgba(245,239,221,0.7); text-decoration:none; transition:color 0.15s ease;}
   .footer-col a:hover{color:var(--parchment);}
   .footer-bottom{padding-top:22px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
-  footer .mono{font-size:0.72rem; color:rgba(241,234,216,0.5); font-family:'IBM Plex Mono', monospace;}
+  footer .mono{font-size:0.72rem; color:rgba(245,239,221,0.5); font-family:'Courier Prime', monospace;}
   footer a.mono{text-decoration:none;}
-  footer a.mono:hover{color:rgba(241,234,216,0.8);}
+  footer a.mono:hover{color:rgba(245,239,221,0.82);}
   @media (max-width:860px){
     .footer-grid{grid-template-columns:1fr 1fr; gap:28px;}
     .footer-brand{grid-column:1 / -1;}
     .productos-grid{grid-template-columns:repeat(2, 1fr);}
-    .como-grid{grid-template-columns:1fr;}
+    .articulo{grid-template-columns:1fr; gap:6px;}
   }
   @media (max-width:520px){
     .footer-grid{grid-template-columns:1fr;}
     .productos-grid{grid-template-columns:1fr;}
-    .kit-card{padding:28px;}
+    .kit-card{padding:26px;}
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
 </style>
@@ -138,9 +162,11 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <a href="index.html" class="brand">
-      <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="16" r="14.5" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
-        <path d="M16 8.5v15M10.3 11.5l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1m11.4 0l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1M8 11.5h4.7m6.6 0H24M11.7 23.5h8.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+        <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+        <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
       </svg>
       <span class="brand-text">
         <span class="brand-name">Idóneo</span>
@@ -190,12 +216,12 @@
 
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>Kit de documentos legales</span>
+    <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>Kit de documentos legales</span>
     <h1>Un punto de partida para tu documento, sin agendar nada.</h1>
     <p class="hero-sub">Plantillas de referencia listas para adaptar a tu caso: carta poder, contrato de arrendamiento, queja ante PROFECO y más. Descarga inmediata por correo, desde $49 MXN.</p>
     <div class="disclaimer-banner">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-      <p><strong>Esto no es asesoría legal.</strong> Son plantillas de referencia con base en formatos de uso común en México, para casos simples y sin complicaciones. Si tu situación tiene bienes en disputa, menores de edad, montos grandes o cualquier detalle fuera de lo normal, lo barato te puede salir caro — <a href="buscar.html" style="color:var(--brass-light); text-decoration:underline;">contrata a un abogado verificado</a> en vez de improvisar con una plantilla.</p>
+      <p><strong>Esto no es asesoría legal.</strong> Son plantillas de referencia con base en formatos de uso común en México, para casos simples y sin complicaciones. Si tu situación tiene bienes en disputa, menores de edad, montos grandes o cualquier detalle fuera de lo normal, lo barato te puede salir caro — <a href="buscar.html">contrata a un abogado verificado</a> en vez de improvisar con una plantilla.</p>
     </div>
   </div>
 </section>
@@ -213,9 +239,9 @@
 
 <section class="kit-section">
   <div class="wrap">
-    <div class="kit-card">
+    <div class="kit-card tab-card">
+      <span class="card-tab">El más completo</span>
       <div class="kit-card-text">
-        <span class="kicker">El más completo</span>
         <h2>Kit completo — los 5 documentos</h2>
         <p>Carta poder, contrato de arrendamiento, queja PROFECO, aviso de rescisión laboral y contrato de prestación de servicios. Cómpralos todos juntos y ahórrate $196 MXN frente a comprarlos por separado.</p>
       </div>
@@ -228,26 +254,15 @@
   </div>
 </section>
 
-<section class="como-funciona">
+<section class="articulos">
   <div class="wrap">
     <div class="section-head" style="margin-bottom:28px;">
       <span class="kicker">Cómo funciona</span>
       <h2>Tres pasos, sin agendar consulta.</h2>
     </div>
-    <div class="como-grid">
-      <div class="como-item">
-        <div class="num">1</div>
-        <p>Eliges el documento (o el Kit completo) y pagas en una página segura de Stripe.</p>
-      </div>
-      <div class="como-item">
-        <div class="num">2</div>
-        <p>Nos escribes con el correo de tu pago (o usas el botón de "Pedir por correo") — todavía activamos a mano mientras automatizamos la entrega.</p>
-      </div>
-      <div class="como-item">
-        <div class="num">3</div>
-        <p>Recibes tu documento en Word y PDF, listo para adaptar con tus datos — el mismo día hábil.</p>
-      </div>
-    </div>
+    <div class="articulo"><span class="art-label">01</span><div><h3>Eliges y pagas</h3><p>Eliges el documento (o el Kit completo) y pagas en una página segura de Stripe.</p></div></div>
+    <div class="articulo"><span class="art-label">02</span><div><h3>Nos escribes</h3><p>Nos escribes con el correo de tu pago (o usas el botón de "Pedir por correo") — todavía activamos a mano mientras automatizamos la entrega.</p></div></div>
+    <div class="articulo"><span class="art-label">03</span><div><h3>Recibes tu documento</h3><p>Recibes tu documento en Word y PDF, listo para adaptar con tus datos — el mismo día hábil.</p></div></div>
   </div>
 </section>
 
@@ -255,9 +270,11 @@
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <a href="index.html" class="brand">
-        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="14.5" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
-          <path d="M16 8.5v15M10.3 11.5l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1m11.4 0l-2.6 5.1a3.3 3.3 0 0 0 6.6 0l-2.6-5.1M8 11.5h4.7m6.6 0H24M11.7 23.5h8.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg class="brand-mark" viewBox="0 0 44 26" fill="none">
+          <circle cx="10" cy="13" r="7.5" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="10" cy="13" r="2.6" fill="currentColor"/>
+          <line x1="17.3" y1="13" x2="41" y2="13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M26 13v5M31 13v8M36 13v4M41 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
         <span class="brand-text">
           <span class="brand-name">Idóneo</span>
@@ -289,6 +306,7 @@
       <a href="documentos.html">Kit de documentos</a>
       <a href="foro.html">Foro de preguntas</a>
       <a href="index.html#como-funciona">Cómo funciona</a>
+      <a href="index.html#preguntas-frecuentes">Preguntas frecuentes</a>
       <a href="aviso-privacidad.html">Aviso de privacidad</a>
       <a href="terminos.html">Términos y condiciones</a>
     </div>
@@ -314,30 +332,35 @@
   const PRODUCTOS = [
     {
       nombre: 'Carta poder simple',
+      categoria: 'General',
       precio: '$49 MXN',
       desc: 'Para autorizar a alguien a hacer un trámite en tu nombre (recoger documentos, cobrar, representarte en gestiones simples).',
       icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'
     },
     {
       nombre: 'Contrato de arrendamiento básico',
+      categoria: 'Inmobiliario',
       precio: '$79 MXN',
       desc: 'Para rentar una casa o depa sin complicaciones — plazo, renta, depósito, y las cláusulas más comunes que la gente olvida poner.',
       icon: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>'
     },
     {
       nombre: 'Formato de queja ante PROFECO',
+      categoria: 'Consumidor',
       precio: '$49 MXN',
       desc: 'Estructura lista para llenar cuando un negocio no te resuelve un problema de compra, garantía o servicio.',
       icon: '<path d="M20.6 12.6l-8 8a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8l8-8A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.8z"/><circle cx="15.5" cy="8.5" r="1.5"/>'
     },
     {
       nombre: 'Aviso de rescisión laboral',
+      categoria: 'Laboral',
       precio: '$59 MXN',
       desc: 'Para trabajadores: formato para notificar por escrito una rescisión de tu contrato con causa justificada, con acuse de recibo.',
       icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>'
     },
     {
       nombre: 'Contrato de prestación de servicios',
+      categoria: 'Freelance',
       precio: '$79 MXN',
       desc: 'Para freelancers y consultores — deja claro el alcance, el pago y los plazos antes de empezar a trabajar con un cliente nuevo.',
       icon: '<path d="M4 6h16M4 12h16M4 18h10"/>'
@@ -345,7 +368,8 @@
   ];
 
   document.getElementById('productosGrid').innerHTML = PRODUCTOS.map(p => `
-    <div class="producto-card">
+    <div class="tab-card producto-card">
+      <span class="card-tab">${p.categoria}</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${p.icon}</svg>
       <h3>${p.nombre}</h3>
       <p>${p.desc}</p>

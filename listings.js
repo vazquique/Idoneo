@@ -51,6 +51,8 @@
   const CASOS_GANADOS_COLLECTION = 'casos_ganados';
   const PREGUNTAS_COLLECTION = 'preguntas';
   const RESPUESTAS_FORO_COLLECTION = 'respuestas_foro';
+  const HILOS_COLLECTION = 'hilos';
+  const MENSAJES_COLLECTION = 'mensajes';
 
   // Idiomas adicionales al español que un abogado puede ofrecer — se
   // muestran como insignia en su tarjeta/perfil y como filtro en el
@@ -495,6 +497,135 @@
     await requireDb().collection(RESPUESTAS_FORO_COLLECTION).doc(String(respuestaId)).delete();
   }
 
+  // ---- Mensajeria interna ----
+  // Alternativa privada al boton de WhatsApp: solo el cliente puede abrir
+  // un hilo (nunca el despacho, para que nadie reciba mensajes en frio);
+  // a partir de ahi ambos lados pueden escribirse dentro de Idoneo. Ver
+  // INSTRUCCIONES-FIREBASE.md, seccion "Mensajeria interna".
+  async function getOrCrearHilo(abogadoId, abogadoUid, nombreDespacho){
+    const user = requireAuthUser();
+    if(user.uid === abogadoUid) throw new Error('No puedes enviarte un mensaje a ti mismo.');
+    const existente = await requireDb().collection(HILOS_COLLECTION)
+      .where('clienteUid', '==', user.uid)
+      .where('abogadoId', '==', String(abogadoId))
+      .limit(1).get();
+    if(!existente.empty) return existente.docs[0].id;
+    const ref = await requireDb().collection(HILOS_COLLECTION).add({
+      clienteUid: user.uid,
+      clienteNombre: user.displayName || 'Cliente de Idóneo',
+      abogadoId: String(abogadoId),
+      abogadoUid: String(abogadoUid),
+      abogadoNombre: (nombreDespacho || '').toString().trim().slice(0, 200) || 'Abogado de Idóneo',
+      ultimoMensaje: '',
+      ultimoMensajeAt: firebase.firestore.FieldValue.serverTimestamp(),
+      ultimoMensajePor: '',
+      noLeidoCliente: false,
+      noLeidoAbogado: false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    return ref.id;
+  }
+
+  async function getHilo(hiloId){
+    const doc = await requireDb().collection(HILOS_COLLECTION).doc(String(hiloId)).get();
+    return doc.exists ? Object.assign({id: doc.id}, doc.data()) : null;
+  }
+
+  function ordenarHilosPorActividad(lista){
+    return lista.sort((a, b) => (b.ultimoMensajeAt ? b.ultimoMensajeAt.seconds : 0) - (a.ultimoMensajeAt ? a.ultimoMensajeAt.seconds : 0));
+  }
+
+  // Un hilo tiene dos lados (cliente y abogado) y Firestore no puede
+  // filtrar por "clienteUid == X OR abogadoUid == X" en una sola
+  // consulta con el SDK compat -- se piden ambos lados por separado y se
+  // combinan aqui.
+  async function getMisHilos(){
+    const user = requireAuthUser();
+    const [comoCliente, comoAbogado] = await Promise.all([
+      requireDb().collection(HILOS_COLLECTION).where('clienteUid', '==', user.uid).get(),
+      requireDb().collection(HILOS_COLLECTION).where('abogadoUid', '==', user.uid).get()
+    ]);
+    const lista = comoCliente.docs.concat(comoAbogado.docs).map(doc => Object.assign({id: doc.id}, doc.data()));
+    return ordenarHilosPorActividad(lista);
+  }
+
+  // Version en vivo de getMisHilos: dos listeners (lado cliente y lado
+  // abogado) que se combinan en un solo mapa por id de hilo, para que la
+  // bandeja se actualice sola cuando llega un mensaje nuevo. Devuelve la
+  // funcion para cancelar ambos listeners.
+  function escucharMisHilos(callback){
+    const user = requireAuthUser();
+    const hilosPorId = new Map();
+    function emit(){
+      callback(ordenarHilosPorActividad(Array.from(hilosPorId.values())));
+    }
+    function wire(campo){
+      return requireDb().collection(HILOS_COLLECTION).where(campo, '==', user.uid).onSnapshot(snap => {
+        snap.docChanges().forEach(ch => {
+          if(ch.type === 'removed') hilosPorId.delete(ch.doc.id);
+          else hilosPorId.set(ch.doc.id, Object.assign({id: ch.doc.id}, ch.doc.data()));
+        });
+        emit();
+      });
+    }
+    const unsub1 = wire('clienteUid');
+    const unsub2 = wire('abogadoUid');
+    return () => { unsub1(); unsub2(); };
+  }
+
+  // Requiere un indice compuesto (hiloId + createdAt) -- la primera vez
+  // que corra en un proyecto real, Firestore da un link directo en la
+  // consola de error para crearlo con un clic.
+  function escucharMensajes(hiloId, callback){
+    requireAuthUser();
+    return requireDb().collection(MENSAJES_COLLECTION).where('hiloId', '==', String(hiloId)).orderBy('createdAt', 'asc')
+      .onSnapshot(snap => {
+        callback(snap.docs.map(doc => Object.assign({id: doc.id}, doc.data())));
+      });
+  }
+
+  async function enviarMensaje(hiloId, texto){
+    const user = requireAuthUser();
+    const textoLimpio = (texto || '').toString().trim().slice(0, 2000);
+    if(!textoLimpio) throw new Error('Escribe un mensaje.');
+    const hilo = await getHilo(hiloId);
+    if(!hilo) throw new Error('No encontramos esta conversación.');
+    if(user.uid !== hilo.clienteUid && user.uid !== hilo.abogadoUid) throw new Error('No tienes acceso a esta conversación.');
+    const esCliente = user.uid === hilo.clienteUid;
+    await requireDb().collection(MENSAJES_COLLECTION).add({
+      hiloId: String(hiloId),
+      clienteUid: hilo.clienteUid,
+      abogadoUid: hilo.abogadoUid,
+      remitenteUid: user.uid,
+      texto: textoLimpio,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await requireDb().collection(HILOS_COLLECTION).doc(String(hiloId)).update({
+      ultimoMensaje: textoLimpio.slice(0, 300),
+      ultimoMensajeAt: firebase.firestore.FieldValue.serverTimestamp(),
+      ultimoMensajePor: user.uid,
+      noLeidoCliente: !esCliente,
+      noLeidoAbogado: esCliente
+    });
+  }
+
+  async function marcarHiloLeido(hiloId){
+    const user = requireAuthUser();
+    const hilo = await getHilo(hiloId);
+    if(!hilo) return;
+    if(user.uid === hilo.clienteUid){
+      await requireDb().collection(HILOS_COLLECTION).doc(String(hiloId)).update({noLeidoCliente: false});
+    } else if(user.uid === hilo.abogadoUid){
+      await requireDb().collection(HILOS_COLLECTION).doc(String(hiloId)).update({noLeidoAbogado: false});
+    }
+  }
+
+  async function contarHilosNoLeidos(){
+    const hilos = await getMisHilos();
+    const user = requireAuthUser();
+    return hilos.filter(h => (h.clienteUid === user.uid && h.noLeidoCliente) || (h.abogadoUid === user.uid && h.noLeidoAbogado)).length;
+  }
+
   async function getMyListings(){
     const user = requireAuthUser();
     const snap = await requireDb().collection(COLLECTION).where('ownerUid', '==', user.uid).get();
@@ -786,6 +917,7 @@
     getMisReferidosAprobados,
     submitPregunta, getPreguntas, getPregunta, deletePregunta,
     getAllRespuestasForoGrouped, getRespuestasForPregunta, submitRespuestaForo, deleteRespuestaForo,
+    getOrCrearHilo, getHilo, getMisHilos, escucharMisHilos, escucharMensajes, enviarMensaje, marcarHiloLeido, contarHilosNoLeidos,
     getMyListings, updateMyListing, deleteMyListing, adminSetOwner, addToGaleria, removeFromGaleria,
     adminSignIn, adminSignOut, onAdminAuthChanged
   };
