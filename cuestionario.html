@@ -105,7 +105,10 @@
 
   /* ---------- Resumen / ajuste ---------- */
   .resumen-card{position:relative; background:var(--parchment-dim); border:1px solid var(--rule-strong); padding:26px 28px; margin-bottom:20px;}
-  .resumen-ia-texto{font-size:0.92rem; color:var(--ink-dim); margin-top:8px; max-width:60ch;}
+  .resumen-ia-box{display:flex; gap:12px; align-items:flex-start; background:var(--parchment); border-left:3px solid var(--stamp); padding:14px 16px; margin:12px 0 4px; max-width:64ch;}
+  .resumen-ia-box svg{flex-shrink:0; width:18px; height:18px; color:var(--stamp); margin-top:2px;}
+  .resumen-ia-label{display:block; font-family:'Courier Prime', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--stamp); margin-bottom:4px;}
+  .resumen-ia-texto{font-family:'Fraunces', serif; font-style:italic; font-size:1.02rem; color:var(--ink); line-height:1.45;}
   .resumen-chips{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 16px;}
   .resumen-chip{font-family:'Courier Prime', monospace; font-size:0.74rem; background:rgba(163,43,31,0.08); border:1px solid var(--stamp); color:var(--ink); padding:6px 13px; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;}
   .resumen-chip.is-empty{background:none; border-style:dashed; border-color:var(--rule-strong); color:var(--ink-faint); font-weight:400; text-transform:none;}
@@ -249,7 +252,7 @@
       <button type="button" class="quiz-skip" id="elegirManualBtn">Prefiero elegir de una lista →</button>
       <button type="button" class="asistente-submit-btn" id="asistenteSubmitBtn">Preguntar al asistente →</button>
     </div>
-    <p class="asistente-disclaimer">Este asistente analiza lo que escribes con palabras clave para sugerirte la especialidad correcta — no es un chatbot con inteligencia artificial real, así que si el resultado no encaja bien, lo puedes ajustar abajo o <a href="buscar.html" style="color:var(--stamp); text-decoration:underline;">buscar manualmente</a>.</p>
+    <p class="asistente-disclaimer">Este asistente usa inteligencia artificial para entender tu situación y sugerirte la especialidad correcta — pero no sustituye una consulta real con un abogado. Si el resultado no encaja bien, lo puedes ajustar abajo o <a href="buscar.html" style="color:var(--stamp); text-decoration:underline;">buscar manualmente</a>.</p>
     <div id="manualPickWrap" style="display:none;"></div>
   </div>
   <div id="resumenSlot"></div>
@@ -502,7 +505,10 @@ const ASISTENTE_FUNCTION_URL = 'https://asistente-eqqkvbj3oa-uc.a.run.app';
     resumenSlot.innerHTML = `
       <div class="resumen-card">
         <span class="quiz-step-label">${bajaConfianza ? 'No estoy seguro de tu especialidad' : 'Esto entendí de tu situación'}</span>
-        ${answers.resumenIA ? `<p class="resumen-ia-texto">${escapeHtml(answers.resumenIA)}</p>` : ''}
+        ${answers.resumenIA ? `<div class="resumen-ia-box">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z"/></svg>
+          <div><span class="resumen-ia-label">Esto entendió el asistente</span><p class="resumen-ia-texto">${escapeHtml(answers.resumenIA)}</p></div>
+        </div>` : ''}
         <div class="resumen-chips">
           <span class="resumen-chip">${escapeHtml(ESPECIALIDAD_LABELS[answers.situacion] || answers.situacion)}</span>
           ${answers.urgencia ? `<span class="resumen-chip">${escapeHtml(URGENCIA_LABELS[answers.urgencia])}</span>` : ''}
